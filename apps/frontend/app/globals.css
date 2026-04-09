@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+:root {
+  /* Brand palette — lalabits.art */
+  --color-primary: #008080;       /* Lala Turquoise */
+  --color-accent: #FF5722;        /* Neon Bit Orange */
+  --color-background: #F8F9FA;    /* Pearl White */
+  --color-foreground: #212121;    /* Charcoal Black */
+  --color-surface: #FFFFFF;
+  --color-border: #E5E7EB;
+  --color-muted: #6B7280;
+}
+
+@theme inline {
+  --color-primary: var(--color-primary);
+  --color-accent: var(--color-accent);
+  --color-background: var(--color-background);
+  --color-foreground: var(--color-foreground);
+  --color-surface: var(--color-surface);
+  --color-border: var(--color-border);
+  --color-muted: var(--color-muted);
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+}
