@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Environment files — never commit real values
+.env
+.env.local
+.env.development
+.env.production
+.env.staging
+
+# Build output
+apps/backend/dist/
+apps/frontend/.next/
+apps/frontend/out/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/settings.json
+.idea/
+
+# Test coverage
+coverage/

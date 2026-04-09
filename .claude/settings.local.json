@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e ':*)",
+      "Bash(echo \"Frontend PID: $!\" sleep 8)",
+      "Bash(curl -s http://localhost:3000)",
+      "Bash(curl -s -X POST http://localhost:3001/auth/login -H \"Content-Type: application/json\" -d '{\"email\":\"testfan@example.com\",\"password\":\"TestPass123!\"}')",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(d.get\\('access_token','ERROR:'+str\\(d\\)\\)[:200]\\)\")",
+      "Bash(curl -s -X POST http://localhost:3001/auth/login -H \"Content-Type: application/json\" -d '{\"email\":\"fan2@wave08test.com\",\"password\":\"TestPass123!\"}')",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3001/membership/subscriptions/history)",
+      "Bash(curl -s 'http://localhost:3001/membership/subscriptions/history?limit=50' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1YmU5YmE0Ny1iZmU1LTQ5NjItODc5NC0wOTFhOWFkNmI0MDAiLCJlbWFpbCI6InRlc3RmYW5AZXhhbXBsZS5jb20iLCJpc19hZG1pbiI6ZmFsc2UsImlhdCI6MTc3NTI5ODI2OCwiZXhwIjoxNzc1Mjk5MTY4fQ.mDxwiRtZpDaBt4Xw55jRj2Np5kgByINoRGWYkLNBKls')",
+      "Bash(curl -s 'http://localhost:3001/billing/invoices?limit=50' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1YmU5YmE0Ny1iZmU1LTQ5NjItODc5NC0wOTFhOWFkNmI0MDAiLCJlbWFpbCI6InRlc3RmYW5AZXhhbXBsZS5jb20iLCJpc19hZG1pbiI6ZmFsc2UsImlhdCI6MTc3NTI5ODI2OCwiZXhwIjoxNzc1Mjk5MTY4fQ.mDxwiRtZpDaBt4Xw55jRj2Np5kgByINoRGWYkLNBKls')",
+      "Bash(tasklist)",
+      "Bash(curl -s \"http://localhost:3001/creators?category=illustrator\")",
+      "Bash(curl -s \"http://localhost:3001/creators?q=e2e\")",
+      "Bash(curl -s \"http://localhost:3001/creators?q=creator&category=illustrator\")",
+      "Bash(curl -s \"http://localhost:3001/creators?page=1&limit=2\")",
+      "Bash(curl -s \"http://localhost:3001/creators\")"
+    ],
+    "additionalDirectories": [
+      "d:\\lalabits.art\\docs"
+    ]
+  }
+}
