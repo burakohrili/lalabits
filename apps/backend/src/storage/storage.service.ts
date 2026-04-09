@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
   S3Client,
@@ -13,21 +13,39 @@ const DEFAULT_GET_EXPIRES_IN = 3600; // 60 minutes
 @Injectable()
 export class StorageService {
   private readonly logger = new Logger(StorageService.name);
-  private readonly client: S3Client;
-  private readonly bucket: string;
+  private _client: S3Client | null = null;
+  private _bucket: string | null = null;
 
-  constructor(private readonly config: ConfigService) {
-    this.bucket = this.config.getOrThrow<string>('STORAGE_BUCKET');
+  constructor(private readonly config: ConfigService) {}
 
-    this.client = new S3Client({
-      endpoint: this.config.getOrThrow<string>('STORAGE_ENDPOINT'),
-      region: this.config.getOrThrow<string>('STORAGE_REGION'),
-      credentials: {
-        accessKeyId: this.config.getOrThrow<string>('STORAGE_ACCESS_KEY_ID'),
-        secretAccessKey: this.config.getOrThrow<string>('STORAGE_SECRET_ACCESS_KEY'),
-      },
-      forcePathStyle: true, // required for non-AWS S3-compatible providers
-    });
+  private get client(): S3Client {
+    if (!this._client) {
+      const endpoint = this.config.get<string>('STORAGE_ENDPOINT');
+      const region = this.config.get<string>('STORAGE_REGION');
+      const accessKeyId = this.config.get<string>('STORAGE_ACCESS_KEY_ID');
+      const secretAccessKey = this.config.get<string>('STORAGE_SECRET_ACCESS_KEY');
+
+      if (!endpoint || !region || !accessKeyId || !secretAccessKey) {
+        throw new InternalServerErrorException('Storage is not configured');
+      }
+
+      this._client = new S3Client({
+        endpoint,
+        region,
+        credentials: { accessKeyId, secretAccessKey },
+        forcePathStyle: true,
+      });
+    }
+    return this._client;
+  }
+
+  private get bucket(): string {
+    if (!this._bucket) {
+      const bucket = this.config.get<string>('STORAGE_BUCKET');
+      if (!bucket) throw new InternalServerErrorException('Storage is not configured');
+      this._bucket = bucket;
+    }
+    return this._bucket;
   }
 
   async getPresignedPutUrl(
