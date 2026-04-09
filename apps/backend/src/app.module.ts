@@ -5,8 +5,6 @@ import { RedisModule } from './redis/redis.module';
 import { StorageModule } from './storage/storage.module';
 import { EmailModule } from './email/email.module';
 import { HealthModule } from './health/health.module';
-// BATCH 1.2 VERIFY — remove DevModule before staging/production
-import { DevModule } from './dev/dev.module';
 import { AuthModule } from './auth/auth.module';
 import { CreatorModule } from './creator/creator.module';
 import { ContentModule } from './content/content.module';
@@ -48,7 +46,6 @@ import { ChatModule } from './chat/chat.module';
     WebhookModule,
     NotificationModule,
     ChatModule,
-    DevModule, // BATCH 1.2 VERIFY — remove before staging/production
   ],
 })
 export class AppModule {}
