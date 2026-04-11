@@ -17,9 +17,9 @@ export default function HeroSecondaryCTA() {
   return (
     <Link
       href={href}
-      className="rounded-xl border border-border px-6 py-3 text-sm font-semibold text-foreground hover:bg-surface transition-colors"
+      className="rounded-xl border border-border px-6 py-3 text-sm font-semibold text-text-primary hover:bg-teal-light hover:border-teal hover:text-teal transition-colors duration-150"
     >
-      Kreatör Ol
+      Üretici Ol
     </Link>
   );
 }

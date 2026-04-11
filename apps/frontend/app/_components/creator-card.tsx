@@ -34,8 +34,8 @@ export default function CreatorCard({ item }: { item: CreatorCardItem }) {
             className="h-12 w-12 rounded-full object-cover shrink-0"
           />
         ) : (
-          <div className="h-12 w-12 rounded-full bg-gray-100 shrink-0 flex items-center justify-center">
-            <span className="text-lg font-semibold text-muted">
+          <div className="h-12 w-12 rounded-full bg-teal shrink-0 flex items-center justify-center">
+            <span className="text-lg font-semibold text-white">
               {item.display_name.charAt(0).toUpperCase()}
             </span>
           </div>
@@ -46,7 +46,7 @@ export default function CreatorCard({ item }: { item: CreatorCardItem }) {
             <p className="text-xs text-muted truncate">@{item.username}</p>
           )}
         </div>
-        <span className="ml-auto shrink-0 rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-muted">
+        <span className="ml-auto shrink-0 rounded-full bg-teal-light text-teal px-2.5 py-0.5 text-xs font-medium">
           {categoryLabel}
         </span>
       </div>

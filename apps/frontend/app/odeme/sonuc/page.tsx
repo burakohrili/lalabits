@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/auth-context';
@@ -19,13 +19,13 @@ interface OrderResult {
   status: string;
 }
 
-export default function PaymentResultPage() {
+function PaymentResultInner() {
   const searchParams = useSearchParams();
   const { accessToken } = useAuth();
 
-  const type = searchParams.get('type'); // 'subscription' | null
+  const type = searchParams.get('type');
   const conversationId = searchParams.get('conversation_id') ?? '';
-  const rawStatus = searchParams.get('status'); // 'success' | 'failed' | 'pending'
+  const rawStatus = searchParams.get('status');
 
   const [pageStatus, setPageStatus] = useState<ResultStatus>('loading');
   const [planName, setPlanName] = useState<string | null>(null);
@@ -37,50 +37,39 @@ export default function PaymentResultPage() {
       setPageStatus('failed');
       return;
     }
-
     if (rawStatus === 'failed') {
       setPageStatus('failed');
       return;
     }
-
     if (rawStatus === 'success' && !accessToken) {
-      // No token yet — treat as success without detail
       setPageStatus('success');
       return;
     }
-
     if (rawStatus === 'success' && accessToken) {
       void fetchResult();
       return;
     }
-
-    // 'pending' or unknown
     setPageStatus('polling');
   }, [rawStatus, accessToken, conversationId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (pageStatus !== 'polling' || !accessToken || pollAttempts >= 6) {
       if (pageStatus === 'polling' && pollAttempts >= 6) {
-        // Give up polling — backend was too slow
         setPageStatus('success');
       }
       return;
     }
-
     const timer = setTimeout(() => {
       void fetchResult();
       setPollAttempts((n) => n + 1);
     }, 2500);
-
     return () => clearTimeout(timer);
   }, [pageStatus, accessToken, pollAttempts]); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function fetchResult() {
     if (!accessToken || !conversationId) return;
-
     try {
       let res: Response;
-
       if (type === 'subscription') {
         res = await fetch(`${API}/membership/result/${conversationId}`, {
           headers: { Authorization: `Bearer ${accessToken}` },
@@ -90,12 +79,7 @@ export default function PaymentResultPage() {
           headers: { Authorization: `Bearer ${accessToken}` },
         });
       }
-
-      if (!res.ok) {
-        setPageStatus('polling');
-        return;
-      }
-
+      if (!res.ok) { setPageStatus('polling'); return; }
       if (type === 'subscription') {
         const data = (await res.json()) as SubscriptionResult;
         if (data.status === 'active' || data.status === 'grace_period') {
@@ -105,7 +89,6 @@ export default function PaymentResultPage() {
         } else if (data.status === 'failed' || data.status === 'expired') {
           setPageStatus('failed');
         } else {
-          // Still pending — keep polling
           setPageStatus('polling');
         }
       } else {
@@ -123,7 +106,6 @@ export default function PaymentResultPage() {
     }
   }
 
-  // ── Loading spinner ────────────────────────────────────────────────────────
   if (pageStatus === 'loading' || pageStatus === 'polling') {
     return (
       <main className="flex flex-1 items-center justify-center px-4 py-20">
@@ -136,7 +118,6 @@ export default function PaymentResultPage() {
     );
   }
 
-  // ── Failed ─────────────────────────────────────────────────────────────────
   if (pageStatus === 'failed') {
     return (
       <main className="flex flex-1 items-center justify-center px-4 py-20">
@@ -165,7 +146,6 @@ export default function PaymentResultPage() {
     );
   }
 
-  // ── Success ────────────────────────────────────────────────────────────────
   if (type === 'subscription') {
     return (
       <main className="flex flex-1 items-center justify-center px-4 py-20">
@@ -187,10 +167,10 @@ export default function PaymentResultPage() {
               Kütüphaneme Git
             </Link>
             <Link
-              href="/kreatorler"
+              href="/ureticilere"
               className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-surface"
             >
-              Kreatorlere Göz At
+              Üreticilere Göz At
             </Link>
           </div>
         </div>
@@ -198,7 +178,6 @@ export default function PaymentResultPage() {
     );
   }
 
-  // One-time purchase success
   return (
     <main className="flex flex-1 items-center justify-center px-4 py-20">
       <div className="w-full max-w-md rounded-2xl border border-green-200 bg-green-50 p-8 text-center flex flex-col gap-4">
@@ -222,5 +201,22 @@ export default function PaymentResultPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function PaymentResultPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="flex flex-1 items-center justify-center px-4 py-20">
+          <div className="flex flex-col items-center gap-4">
+            <div className="h-10 w-10 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+            <p className="text-sm text-muted">Yükleniyor…</p>
+          </div>
+        </main>
+      }
+    >
+      <PaymentResultInner />
+    </Suspense>
   );
 }

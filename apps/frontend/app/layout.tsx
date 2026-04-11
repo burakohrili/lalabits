@@ -1,19 +1,22 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Inter } from "next/font/google";
 import { AuthProvider } from "@/contexts/auth-context";
 import { NotificationBadgeProvider } from "@/contexts/notification-badge-context";
 import { ChatBadgeProvider } from "@/contexts/chat-badge-context";
 import SiteHeader from "./_components/site-header";
+import Footer from "@/components/Footer";
 import "./globals.css";
 
-const geist = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "lalabits.art",
-  description: "Yaratıcılar için dijital içerik ve üyelik platformu.",
+  title: "lalabits.art — Türkiye'nin İçerik Platformu",
+  description:
+    "Türkiye'nin içerik üreticisi platformu. Üyelik, dijital ürün ve içerik ile destekçilerinden doğrudan kazan.",
 };
 
 export default function RootLayout({
@@ -22,13 +25,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="tr" className={`${geist.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col font-[var(--font-geist-sans)]">
+    <html lang="tr" className={`${inter.variable} h-full antialiased`}>
+      <body className="min-h-full flex flex-col font-[var(--font-inter)]">
         <AuthProvider>
           <NotificationBadgeProvider>
             <ChatBadgeProvider>
               <SiteHeader />
-              {children}
+              <div className="flex-1">{children}</div>
+              <Footer />
             </ChatBadgeProvider>
           </NotificationBadgeProvider>
         </AuthProvider>
