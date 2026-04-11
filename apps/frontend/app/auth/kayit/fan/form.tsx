@@ -137,6 +137,13 @@ export default function FanRegisterForm() {
           Giriş yap
         </Link>
       </p>
+
+      <div className="border-t border-border pt-4 text-center">
+        <p className="text-xs text-muted mb-1">İçerik üretmek mi istiyorsun?</p>
+        <Link href="/auth/kayit/yaratici" className="text-sm font-medium text-primary hover:underline">
+          Üretici olarak kayıt ol →
+        </Link>
+      </div>
     </form>
   );
 }

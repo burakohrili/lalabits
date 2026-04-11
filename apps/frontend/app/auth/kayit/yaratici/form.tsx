@@ -137,6 +137,13 @@ export default function CreatorRegisterForm() {
           Giriş yap
         </Link>
       </p>
+
+      <div className="border-t border-border pt-4 text-center">
+        <p className="text-xs text-muted mb-1">Üretici değil misin?</p>
+        <Link href="/auth/kayit/fan" className="text-sm font-medium text-primary hover:underline">
+          Destekçi olarak kayıt ol →
+        </Link>
+      </div>
     </form>
   );
 }
