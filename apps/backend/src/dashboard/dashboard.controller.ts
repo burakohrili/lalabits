@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Patch,
+  Put,
   Delete,
   HttpCode,
   HttpStatus,
@@ -15,6 +16,7 @@ import { DashboardService } from './dashboard.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CreatorApprovedGuard } from '../creator/guards/creator-approved.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { UpdateSocialLinksDto } from './dto/update-social-links.dto';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -74,6 +76,23 @@ export class DashboardController {
     @Param('id') planId: string,
   ) {
     return this.dashboardService.archivePlan(user.id, planId);
+  }
+
+  // ── Social Links ──────────────────────────────────────────────────────────
+
+  @Get('profile/social-links')
+  @HttpCode(HttpStatus.OK)
+  getSocialLinks(@CurrentUser() user: AuthenticatedUser) {
+    return this.dashboardService.getSocialLinks(user.id);
+  }
+
+  @Put('profile/social-links')
+  @HttpCode(HttpStatus.OK)
+  updateSocialLinks(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() dto: UpdateSocialLinksDto,
+  ) {
+    return this.dashboardService.updateSocialLinks(user.id, dto);
   }
 
   // ── Posts ─────────────────────────────────────────────────────────────────

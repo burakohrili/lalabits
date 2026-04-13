@@ -841,4 +841,51 @@ export class DashboardService {
       updated_at: rest.updated_at,
     };
   }
+
+  // ── Social Links ──────────────────────────────────────────────────────────
+
+  async getSocialLinks(userId: string) {
+    const profile = await this.creatorProfileRepository.findOne({
+      where: { user_id: userId },
+      select: { id: true, social_links: true },
+    });
+
+    return { social_links: profile?.social_links ?? null };
+  }
+
+  async updateSocialLinks(
+    userId: string,
+    dto: {
+      youtube?: string;
+      instagram?: string;
+      twitter?: string;
+      discord?: string;
+      tiktok?: string;
+      website?: string;
+    },
+  ) {
+    const profile = await this.creatorProfileRepository.findOne({
+      where: { user_id: userId },
+    });
+
+    const p = profile!;
+
+    const links = {
+      youtube: dto.youtube?.trim() || null,
+      instagram: dto.instagram?.trim() || null,
+      twitter: dto.twitter?.trim() || null,
+      discord: dto.discord?.trim() || null,
+      tiktok: dto.tiktok?.trim() || null,
+      website: dto.website?.trim() || null,
+    };
+
+    const hasAny = Object.values(links).some((v) => v !== null);
+
+    await this.creatorProfileRepository.update(
+      { id: p.id },
+      { social_links: hasAny ? links : null },
+    );
+
+    return { social_links: hasAny ? links : null };
+  }
 }

@@ -21,6 +21,7 @@ import { FeedModule } from './feed/feed.module';
 import { WebhookModule } from './webhook/webhook.module';
 import { NotificationModule } from './notification/notification.module';
 import { ChatModule } from './chat/chat.module';
+import { BlockModule } from './moderation/block.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { ChatModule } from './chat/chat.module';
     WebhookModule,
     NotificationModule,
     ChatModule,
+    BlockModule,
   ],
 })
 export class AppModule {}

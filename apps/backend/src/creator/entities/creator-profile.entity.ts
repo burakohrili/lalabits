@@ -88,6 +88,16 @@ export class CreatorProfile {
   @Column({ type: 'boolean', nullable: true })
   payout_iban_format_valid: boolean | null;
 
+  @Column({ type: 'jsonb', nullable: true })
+  social_links: {
+    youtube?: string | null;
+    instagram?: string | null;
+    twitter?: string | null;
+    discord?: string | null;
+    tiktok?: string | null;
+    website?: string | null;
+  } | null;
+
   @CreateDateColumn({ type: 'timestamptz' })
   created_at: Date;
 

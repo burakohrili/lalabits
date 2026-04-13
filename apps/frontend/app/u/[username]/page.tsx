@@ -34,6 +34,15 @@ interface Plan {
   perks: string[];
 }
 
+interface SocialLinks {
+  youtube?: string | null;
+  instagram?: string | null;
+  twitter?: string | null;
+  discord?: string | null;
+  tiktok?: string | null;
+  website?: string | null;
+}
+
 interface CreatorPublicProfile {
   username: string;
   display_name: string;
@@ -41,6 +50,7 @@ interface CreatorPublicProfile {
   avatar_url: string | null;
   category: string;
   content_format_tags: string[];
+  social_links: SocialLinks | null;
   products: Product[];
   collections: Collection[];
   plans: Plan[];
@@ -338,6 +348,46 @@ export default function CreatorPublicPage() {
             <p className="mt-2 text-sm text-foreground leading-relaxed">{profile.bio}</p>
           )}
           <p className="mt-2 text-xs text-muted capitalize">{profile.category?.replace(/_/g, ' ')}</p>
+          {profile.social_links && (
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              {profile.social_links.youtube && (
+                <a href={profile.social_links.youtube} target="_blank" rel="noopener noreferrer"
+                  className="rounded-lg border border-border px-3 py-1 text-xs text-muted hover:text-foreground hover:border-foreground/40 transition-colors">
+                  YouTube
+                </a>
+              )}
+              {profile.social_links.instagram && (
+                <a href={profile.social_links.instagram} target="_blank" rel="noopener noreferrer"
+                  className="rounded-lg border border-border px-3 py-1 text-xs text-muted hover:text-foreground hover:border-foreground/40 transition-colors">
+                  Instagram
+                </a>
+              )}
+              {profile.social_links.twitter && (
+                <a href={profile.social_links.twitter} target="_blank" rel="noopener noreferrer"
+                  className="rounded-lg border border-border px-3 py-1 text-xs text-muted hover:text-foreground hover:border-foreground/40 transition-colors">
+                  Twitter / X
+                </a>
+              )}
+              {profile.social_links.discord && (
+                <a href={profile.social_links.discord} target="_blank" rel="noopener noreferrer"
+                  className="rounded-lg border border-border px-3 py-1 text-xs text-muted hover:text-foreground hover:border-foreground/40 transition-colors">
+                  Discord
+                </a>
+              )}
+              {profile.social_links.tiktok && (
+                <a href={profile.social_links.tiktok} target="_blank" rel="noopener noreferrer"
+                  className="rounded-lg border border-border px-3 py-1 text-xs text-muted hover:text-foreground hover:border-foreground/40 transition-colors">
+                  TikTok
+                </a>
+              )}
+              {profile.social_links.website && (
+                <a href={profile.social_links.website} target="_blank" rel="noopener noreferrer"
+                  className="rounded-lg border border-border px-3 py-1 text-xs text-muted hover:text-foreground hover:border-foreground/40 transition-colors">
+                  Web Site
+                </a>
+              )}
+            </div>
+          )}
           {(isOwnPage || membershipStatus?.subscribed) && (
             <div className="mt-3">
               <Link

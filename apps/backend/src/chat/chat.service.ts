@@ -20,6 +20,7 @@ import {
 } from '../billing/entities/membership-subscription.entity';
 import { Report, ReportTargetType } from '../moderation/entities/report.entity';
 import { ReportReasonCode } from '../moderation/dto/submit-report.dto';
+import { BlockService } from '../moderation/block.service';
 import { SendMessageDto } from './dto/send-message.dto';
 import { StartConversationDto } from './dto/start-conversation.dto';
 import { ReportMessageDto } from './dto/report-message.dto';
@@ -55,6 +56,7 @@ export class ChatService {
     private readonly subscriptionRepo: Repository<MembershipSubscription>,
     @InjectRepository(Report)
     private readonly reportRepo: Repository<Report>,
+    private readonly blockService: BlockService,
   ) {}
 
   // ── CONVERSATION: start or retrieve ──────────────────────────────────────
@@ -159,6 +161,12 @@ export class ChatService {
       }
     }
 
+    // Block check: prevent sending if either party has blocked the other
+    const otherUserId = conv.fan_user_id === userId ? conv.creator_user_id : conv.fan_user_id;
+    if (await this.blockService.isBlocked(userId, otherUserId)) {
+      throw new ForbiddenException('BLOCKED');
+    }
+
     const message = await this.messageRepo.save(
       this.messageRepo.create({
         conversation_id: conv.id,
@@ -228,11 +236,18 @@ export class ChatService {
     const profile = await this.resolveCreatorProfile(creatorUsername);
     await this.assertCommunityAccess(userId, profile);
 
+    // Fetch IDs blocked by viewer to filter their messages out
+    const blockedIds = await this.blockService.getBlockedIds(userId);
+
     let qb = this.communityMessageRepo
       .createQueryBuilder('m')
       .where('m.creator_profile_id = :profileId', { profileId: profile.id })
       .orderBy('m.created_at', 'DESC')
       .take(Math.min(limit, 50));
+
+    if (blockedIds.length > 0) {
+      qb = qb.andWhere('m.sender_user_id NOT IN (:...blockedIds)', { blockedIds });
+    }
 
     if (beforeId) {
       const pivot = await this.communityMessageRepo.findOne({ where: { id: beforeId } });

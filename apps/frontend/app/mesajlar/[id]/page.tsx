@@ -40,6 +40,7 @@ export default function MesajlarThreadPage() {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [body, setBody] = useState('');
+  const [blockingUserId, setBlockingUserId] = useState<string | null>(null);
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -211,19 +212,44 @@ export default function MesajlarThreadPage() {
           <p className="text-center text-sm text-muted py-10">Henüz mesaj yok. İlk mesajı siz gönderin.</p>
         )}
         {messages.map((m) => (
-          <div key={m.id} className={`flex ${m.is_own ? 'justify-end' : 'justify-start'}`}>
-            <div
-              className={[
-                'max-w-[75%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed',
-                m.is_own
-                  ? 'bg-primary text-white rounded-br-sm'
-                  : 'bg-surface border border-border text-foreground rounded-bl-sm',
-              ].join(' ')}
-            >
-              <p>{m.body}</p>
-              <p className={`text-[10px] mt-1 ${m.is_own ? 'text-white/70' : 'text-muted/70'}`}>
-                {relativeTime(m.created_at)}
-              </p>
+          <div key={m.id} className={`flex ${m.is_own ? 'justify-end' : 'justify-start'} group`}>
+            <div className="flex flex-col gap-1 max-w-[75%]">
+              <div
+                className={[
+                  'rounded-2xl px-4 py-2.5 text-sm leading-relaxed',
+                  m.is_own
+                    ? 'bg-primary text-white rounded-br-sm'
+                    : 'bg-surface border border-border text-foreground rounded-bl-sm',
+                ].join(' ')}
+              >
+                <p>{m.body}</p>
+                <p className={`text-[10px] mt-1 ${m.is_own ? 'text-white/70' : 'text-muted/70'}`}>
+                  {relativeTime(m.created_at)}
+                </p>
+              </div>
+              {!m.is_own && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!accessToken) return;
+                    if (!confirm('Bu kullanıcıyı engellemek istediğine emin misin?')) return;
+                    setBlockingUserId(m.sender_user_id);
+                    fetch(`${API}/users/${m.sender_user_id}/block`, {
+                      method: 'POST',
+                      headers: { Authorization: `Bearer ${accessToken}` },
+                    })
+                      .then(() => {
+                        setMessages((prev) => prev.filter((msg) => msg.sender_user_id !== m.sender_user_id));
+                      })
+                      .catch(() => setError('Engelleme başarısız. Tekrar dene.'))
+                      .finally(() => setBlockingUserId(null));
+                  }}
+                  disabled={blockingUserId === m.sender_user_id}
+                  className="self-start text-[10px] text-muted hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 disabled:opacity-40"
+                >
+                  Engelle
+                </button>
+              )}
             </div>
           </div>
         ))}

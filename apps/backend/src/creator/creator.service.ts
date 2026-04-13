@@ -177,6 +177,7 @@ export class CreatorService {
       category: profile.category,
       content_format_tags: profile.content_format_tags,
       avatar_url: avatarUrl,
+      social_links: profile.social_links ?? null,
       products,
       collections,
       plans,

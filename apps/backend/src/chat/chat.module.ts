@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '../auth/auth.module';
 import { BillingModule } from '../billing/billing.module';
 import { CreatorModule } from '../creator/creator.module';
+import { BlockModule } from '../moderation/block.module';
 import { ChatConversation } from './entities/chat-conversation.entity';
 import { ChatMessage } from './entities/chat-message.entity';
 import { ChatReadCursor } from './entities/chat-read-cursor.entity';
@@ -25,6 +26,7 @@ import { ChatController } from './chat.controller';
     AuthModule,       // User entity + JwtAuthGuard
     BillingModule,    // MembershipSubscription entity
     CreatorModule,    // CreatorProfile entity
+    BlockModule,      // BlockService for block checks
   ],
   providers: [ChatService],
   controllers: [ChatController],
