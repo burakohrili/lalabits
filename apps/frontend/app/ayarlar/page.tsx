@@ -23,7 +23,7 @@ export default function AyarlarPage() {
     );
   }
 
-  const items = [
+  const items: { href: string; title: string; description: string; badge?: string }[] = [
     {
       href: '/ayarlar/engellenenler',
       title: 'Engellenen Kullanıcılar',
@@ -33,7 +33,6 @@ export default function AyarlarPage() {
       href: '/ayarlar/bildirimler',
       title: 'Bildirim Tercihleri',
       description: 'E-posta ve uygulama bildirimi tercihlerini ayarla.',
-      badge: 'Yakında',
     },
   ];
 

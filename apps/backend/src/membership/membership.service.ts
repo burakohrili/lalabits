@@ -654,4 +654,53 @@ export class MembershipService {
       },
     );
   }
+
+  // ── Pause / Resume ────────────────────────────────────────────────────────
+
+  async pauseSubscription(fanUserId: string, subscriptionId: string, pauseDays = 30) {
+    const sub = await this.subscriptionRepository.findOne({
+      where: { id: subscriptionId, fan_user_id: fanUserId },
+    });
+
+    if (!sub) throw new NotFoundException('SUBSCRIPTION_NOT_FOUND');
+    if (sub.status !== MembershipSubscriptionStatus.Active) {
+      throw new ConflictException('SUBSCRIPTION_NOT_ACTIVE');
+    }
+
+    const now = new Date();
+    const resumesAt = new Date(now.getTime() + pauseDays * 86400 * 1000);
+
+    await this.subscriptionRepository.update(
+      { id: sub.id },
+      {
+        status: MembershipSubscriptionStatus.Paused,
+        paused_at: now,
+        pause_resumes_at: resumesAt,
+      },
+    );
+
+    return { subscription_id: sub.id, paused_at: now, pause_resumes_at: resumesAt };
+  }
+
+  async resumeSubscription(fanUserId: string, subscriptionId: string) {
+    const sub = await this.subscriptionRepository.findOne({
+      where: { id: subscriptionId, fan_user_id: fanUserId },
+    });
+
+    if (!sub) throw new NotFoundException('SUBSCRIPTION_NOT_FOUND');
+    if (sub.status !== MembershipSubscriptionStatus.Paused) {
+      throw new ConflictException('SUBSCRIPTION_NOT_PAUSED');
+    }
+
+    await this.subscriptionRepository.update(
+      { id: sub.id },
+      {
+        status: MembershipSubscriptionStatus.Active,
+        paused_at: null,
+        pause_resumes_at: null,
+      },
+    );
+
+    return { subscription_id: sub.id, resumed_at: new Date() };
+  }
 }

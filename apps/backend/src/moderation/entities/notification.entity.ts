@@ -20,6 +20,7 @@ export enum NotificationType {
   AdminBroadcast = 'admin_broadcast',
   OrderConfirmed = 'order_confirmed',
   ContentRemoved = 'content_removed',
+  MembershipResumed = 'membership_resumed',
 }
 
 @Entity('notifications')

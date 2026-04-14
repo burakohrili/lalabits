@@ -11,6 +11,9 @@ import { User } from '../auth/entities/user.entity';
 import { LegalDocumentVersion } from '../legal/entities/legal-document-version.entity';
 import { MembershipPlan } from '../creator/entities/membership-plan.entity';
 import { MembershipSubscription } from '../billing/entities/membership-subscription.entity';
+import { Invoice } from '../billing/entities/invoice.entity';
+import { ChatConversation } from '../chat/entities/chat-conversation.entity';
+import { ChatMessage } from '../chat/entities/chat-message.entity';
 import { NotificationModule } from '../notification/notification.module';
 import { AdminService } from './admin.service';
 import { AdminController } from './admin.controller';
@@ -29,6 +32,9 @@ import { AdminController } from './admin.controller';
       LegalDocumentVersion,
       MembershipPlan,
       MembershipSubscription,
+      Invoice,
+      ChatConversation,
+      ChatMessage,
     ]),
     NotificationModule,
   ],

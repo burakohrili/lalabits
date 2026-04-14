@@ -8,6 +8,126 @@ import InvoiceList, { type InvoiceItem } from './_components/invoice-list';
 
 const API = process.env.NEXT_PUBLIC_API_URL!;
 
+interface DisputeItem {
+  id: string;
+  invoice_id: string | null;
+  reason: string;
+  status: string;
+  created_at: string;
+}
+
+const DISPUTE_STATUS_LABELS: Record<string, string> = {
+  open: 'Açık',
+  under_review: 'İnceleniyor',
+  resolved_refund: 'İade Yapıldı',
+  resolved_no_action: 'Kapatıldı',
+  closed: 'Kapandı',
+};
+
+function DisputeSection({ accessToken }: { accessToken: string }) {
+  const [disputes, setDisputes] = useState<DisputeItem[]>([]);
+  const [showForm, setShowForm] = useState(false);
+  const [reason, setReason] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+
+  useEffect(() => {
+    void (async () => {
+      const res = await fetch(`${API}/billing/disputes?limit=20`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      if (res.ok) {
+        const data = (await res.json()) as { items: DisputeItem[] };
+        setDisputes(data.items);
+      }
+    })();
+  }, [accessToken]);
+
+  async function handleSubmit() {
+    if (submitting || !reason.trim()) return;
+    setSubmitting(true);
+    setFormError(null);
+    try {
+      const res = await fetch(`${API}/billing/disputes`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason: reason.trim() }),
+      });
+      if (!res.ok) throw new Error('SUBMIT_FAILED');
+      const created = (await res.json()) as DisputeItem;
+      setDisputes((prev) => [created, ...prev]);
+      setReason('');
+      setShowForm(false);
+    } catch {
+      setFormError('İtiraz gönderilemedi. Tekrar deneyin.');
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <section className="mb-10">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-muted">Ödeme İtirazları</h2>
+        <button
+          type="button"
+          onClick={() => setShowForm((v) => !v)}
+          className="text-xs text-primary hover:underline"
+        >
+          {showForm ? 'İptal' : 'Yeni İtiraz'}
+        </button>
+      </div>
+
+      {showForm && (
+        <div className="mb-4 rounded-2xl border border-border bg-surface p-5">
+          <p className="text-xs text-muted mb-3">Bir ödemeyle ilgili sorun yaşıyorsanız buradan itiraz gönderebilirsiniz.</p>
+          {formError && (
+            <p className="mb-3 text-xs text-red-600">{formError}</p>
+          )}
+          <textarea
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            rows={3}
+            maxLength={2000}
+            placeholder="İtiraz nedeninizi açıklayın…"
+            className="w-full resize-none rounded-xl border border-border px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 mb-3"
+          />
+          <button
+            type="button"
+            onClick={() => void handleSubmit()}
+            disabled={submitting || !reason.trim()}
+            className="w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-white hover:opacity-90 disabled:opacity-40 transition-opacity"
+          >
+            {submitting ? 'Gönderiliyor…' : 'İtiraz Gönder'}
+          </button>
+        </div>
+      )}
+
+      {disputes.length === 0 ? (
+        <div className="rounded-2xl border border-border bg-surface px-6 py-8 text-center">
+          <p className="text-sm text-muted">Henüz itirazınız yok.</p>
+        </div>
+      ) : (
+        <div className="flex flex-col divide-y divide-border rounded-2xl border border-border bg-surface overflow-hidden">
+          {disputes.map((d) => (
+            <div key={d.id} className="px-5 py-3 flex items-center justify-between gap-4">
+              <p className="text-xs text-muted line-clamp-1">{d.reason}</p>
+              <span className={[
+                'shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium',
+                d.status === 'resolved_refund' ? 'bg-green-50 text-green-700'
+                  : d.status === 'open' ? 'bg-amber-50 text-amber-700'
+                  : 'bg-gray-100 text-muted',
+              ].join(' ')}>
+                {DISPUTE_STATUS_LABELS[d.status] ?? d.status}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
 export default function BillingPage() {
   const { accessToken, status: authStatus } = useAuth();
   const router = useRouter();
@@ -72,6 +192,16 @@ export default function BillingPage() {
     );
   }
 
+  function handleStatusChange(subscriptionId: string, newStatus: string, extra?: Partial<SubscriptionItem>) {
+    setSubscriptions((prev) =>
+      prev.map((s) =>
+        s.subscription_id === subscriptionId
+          ? { ...s, status: newStatus, ...extra }
+          : s,
+      ),
+    );
+  }
+
   if (authStatus === 'loading' || (authStatus === 'unauthenticated')) {
     return (
       <main className="flex flex-1 items-center justify-center px-4 py-20">
@@ -130,6 +260,7 @@ export default function BillingPage() {
                 item={sub}
                 accessToken={accessToken!}
                 onCancelled={handleCancelled}
+                onStatusChange={handleStatusChange}
               />
             ))}
           </div>
@@ -173,7 +304,7 @@ export default function BillingPage() {
 
       {/* Past memberships */}
       {expiredSubs.length > 0 && (
-        <section>
+        <section className="mb-10">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-muted mb-4">
             Geçmiş Üyelikler
           </h2>
@@ -205,6 +336,9 @@ export default function BillingPage() {
           </div>
         </section>
       )}
+
+      {/* Payment disputes */}
+      <DisputeSection accessToken={accessToken!} />
     </main>
   );
 }

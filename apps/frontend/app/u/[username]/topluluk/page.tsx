@@ -180,12 +180,12 @@ export default function ToplulukPage() {
     return (
       <main className="mx-auto max-w-2xl px-4 py-20 text-center">
         <p className="text-lg font-semibold text-foreground mb-2">Bu topluluğa erişmek için abone olmanız gerekiyor.</p>
-        <p className="text-sm text-muted mb-6">@{username} kreatörünün üyelik planlarına bakın.</p>
+        <p className="text-sm text-muted mb-6">@{username} üreticinin üyelik planlarına bakın.</p>
         <Link
           href={`/u/${username}`}
           className="rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-white hover:opacity-90"
         >
-          Kreatör sayfasına git
+          Üretici sayfasına git
         </Link>
       </main>
     );
@@ -204,7 +204,7 @@ export default function ToplulukPage() {
         <h1 className="text-sm font-semibold text-foreground">Topluluk</h1>
         {isCreator && (
           <span className="ml-auto rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
-            Kreatör
+            Üretici
           </span>
         )}
       </div>

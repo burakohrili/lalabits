@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/auth-context';
+import ReportModal from '@/components/ReportModal';
 
 const API = process.env.NEXT_PUBLIC_API_URL!;
 
@@ -87,6 +88,7 @@ export default function CreatorPublicPage() {
   const [notFoundState, setNotFoundState] = useState(false);
   const [purchasedIds, setPurchasedIds] = useState<Set<string>>(new Set());
   const [membershipStatus, setMembershipStatus] = useState<MembershipStatus | null>(null);
+  const [showReport, setShowReport] = useState(false);
   const [posts, setPosts] = useState<PostFeedItem[]>([]);
 
   useEffect(() => {
@@ -342,8 +344,21 @@ export default function CreatorPublicPage() {
           )}
         </div>
         <div className="min-w-0 flex-1">
-          <h1 className="text-2xl font-bold text-foreground">{profile.display_name}</h1>
-          <p className="text-sm text-muted">@{profile.username}</p>
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <h1 className="text-2xl font-bold text-foreground">{profile.display_name}</h1>
+              <p className="text-sm text-muted">@{profile.username}</p>
+            </div>
+            {accessToken && user?.creator_profile?.username !== profile.username && (
+              <button
+                type="button"
+                onClick={() => setShowReport(true)}
+                className="shrink-0 text-xs text-muted hover:text-red-500 transition-colors mt-1"
+              >
+                Şikayet Et
+              </button>
+            )}
+          </div>
           {profile.bio && (
             <p className="mt-2 text-sm text-foreground leading-relaxed">{profile.bio}</p>
           )}

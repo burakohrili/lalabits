@@ -67,6 +67,121 @@ export class EmailService implements OnModuleInit {
     this.logger.log(`Email sent to ${to}: ${subject}`);
   }
 
+  // ── Transactional email templates ─────────────────────────────────────────
+
+  async sendMembershipRenewalSuccess(
+    to: string,
+    creatorName: string,
+    planName: string,
+    nextBillingDate: string,
+  ): Promise<void> {
+    await this.sendMail(
+      to,
+      `Üyelik yenilendi — ${creatorName}`,
+      `<p>Merhaba,</p>
+       <p><strong>${creatorName}</strong> üreticisindeki <strong>${planName}</strong> üyeliğiniz başarıyla yenilendi.</p>
+       <p>Sonraki yenileme tarihi: <strong>${nextBillingDate}</strong></p>`,
+    );
+  }
+
+  async sendMembershipRenewalFailed(
+    to: string,
+    creatorName: string,
+    planName: string,
+  ): Promise<void> {
+    await this.sendMail(
+      to,
+      `Üyelik yenilemesi başarısız — ${creatorName}`,
+      `<p>Merhaba,</p>
+       <p><strong>${creatorName}</strong> üreticisindeki <strong>${planName}</strong> üyeliğinizin yenilemesi başarısız oldu.</p>
+       <p>Ödeme bilgilerinizi güncelleyerek erişiminizi sürdürebilirsiniz.</p>`,
+    );
+  }
+
+  async sendMembershipCancelled(
+    to: string,
+    creatorName: string,
+    planName: string,
+    accessUntil: string,
+  ): Promise<void> {
+    await this.sendMail(
+      to,
+      `Üyelik iptal edildi — ${creatorName}`,
+      `<p>Merhaba,</p>
+       <p><strong>${creatorName}</strong> üreticisindeki <strong>${planName}</strong> üyeliğiniz iptal edildi.</p>
+       <p>İçeriklere erişiminiz <strong>${accessUntil}</strong> tarihine kadar devam edecektir.</p>`,
+    );
+  }
+
+  async sendMembershipExpired(to: string, creatorName: string): Promise<void> {
+    await this.sendMail(
+      to,
+      `Üyeliğiniz sona erdi — ${creatorName}`,
+      `<p>Merhaba,</p>
+       <p><strong>${creatorName}</strong> üreticisindeki üyeliğiniz sona erdi.</p>
+       <p>Yeniden abone olarak içeriklere erişmeye devam edebilirsiniz.</p>`,
+    );
+  }
+
+  async sendOrderConfirmed(
+    to: string,
+    productTitle: string,
+    downloadUrl?: string,
+  ): Promise<void> {
+    const downloadSection = downloadUrl
+      ? `<p style="margin: 24px 0;">
+           <a href="${downloadUrl}"
+              style="background:#008080;color:#fff;padding:12px 24px;border-radius:6px;text-decoration:none;display:inline-block;font-weight:600;">
+             İndir
+           </a>
+         </p>`
+      : '';
+    await this.sendMail(
+      to,
+      `Siparişiniz onaylandı — ${productTitle}`,
+      `<p>Merhaba,</p>
+       <p><strong>${productTitle}</strong> ürününü satın aldığınız için teşekkürler!</p>
+       ${downloadSection}`,
+    );
+  }
+
+  async sendContentRemoved(
+    to: string,
+    contentTitle: string,
+    reason?: string,
+  ): Promise<void> {
+    const reasonSection = reason
+      ? `<p>Sebep: ${reason}</p>`
+      : '';
+    await this.sendMail(
+      to,
+      'İçeriğiniz kaldırıldı',
+      `<p>Merhaba,</p>
+       <p><strong>${contentTitle}</strong> başlıklı içeriğiniz moderasyon incelemesi sonucunda kaldırılmıştır.</p>
+       ${reasonSection}`,
+    );
+  }
+
+  async sendNewPostNotification(
+    to: string,
+    creatorName: string,
+    postTitle: string,
+    postUrl: string,
+  ): Promise<void> {
+    await this.sendMail(
+      to,
+      `Yeni içerik — ${creatorName}`,
+      `<p>Merhaba,</p>
+       <p>Takip ettiğiniz <strong>${creatorName}</strong> yeni bir içerik yayınladı:</p>
+       <p style="margin: 24px 0;">
+         <a href="${postUrl}"
+            style="background:#008080;color:#fff;padding:12px 24px;border-radius:6px;text-decoration:none;display:inline-block;font-weight:600;">
+           ${postTitle}
+         </a>
+       </p>`,
+    );
+  }
+
   private wrapInBaseTemplate(subject: string, body: string): string {
     return `
 <!DOCTYPE html>

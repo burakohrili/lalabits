@@ -14,6 +14,8 @@ const NAV_ITEMS = [
   { label: 'Gönderiler', href: '/dashboard/gonderiler' },
   { label: 'Mağaza', href: '/dashboard/magaza' },
   { label: 'Koleksiyonlar', href: '/dashboard/koleksiyonlar' },
+  { label: 'İstatistikler', href: '/dashboard/istatistikler' },
+  { label: 'Ayarlar', href: '/dashboard/ayarlar' },
 ] as const;
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {

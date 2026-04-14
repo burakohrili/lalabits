@@ -19,6 +19,10 @@ import { LegalDocumentVersion, LegalDocumentType } from '../legal/entities/legal
 import { CreatorProfile, CreatorProfileStatus } from '../creator/entities/creator-profile.entity';
 import { RedisService } from '../redis/redis.service';
 import { EmailService } from '../email/email.service';
+import { StorageService } from '../storage/storage.service';
+import { UpdateMeDto } from './dto/update-me.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
+import { DeleteAccountDto } from './dto/delete-account.dto';
 import { LoginDto } from './dto/login.dto';
 import { RegisterFanDto } from './dto/register-fan.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
@@ -39,6 +43,7 @@ export class AuthService {
     private readonly config: ConfigService,
     private readonly redis: RedisService,
     private readonly emailService: EmailService,
+    private readonly storageService: StorageService,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     @InjectRepository(EmailVerificationToken)
@@ -619,6 +624,79 @@ export class AuthService {
           }
         : null,
     };
+  }
+
+  async updateMe(userId: string, dto: UpdateMeDto) {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      withDeleted: false,
+    });
+    if (!user) throw new UnauthorizedException();
+
+    const updates: Partial<User> = {};
+    if (dto.display_name !== undefined) {
+      updates.display_name = dto.display_name.trim();
+    }
+
+    let avatarUploadUrl: string | undefined;
+    if (dto.avatar_filename && dto.avatar_content_type) {
+      const ext = dto.avatar_filename.split('.').pop() ?? 'bin';
+      const key = `avatars/users/${userId}/${randomUUID()}.${ext}`;
+      avatarUploadUrl = await this.storageService.getPresignedPutUrl(key, dto.avatar_content_type);
+      updates.avatar_url = key;
+    }
+
+    if (Object.keys(updates).length > 0) {
+      await this.userRepository.update({ id: userId }, updates as object);
+    }
+
+    const updatedUser = await this.userRepository.findOne({
+      where: { id: userId },
+      withDeleted: false,
+    });
+
+    const avatarUrl = updatedUser?.avatar_url
+      ? await this.storageService.getSignedGetUrl(updatedUser.avatar_url)
+      : null;
+
+    return {
+      display_name: updatedUser?.display_name ?? user.display_name,
+      avatar_url: avatarUrl,
+      ...(avatarUploadUrl ? { avatar_upload_url: avatarUploadUrl } : {}),
+    };
+  }
+
+  async changePassword(userId: string, dto: ChangePasswordDto): Promise<void> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      withDeleted: false,
+    });
+    if (!user || !user.password_hash) throw new UnauthorizedException();
+
+    const match = await bcrypt.compare(dto.current_password, user.password_hash);
+    if (!match) throw new ForbiddenException('INVALID_CURRENT_PASSWORD');
+
+    const newHash = await bcrypt.hash(dto.new_password, 12);
+    await this.userRepository.update({ id: userId }, { password_hash: newHash });
+  }
+
+  async deleteAccount(userId: string, dto: DeleteAccountDto): Promise<void> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      withDeleted: false,
+    });
+    if (!user || !user.password_hash) throw new UnauthorizedException();
+
+    const match = await bcrypt.compare(dto.password, user.password_hash);
+    if (!match) throw new ForbiddenException('INVALID_PASSWORD');
+
+    await this.userRepository.softDelete({ id: userId });
+
+    // Invalidate all active refresh token sessions
+    const sessionKeys = await this.redis.keys(`${REFRESH_KEY_PREFIX}:${userId}:*`);
+    if (sessionKeys.length > 0) {
+      await this.redis.del(...sessionKeys);
+    }
   }
 
   async logout(dto: RefreshTokenDto): Promise<void> {

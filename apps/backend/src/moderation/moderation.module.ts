@@ -9,6 +9,9 @@ import { User } from '../auth/entities/user.entity';
 import { CreatorProfile } from '../creator/entities/creator-profile.entity';
 import { ModerationService } from './moderation.service';
 import { ModerationController } from './moderation.controller';
+import { KvkkRequest } from './entities/kvkk-request.entity';
+import { KvkkService } from './kvkk.service';
+import { KvkkController, AdminKvkkController } from './kvkk.controller';
 
 @Module({
   imports: [
@@ -20,10 +23,11 @@ import { ModerationController } from './moderation.controller';
       Collection,
       User,
       CreatorProfile,
+      KvkkRequest,
     ]),
   ],
-  providers: [ModerationService],
-  controllers: [ModerationController],
+  providers: [ModerationService, KvkkService],
+  controllers: [ModerationController, KvkkController, AdminKvkkController],
   exports: [TypeOrmModule],
 })
 export class ModerationModule {}

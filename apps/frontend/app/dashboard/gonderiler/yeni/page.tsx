@@ -30,7 +30,12 @@ export default function YeniGonderiPage() {
         },
         body: JSON.stringify({
           title: values.title,
-          content: values.body.trim() ? { type: 'plain', body: values.body } : null,
+          content:
+            values.content_type === 'checklist'
+              ? { type: 'checklist', items: values.checklist_items.filter((it) => it.text.trim()) }
+              : values.body.trim()
+              ? { type: 'plain', body: values.body }
+              : null,
           access_level: values.access_level,
         }),
       });

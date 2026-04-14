@@ -144,6 +144,12 @@ function HeaderCTA() {
   return (
     <div className="flex items-center gap-3">
       <Link
+        href="/akis"
+        className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors"
+      >
+        Akış
+      </Link>
+      <Link
         href="/mesajlar"
         className="relative text-sm font-medium text-text-secondary hover:text-text-primary transition-colors"
       >

@@ -8,6 +8,8 @@ import {
   HttpCode,
   HttpStatus,
   UseGuards,
+  DefaultValuePipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -20,6 +22,8 @@ import { ModerationDecisionDto } from './dto/moderation-decision.dto';
 import { CreatorApplicationDecision } from '../creator/entities/creator-application.entity';
 import { CreatorProfileStatus } from '../creator/entities/creator-profile.entity';
 import { ReportStatus, ReportTargetType } from '../moderation/entities/report.entity';
+import { InvoiceStatus } from '../billing/entities/invoice.entity';
+import { MembershipSubscriptionStatus } from '../billing/entities/membership-subscription.entity';
 
 @Controller('admin')
 @UseGuards(JwtAuthGuard, AdminGuard)
@@ -175,5 +179,51 @@ export class AdminController {
     @Body() dto: ModerationDecisionDto,
   ) {
     return this.adminService.restoreContent(id, user.id, dto);
+  }
+
+  // ── Payments ──────────────────────────────────────────────────────────────
+
+  @Get('odemeler')
+  listInvoices(
+    @Query('status') status?: InvoiceStatus,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit = 20,
+  ) {
+    return this.adminService.listInvoices(status, page, limit);
+  }
+
+  @Get('abonelikler')
+  listSubscriptions(
+    @Query('status') status?: MembershipSubscriptionStatus,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit = 20,
+  ) {
+    return this.adminService.listSubscriptions(status, page, limit);
+  }
+
+  // ── Statistics ────────────────────────────────────────────────────────────
+
+  @Get('istatistikler')
+  getStatistics() {
+    return this.adminService.getStatistics();
+  }
+
+  // ── Conversation Inspection ───────────────────────────────────────────────
+
+  @Get('conversations')
+  listConversations(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit = 20,
+  ) {
+    return this.adminService.listConversations(page, limit);
+  }
+
+  @Get('conversations/:id/messages')
+  getConversationMessages(
+    @Param('id') id: string,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit = 50,
+  ) {
+    return this.adminService.getConversationMessages(id, page, limit);
   }
 }

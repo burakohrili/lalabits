@@ -6,6 +6,7 @@ import {
   UnprocessableEntityException,
   BadRequestException,
 } from '@nestjs/common';
+import { randomUUID } from 'crypto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { CreatorProfile } from '../creator/entities/creator-profile.entity';
@@ -32,7 +33,9 @@ import {
   CollectionItem,
   CollectionItemType,
 } from '../content/entities/collection-item.entity';
+import { Invoice, InvoiceStatus } from '../billing/entities/invoice.entity';
 import { StorageService } from '../storage/storage.service';
+import { UpdateDashboardProfileDto } from './dto/update-profile.dto';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -59,6 +62,8 @@ export class DashboardService {
     private readonly collectionRepository: Repository<Collection>,
     @InjectRepository(CollectionItem)
     private readonly collectionItemRepository: Repository<CollectionItem>,
+    @InjectRepository(Invoice)
+    private readonly invoiceRepository: Repository<Invoice>,
     private readonly storageService: StorageService,
   ) {}
 
@@ -887,5 +892,143 @@ export class DashboardService {
     );
 
     return { social_links: hasAny ? links : null };
+  }
+
+  // ── Creator Profile Edit ───────────────────────────────────────────────────
+
+  async updateCreatorProfile(userId: string, dto: UpdateDashboardProfileDto) {
+    const profile = await this.creatorProfileRepository.findOne({
+      where: { user_id: userId },
+    });
+    if (!profile) throw new NotFoundException('CREATOR_PROFILE_NOT_FOUND');
+
+    const updates: Partial<CreatorProfile> = {};
+    if (dto.display_name !== undefined) updates.display_name = dto.display_name.trim();
+    if (dto.bio !== undefined) updates.bio = dto.bio;
+
+    let avatarUploadUrl: string | undefined;
+    if (dto.avatar_filename && dto.avatar_content_type) {
+      const ext = dto.avatar_filename.split('.').pop() ?? 'bin';
+      const key = `avatars/creators/${profile.id}/${randomUUID()}.${ext}`;
+      avatarUploadUrl = await this.storageService.getPresignedPutUrl(key, dto.avatar_content_type);
+      updates.avatar_url = key;
+    }
+
+    let coverUploadUrl: string | undefined;
+    if (dto.cover_image_filename && dto.cover_image_content_type) {
+      const ext = dto.cover_image_filename.split('.').pop() ?? 'bin';
+      const key = `covers/${profile.id}/${randomUUID()}.${ext}`;
+      coverUploadUrl = await this.storageService.getPresignedPutUrl(key, dto.cover_image_content_type);
+      updates.cover_image_url = key;
+    }
+
+    if (Object.keys(updates).length > 0) {
+      await this.creatorProfileRepository.update({ id: profile.id }, updates as object);
+    }
+
+    const avatarUrl = (updates.avatar_url ?? profile.avatar_url)
+      ? await this.storageService.getSignedGetUrl((updates.avatar_url ?? profile.avatar_url)!)
+      : null;
+
+    const coverUrl = (updates.cover_image_url ?? profile.cover_image_url)
+      ? await this.storageService.getSignedGetUrl((updates.cover_image_url ?? profile.cover_image_url)!)
+      : null;
+
+    return {
+      display_name: updates.display_name ?? profile.display_name,
+      bio: updates.bio !== undefined ? updates.bio : profile.bio,
+      avatar_url: avatarUrl,
+      cover_image_url: coverUrl,
+      ...(avatarUploadUrl ? { avatar_upload_url: avatarUploadUrl } : {}),
+      ...(coverUploadUrl ? { cover_image_upload_url: coverUploadUrl } : {}),
+    };
+  }
+
+  // ── Analytics ─────────────────────────────────────────────────────────────
+
+  async getAnalytics(userId: string) {
+    const profile = await this.creatorProfileRepository.findOne({
+      where: { user_id: userId },
+    });
+    const p = profile!;
+
+    const [
+      activeMembers,
+      totalContentCount,
+      totalRevenueRow,
+      revenueByMonthRows,
+      membersByMonthRows,
+      recentPosts,
+    ] = await Promise.all([
+      this.subscriptionRepository.count({
+        where: { creator_profile_id: p.id, status: MembershipSubscriptionStatus.Active },
+      }),
+      this.postRepository.count({
+        where: {
+          creator_profile_id: p.id,
+          publish_status: PostPublishStatus.Published,
+          moderation_status: PostModerationStatus.Clean,
+        },
+      }),
+      this.invoiceRepository
+        .createQueryBuilder('inv')
+        .select('COALESCE(SUM(inv.amount_try), 0)', 'total')
+        .innerJoin('inv.membership_subscription', 'sub')
+        .where('sub.creator_profile_id = :profileId', { profileId: p.id })
+        .andWhere('inv.status = :status', { status: InvoiceStatus.Paid })
+        .getRawOne<{ total: string }>(),
+      this.invoiceRepository
+        .createQueryBuilder('inv')
+        .select("TO_CHAR(DATE_TRUNC('month', inv.paid_at), 'YYYY-MM')", 'month')
+        .addSelect('SUM(inv.amount_try)', 'revenue_try')
+        .innerJoin('inv.membership_subscription', 'sub')
+        .where('sub.creator_profile_id = :profileId', { profileId: p.id })
+        .andWhere('inv.status = :status', { status: InvoiceStatus.Paid })
+        .andWhere("inv.paid_at >= NOW() - INTERVAL '6 months'")
+        .groupBy("DATE_TRUNC('month', inv.paid_at)")
+        .orderBy("DATE_TRUNC('month', inv.paid_at)", 'ASC')
+        .getRawMany<{ month: string; revenue_try: string }>(),
+      this.subscriptionRepository
+        .createQueryBuilder('sub')
+        .select("TO_CHAR(DATE_TRUNC('month', sub.created_at), 'YYYY-MM')", 'month')
+        .addSelect('COUNT(*)', 'count')
+        .where('sub.creator_profile_id = :profileId', { profileId: p.id })
+        .andWhere("sub.created_at >= NOW() - INTERVAL '6 months'")
+        .groupBy("DATE_TRUNC('month', sub.created_at)")
+        .orderBy("DATE_TRUNC('month', sub.created_at)", 'ASC')
+        .getRawMany<{ month: string; count: string }>(),
+      this.postRepository.find({
+        where: {
+          creator_profile_id: p.id,
+          publish_status: PostPublishStatus.Published,
+          moderation_status: PostModerationStatus.Clean,
+        },
+        order: { published_at: 'DESC' },
+        take: 10,
+        select: ['id', 'title', 'access_level', 'published_at'],
+      }),
+    ]);
+
+    return {
+      summary: {
+        total_revenue_try: Number(totalRevenueRow?.total ?? 0),
+        active_members: activeMembers,
+        total_content_count: totalContentCount,
+      },
+      revenue_by_month: revenueByMonthRows.map((r) => ({
+        month: r.month,
+        revenue_try: Number(r.revenue_try),
+      })),
+      members_by_month: membersByMonthRows.map((r) => ({
+        month: r.month,
+        count: Number(r.count),
+      })),
+      top_posts: recentPosts.map((post) => ({
+        id: post.id,
+        title: post.title,
+        access_level: post.access_level,
+        published_at: post.published_at,
+      })),
+    };
   }
 }

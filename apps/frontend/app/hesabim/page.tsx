@@ -1,0 +1,81 @@
+'use client';
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { useAuth } from '@/contexts/auth-context';
+
+export default function HesabimPage() {
+  const { status: authStatus } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (authStatus === 'unauthenticated') {
+      router.replace('/auth/giris?next=/hesabim');
+    }
+  }, [authStatus, router]);
+
+  if (authStatus === 'loading') {
+    return (
+      <main className="mx-auto max-w-lg px-4 py-10">
+        <div className="h-8 w-48 rounded-lg bg-gray-100 animate-pulse" />
+      </main>
+    );
+  }
+
+  const items = [
+    {
+      href: '/hesabim/profil',
+      title: 'Profilim',
+      description: 'Görünen adını ve profil fotoğrafını güncelle.',
+    },
+    {
+      href: '/hesabim/sifre',
+      title: 'Şifre Değiştir',
+      description: 'Hesap güvenliğin için şifreni güncelle.',
+    },
+    {
+      href: '/hesabim/faturalarim',
+      title: 'Faturalarım',
+      description: 'Geçmiş ödemelerini ve aktif aboneliklerini görüntüle.',
+    },
+    {
+      href: '/hesabim/hesabimi-sil',
+      title: 'Hesabımı Sil',
+      description: 'Hesabını kalıcı olarak kapat.',
+      danger: true,
+    },
+  ];
+
+  return (
+    <main className="mx-auto max-w-lg px-4 py-10">
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-foreground">Hesabım</h1>
+        <p className="mt-1 text-sm text-muted">Profil ve hesap bilgilerini yönet.</p>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        {items.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className={[
+              'flex items-center justify-between rounded-2xl border bg-surface p-5 transition-colors',
+              item.danger
+                ? 'border-red-200 hover:border-red-400'
+                : 'border-border hover:border-primary/40',
+            ].join(' ')}
+          >
+            <div>
+              <p className={`text-sm font-semibold ${item.danger ? 'text-red-600' : 'text-foreground'}`}>
+                {item.title}
+              </p>
+              <p className="mt-0.5 text-xs text-muted">{item.description}</p>
+            </div>
+            <span className="text-muted text-lg">›</span>
+          </Link>
+        ))}
+      </div>
+    </main>
+  );
+}

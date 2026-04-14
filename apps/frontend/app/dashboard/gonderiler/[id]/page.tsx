@@ -9,10 +9,15 @@ import PostForm, { type PostFormValues } from '../_components/post-form';
 
 const API = process.env.NEXT_PUBLIC_API_URL!;
 
+interface ChecklistItem {
+  id: string;
+  text: string;
+}
+
 interface PostDetail {
   id: string;
   title: string;
-  content: { type: string; body: string } | null;
+  content: { type: string; body?: string; items?: ChecklistItem[] } | null;
   access_level: 'public' | 'member_only';
   publish_status: 'draft' | 'published' | 'archived';
 }
@@ -69,7 +74,12 @@ export default function EditGonderiPage() {
         },
         body: JSON.stringify({
           title: values.title,
-          content: values.body.trim() ? { type: 'plain', body: values.body } : null,
+          content:
+            values.content_type === 'checklist'
+              ? { type: 'checklist', items: values.checklist_items.filter((it) => it.text.trim()) }
+              : values.body.trim()
+              ? { type: 'plain', body: values.body }
+              : null,
           access_level: values.access_level,
         }),
       });
@@ -122,8 +132,13 @@ export default function EditGonderiPage() {
           <PostForm
             initial={{
               title: post.title,
-              body: post.content?.type === 'plain' ? post.content.body : '',
+              body: post.content?.type === 'plain' ? (post.content.body ?? '') : '',
               access_level: post.access_level,
+              content_type: post.content?.type === 'checklist' ? 'checklist' : 'text',
+              checklist_items:
+                post.content?.type === 'checklist' && post.content.items
+                  ? post.content.items
+                  : [{ id: 'init', text: '' }],
             }}
             submitLabel="Değişiklikleri kaydet"
             busy={busy}

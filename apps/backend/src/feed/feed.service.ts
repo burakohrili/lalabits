@@ -10,6 +10,7 @@ import {
 import { CreatorProfile, CreatorProfileStatus } from '../creator/entities/creator-profile.entity';
 import { MembershipPlan, MembershipPlanStatus } from '../creator/entities/membership-plan.entity';
 import { MembershipSubscription, MembershipSubscriptionStatus } from '../billing/entities/membership-subscription.entity';
+import { PostChecklistProgress } from '../content/entities/post-checklist-progress.entity';
 
 // ── Teaser excerpt ─────────────────────────────────────────────────────────
 
@@ -63,6 +64,8 @@ export class FeedService {
     private readonly planRepository: Repository<MembershipPlan>,
     @InjectRepository(MembershipSubscription)
     private readonly subscriptionRepository: Repository<MembershipSubscription>,
+    @InjectRepository(PostChecklistProgress)
+    private readonly checklistProgressRepository: Repository<PostChecklistProgress>,
   ) {}
 
   // ── Public feed ─────────────────────────────────────────────────────────
@@ -260,6 +263,79 @@ export class FeedService {
     });
   }
 
+  // ── Home Feed (fan) ──────────────────────────────────────────────────────
+
+  async getHomeFeed(
+    fanUserId: string,
+    page = 1,
+    limit = 20,
+  ): Promise<{ items: (PostFeedItem & { creator_username: string; creator_display_name: string; creator_avatar_url: string | null })[]; total: number; page: number; limit: number; creators_count: number }> {
+    const safeLimit = Math.min(50, Math.max(1, limit));
+    const safePage = Math.max(1, page);
+
+    // Active subscriptions
+    const subs = await this.subscriptionRepository.find({
+      where: {
+        fan_user_id: fanUserId,
+        status: In([
+          MembershipSubscriptionStatus.Active,
+          MembershipSubscriptionStatus.Cancelled,
+          MembershipSubscriptionStatus.GracePeriod,
+        ]),
+      },
+    });
+
+    const activeSubs = subs.filter(isAccessActive);
+    if (activeSubs.length === 0) {
+      return { items: [], total: 0, page: safePage, limit: safeLimit, creators_count: 0 };
+    }
+
+    const creatorProfileIds = [...new Set(activeSubs.map((s) => s.creator_profile_id))];
+
+    const [posts, total] = await this.postRepository.findAndCount({
+      where: {
+        creator_profile_id: In(creatorProfileIds),
+        publish_status: PostPublishStatus.Published,
+        moderation_status: PostModerationStatus.Clean,
+      },
+      order: { published_at: 'DESC' },
+      skip: (safePage - 1) * safeLimit,
+      take: safeLimit,
+    });
+
+    const visiblePosts = posts.filter((p) => p.access_level !== PostAccessLevel.Premium);
+
+    const profiles = await this.creatorProfileRepository.find({
+      where: { id: In(creatorProfileIds) },
+    });
+    const profileMap = new Map(profiles.map((p) => [p.id, p]));
+
+    const subByCreator = new Map(activeSubs.map((s) => [s.creator_profile_id, s]));
+
+    const items = await Promise.all(
+      visiblePosts.map(async (post) => {
+        const profile = profileMap.get(post.creator_profile_id);
+        const sub = subByCreator.get(post.creator_profile_id) ?? null;
+        const ctaPlan = await this.findLowestPublishedPlan(post.creator_profile_id);
+        const base = await this.resolvePostItem(post, false, sub, ctaPlan);
+        return {
+          ...base,
+          creator_username: profile?.username ?? '',
+          creator_display_name: profile?.display_name ?? '',
+          creator_avatar_url: profile?.avatar_url ?? null,
+        };
+      }),
+    );
+
+    return {
+      items,
+      total: total - (posts.length - visiblePosts.length),
+      page: safePage,
+      limit: safeLimit,
+      creators_count: creatorProfileIds.length,
+    };
+  }
+
   private async findLowestPublishedPlan(
     creatorProfileId: string,
   ): Promise<MembershipPlan | null> {
@@ -270,5 +346,29 @@ export class FeedService {
       },
       order: { tier_rank: 'ASC' },
     });
+  }
+
+  // ── Checklist Progress ───────────────────────────────────────────────────
+
+  async getChecklistProgress(
+    postId: string,
+    userId: string,
+  ): Promise<{ post_id: string; checked_item_ids: string[] }> {
+    const progress = await this.checklistProgressRepository.findOne({
+      where: { post_id: postId, user_id: userId },
+    });
+    return { post_id: postId, checked_item_ids: progress?.checked_item_ids ?? [] };
+  }
+
+  async updateChecklistProgress(
+    postId: string,
+    userId: string,
+    checkedItemIds: string[],
+  ): Promise<{ post_id: string; checked_item_ids: string[] }> {
+    await this.checklistProgressRepository.upsert(
+      { post_id: postId, user_id: userId, checked_item_ids: checkedItemIds },
+      { conflictPaths: ['post_id', 'user_id'] },
+    );
+    return { post_id: postId, checked_item_ids: checkedItemIds };
   }
 }

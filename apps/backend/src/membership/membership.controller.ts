@@ -131,4 +131,26 @@ export class MembershipController {
   ) {
     return this.membershipService.cancel(user.id, subscriptionId);
   }
+
+  // ── PAUSE / RESUME ────────────────────────────────────────────────────────
+
+  @Post('subscriptions/:id/pause')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  pause(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id') subscriptionId: string,
+  ) {
+    return this.membershipService.pauseSubscription(user.id, subscriptionId);
+  }
+
+  @Post('subscriptions/:id/resume')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  resume(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id') subscriptionId: string,
+  ) {
+    return this.membershipService.resumeSubscription(user.id, subscriptionId);
+  }
 }

@@ -61,7 +61,8 @@ export default function AdminOverviewPage() {
           <p className="mb-6 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">{error}</p>
         )}
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {/* Summary cards */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 mb-8">
           <Link
             href="/admin/yaraticilar/inceleme"
             className="flex flex-col gap-2 rounded-2xl border border-border bg-surface p-6 shadow-sm hover:border-primary/40 transition-colors"
@@ -75,15 +76,38 @@ export default function AdminOverviewPage() {
             <span className="text-sm text-primary">İncele →</span>
           </Link>
           <Link
-            href="/admin/kreatorler"
+            href="/admin/raporlar"
             className="flex flex-col gap-2 rounded-2xl border border-border bg-surface p-6 shadow-sm hover:border-primary/40 transition-colors"
           >
             <span className="text-xs font-medium uppercase tracking-wide text-muted">
-              Kreatör Yönetimi
+              Açık Raporlar
             </span>
-            <span className="text-3xl font-bold text-foreground">—</span>
-            <span className="text-sm text-primary">Yönet →</span>
+            <span className="text-3xl font-bold text-foreground">
+              {overview ? overview.open_reports_count : '—'}
+            </span>
+            <span className="text-sm text-primary">İncele →</span>
           </Link>
+        </div>
+
+        {/* Nav grid */}
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          {[
+            { label: 'Üreticiler', href: '/admin/kreatorler' },
+            { label: 'Ödemeler', href: '/admin/odemeler' },
+            { label: 'İstatistikler', href: '/admin/istatistikler' },
+            { label: 'Blog', href: '/admin/blog' },
+            { label: 'KVKK', href: '/admin/kvkk' },
+            { label: 'Mesajlar', href: '/admin/mesajlar' },
+            { label: 'İtirazlar', href: '/admin/itirazlar' },
+          ].map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="rounded-xl border border-border bg-surface px-4 py-3 text-sm font-medium text-foreground hover:border-primary/40 hover:text-primary transition-colors text-center"
+            >
+              {item.label}
+            </Link>
+          ))}
         </div>
       </div>
     </main>

@@ -10,7 +10,9 @@ import { PostPurchase } from './entities/post-purchase.entity';
 import { BillingCustomer } from './entities/billing-customer.entity';
 import { PaymentMethodSummary } from './entities/payment-method-summary.entity';
 import { WebhookEvent } from './entities/webhook-event.entity';
+import { PaymentDispute } from './entities/payment-dispute.entity';
 import { GraceExpiryJob } from './jobs/grace-expiry.job';
+import { PauseResumeJob } from './jobs/pause-resume.job';
 import { BillingService } from './billing.service';
 import { BillingController } from './billing.controller';
 import { CreatorProfile } from '../creator/entities/creator-profile.entity';
@@ -31,9 +33,10 @@ import { NotificationModule } from '../notification/notification.module';
       PaymentMethodSummary,
       WebhookEvent,
       CreatorProfile,
+      PaymentDispute,
     ]),
   ],
-  providers: [GraceExpiryJob, BillingService],
+  providers: [GraceExpiryJob, PauseResumeJob, BillingService],
   controllers: [BillingController],
   exports: [TypeOrmModule],
 })

@@ -1,9 +1,11 @@
 import {
   Controller,
   Get,
+  Put,
   Patch,
   Param,
   Query,
+  Body,
   HttpCode,
   HttpStatus,
   UseGuards,
@@ -12,6 +14,7 @@ import { NotificationService } from './notification.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import type { AuthenticatedUser } from '../auth/interfaces/authenticated-user.interface';
+import { NotificationType } from '../moderation/entities/notification.entity';
 
 @Controller('notifications')
 @UseGuards(JwtAuthGuard)
@@ -51,5 +54,31 @@ export class NotificationController {
     @Param('id') id: string,
   ) {
     return this.notificationService.markRead(user.id, id);
+  }
+}
+
+@Controller('settings')
+@UseGuards(JwtAuthGuard)
+export class NotificationPreferencesController {
+  constructor(private readonly notificationService: NotificationService) {}
+
+  @Get('notification-preferences')
+  @HttpCode(HttpStatus.OK)
+  getPreferences(@CurrentUser() user: AuthenticatedUser) {
+    return this.notificationService.getPreferences(user.id);
+  }
+
+  @Put('notification-preferences')
+  @HttpCode(HttpStatus.OK)
+  updatePreferences(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body()
+    body: Array<{
+      notification_type: NotificationType;
+      email_enabled?: boolean;
+      in_app_enabled?: boolean;
+    }>,
+  ) {
+    return this.notificationService.updatePreferences(user.id, body);
   }
 }

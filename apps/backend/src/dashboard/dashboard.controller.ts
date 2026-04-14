@@ -17,6 +17,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CreatorApprovedGuard } from '../creator/guards/creator-approved.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { UpdateSocialLinksDto } from './dto/update-social-links.dto';
+import { UpdateDashboardProfileDto } from './dto/update-profile.dto';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -34,6 +35,14 @@ import type { AuthenticatedUser } from '../auth/interfaces/authenticated-user.in
 @UseGuards(JwtAuthGuard, CreatorApprovedGuard)
 export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) {}
+
+  // ── Creator Profile Edit ──────────────────────────────────────────────────
+
+  @Put('profile')
+  @HttpCode(HttpStatus.OK)
+  updateCreatorProfile(@CurrentUser() user: AuthenticatedUser, @Body() dto: UpdateDashboardProfileDto) {
+    return this.dashboardService.updateCreatorProfile(user.id, dto);
+  }
 
   // ── Overview ──────────────────────────────────────────────────────────────
 
@@ -361,5 +370,10 @@ export class DashboardController {
     @Body() dto: ReorderCollectionItemsDto,
   ) {
     return this.dashboardService.reorderCollectionItems(user.id, collectionId, dto);
+  }
+
+  @Get('analytics')
+  getAnalytics(@CurrentUser() user: AuthenticatedUser) {
+    return this.dashboardService.getAnalytics(user.id);
   }
 }

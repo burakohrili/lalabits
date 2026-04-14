@@ -24,6 +24,7 @@ export enum MembershipSubscriptionStatus {
   Cancelled = 'cancelled',   // fan cancelled; access continues until current_period_end
   GracePeriod = 'grace_period', // renewal failed; access continues until grace_period_ends_at
   Expired = 'expired',       // period ended or grace expired; access revoked
+  Paused = 'paused',         // fan paused; access suspended until pause_resumes_at
 }
 
 @Entity('membership_subscriptions')
@@ -68,6 +69,12 @@ export class MembershipSubscription {
 
   @Column({ type: 'varchar', nullable: true })
   gateway_subscription_id: string | null;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  paused_at: Date | null;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  pause_resumes_at: Date | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   created_at: Date;

@@ -5,7 +5,7 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
 import { CreatorApplication, CreatorApplicationDecision } from '../creator/entities/creator-application.entity';
 import { CreatorProfile, CreatorProfileStatus } from '../creator/entities/creator-profile.entity';
 import { ModerationAction, ModerationActionType, ModerationTargetType } from '../moderation/entities/moderation-action.entity';
@@ -17,6 +17,9 @@ import { User } from '../auth/entities/user.entity';
 import { LegalDocumentVersion } from '../legal/entities/legal-document-version.entity';
 import { MembershipPlan } from '../creator/entities/membership-plan.entity';
 import { MembershipSubscription, MembershipSubscriptionStatus } from '../billing/entities/membership-subscription.entity';
+import { Invoice, InvoiceStatus } from '../billing/entities/invoice.entity';
+import { ChatConversation } from '../chat/entities/chat-conversation.entity';
+import { ChatMessage } from '../chat/entities/chat-message.entity';
 import { RejectApplicationDto } from './dto/reject-application.dto';
 import { SuspendCreatorDto } from './dto/suspend-creator.dto';
 import { ModerationDecisionDto } from './dto/moderation-decision.dto';
@@ -49,6 +52,12 @@ export class AdminService {
     private readonly membershipPlanRepository: Repository<MembershipPlan>,
     @InjectRepository(MembershipSubscription)
     private readonly subscriptionRepository: Repository<MembershipSubscription>,
+    @InjectRepository(Invoice)
+    private readonly invoiceRepository: Repository<Invoice>,
+    @InjectRepository(ChatConversation)
+    private readonly conversationRepository: Repository<ChatConversation>,
+    @InjectRepository(ChatMessage)
+    private readonly chatMessageRepository: Repository<ChatMessage>,
     private readonly dataSource: DataSource,
     private readonly emailService: EmailService,
     private readonly notificationService: NotificationService,
@@ -1016,5 +1025,197 @@ export class AdminService {
         // User / CreatorProfile targets: no content_moderation_status — not restorable via this endpoint
         throw new ConflictException('CONTENT_NOT_REMOVED');
     }
+  }
+
+  // ── Admin Payments & Subscriptions ────────────────────────────────────────
+
+  async listInvoices(status?: InvoiceStatus, page = 1, limit = 20) {
+    const offset = (page - 1) * limit;
+    const qb = this.invoiceRepository
+      .createQueryBuilder('inv')
+      .leftJoin('inv.fan_user', 'fan')
+      .addSelect(['fan.email'])
+      .leftJoin('inv.membership_subscription', 'sub')
+      .leftJoin('sub.creator_profile', 'cp')
+      .addSelect(['cp.username'])
+      .orderBy('inv.created_at', 'DESC')
+      .skip(offset)
+      .take(limit);
+
+    if (status) {
+      qb.where('inv.status = :status', { status });
+    }
+
+    const [invoices, total] = await qb.getManyAndCount();
+
+    const items = invoices.map((inv) => ({
+      id: inv.id,
+      fan_email: inv.fan_user?.email ?? null,
+      creator_username: inv.membership_subscription?.creator_profile?.username ?? null,
+      invoice_type: inv.invoice_type,
+      amount_try: inv.amount_try,
+      currency: inv.currency,
+      status: inv.status,
+      issued_at: inv.issued_at,
+      paid_at: inv.paid_at,
+      created_at: inv.created_at,
+    }));
+
+    return { items, total, page, limit };
+  }
+
+  async listSubscriptions(status?: MembershipSubscriptionStatus, page = 1, limit = 20) {
+    const offset = (page - 1) * limit;
+    const qb = this.subscriptionRepository
+      .createQueryBuilder('sub')
+      .leftJoin('sub.fan_user', 'fan')
+      .addSelect(['fan.email'])
+      .leftJoin('sub.creator_profile', 'cp')
+      .addSelect(['cp.username'])
+      .leftJoin('sub.membership_plan', 'plan')
+      .addSelect(['plan.name'])
+      .orderBy('sub.created_at', 'DESC')
+      .skip(offset)
+      .take(limit);
+
+    if (status) {
+      qb.where('sub.status = :status', { status });
+    }
+
+    const [subs, total] = await qb.getManyAndCount();
+
+    const items = subs.map((sub) => ({
+      id: sub.id,
+      fan_email: sub.fan_user?.email ?? null,
+      creator_username: sub.creator_profile?.username ?? null,
+      plan_name: sub.membership_plan?.name ?? null,
+      billing_interval: sub.billing_interval,
+      status: sub.status,
+      current_period_end: sub.current_period_end,
+      created_at: sub.created_at,
+    }));
+
+    return { items, total, page, limit };
+  }
+
+  async getStatistics() {
+    const [
+      totalCreators,
+      activeCreators,
+      totalFans,
+      totalRevenueRow,
+      revenueByMonthRows,
+      newSubsByMonthRows,
+      topCreatorsRows,
+    ] = await Promise.all([
+      this.profileRepository.count(),
+      this.profileRepository.count({ where: { status: CreatorProfileStatus.Approved } }),
+      this.userRepository.count(),
+      this.dataSource.query<{ total: string }[]>(`
+        SELECT COALESCE(SUM(amount_try), 0)::text AS total
+        FROM invoices WHERE status = 'paid'
+      `),
+      this.dataSource.query<{ month: string; revenue_try: string }[]>(`
+        SELECT TO_CHAR(DATE_TRUNC('month', paid_at), 'YYYY-MM') AS month,
+               SUM(amount_try)::text AS revenue_try
+        FROM invoices
+        WHERE status = 'paid'
+          AND paid_at >= NOW() - INTERVAL '12 months'
+        GROUP BY DATE_TRUNC('month', paid_at)
+        ORDER BY DATE_TRUNC('month', paid_at) ASC
+      `),
+      this.dataSource.query<{ month: string; count: string }[]>(`
+        SELECT TO_CHAR(DATE_TRUNC('month', created_at), 'YYYY-MM') AS month,
+               COUNT(*)::text AS count
+        FROM membership_subscriptions
+        WHERE created_at >= NOW() - INTERVAL '12 months'
+        GROUP BY DATE_TRUNC('month', created_at)
+        ORDER BY DATE_TRUNC('month', created_at) ASC
+      `),
+      this.dataSource.query<{ username: string; display_name: string; active_members: string; total_revenue: string }[]>(`
+        SELECT cp.username,
+               cp.display_name,
+               COUNT(DISTINCT CASE WHEN sub.status = 'active' THEN sub.id END)::text AS active_members,
+               COALESCE(SUM(CASE WHEN inv.status = 'paid' THEN inv.amount_try ELSE 0 END), 0)::text AS total_revenue
+        FROM creator_profiles cp
+        LEFT JOIN membership_subscriptions sub ON sub.creator_profile_id = cp.id
+        LEFT JOIN invoices inv ON inv.membership_subscription_id = sub.id
+        GROUP BY cp.id, cp.username, cp.display_name
+        ORDER BY total_revenue DESC
+        LIMIT 10
+      `),
+    ]);
+
+    return {
+      platform_overview: {
+        total_creators: totalCreators,
+        active_creators: activeCreators,
+        total_fans: totalFans,
+        total_revenue_try: Number(totalRevenueRow[0]?.total ?? 0),
+      },
+      revenue_by_month: revenueByMonthRows.map((r) => ({
+        month: r.month,
+        revenue_try: Number(r.revenue_try),
+      })),
+      new_subscriptions_by_month: newSubsByMonthRows.map((r) => ({
+        month: r.month,
+        count: Number(r.count),
+      })),
+      top_creators: topCreatorsRows.map((r) => ({
+        username: r.username,
+        display_name: r.display_name,
+        active_members: Number(r.active_members),
+        total_revenue: Number(r.total_revenue),
+      })),
+    };
+  }
+
+  // ── Admin Conversation Inspection ─────────────────────────────────────────
+
+  async listConversations(page = 1, limit = 20) {
+    const offset = (page - 1) * limit;
+    const [conversations, total] = await this.conversationRepository.findAndCount({
+      order: { last_message_at: 'DESC' },
+      skip: offset,
+      take: limit,
+    });
+
+    // Collect user IDs to resolve emails in one query
+    const userIds = [
+      ...new Set(conversations.flatMap((c) => [c.creator_user_id, c.fan_user_id])),
+    ];
+    const users = userIds.length
+      ? await this.userRepository.find({ where: { id: In(userIds) } })
+      : [];
+    const userMap = new Map(users.map((u) => [u.id, u.email]));
+
+    const items = conversations.map((c) => ({
+      id: c.id,
+      creator_user_id: c.creator_user_id,
+      fan_user_id: c.fan_user_id,
+      creator_email: userMap.get(c.creator_user_id) ?? null,
+      fan_email: userMap.get(c.fan_user_id) ?? null,
+      last_message_at: c.last_message_at,
+      created_at: c.created_at,
+    }));
+
+    return { items, total, page, limit };
+  }
+
+  async getConversationMessages(conversationId: string, page = 1, limit = 50) {
+    const conversation = await this.conversationRepository.findOne({
+      where: { id: conversationId },
+    });
+    if (!conversation) throw new NotFoundException('CONVERSATION_NOT_FOUND');
+
+    const offset = (page - 1) * limit;
+    const [messages, total] = await this.chatMessageRepository.findAndCount({
+      where: { conversation_id: conversationId },
+      order: { created_at: 'ASC' },
+      skip: offset,
+      take: limit,
+    });
+
+    return { conversation_id: conversationId, items: messages, total, page, limit };
   }
 }
