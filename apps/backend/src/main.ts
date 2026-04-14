@@ -33,8 +33,12 @@ async function bootstrap() {
 
   const config = app.get(ConfigService);
 
+  // FRONTEND_URL can be comma-separated for multiple origins (e.g. Vercel preview + prod domain)
+  const rawOrigins = config.get<string>('FRONTEND_URL', 'http://localhost:3000');
+  const allowedOrigins = rawOrigins.split(',').map((o) => o.trim()).filter(Boolean);
+
   app.enableCors({
-    origin: config.get<string>('FRONTEND_URL', 'http://localhost:3000'),
+    origin: allowedOrigins.length === 1 ? allowedOrigins[0] : allowedOrigins,
     credentials: true,
   });
 
