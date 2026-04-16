@@ -74,7 +74,7 @@ export default function ToplulukPage() {
         return;
       }
       if (res.status === 404) {
-        router.replace('/kreatorler');
+        router.replace('/kesfet');
         return;
       }
       if (!res.ok) throw new Error('FETCH_FAILED');

@@ -1,12 +1,14 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
+import { StorageService } from '../storage/storage.service';
 import {
   Post,
   PostAccessLevel,
   PostPublishStatus,
   PostModerationStatus,
 } from '../content/entities/post.entity';
+import { PostAttachment } from '../content/entities/post-attachment.entity';
 import { CreatorProfile, CreatorProfileStatus } from '../creator/entities/creator-profile.entity';
 import { MembershipPlan, MembershipPlanStatus } from '../creator/entities/membership-plan.entity';
 import { MembershipSubscription, MembershipSubscriptionStatus } from '../billing/entities/membership-subscription.entity';
@@ -41,6 +43,15 @@ function isAccessActive(sub: MembershipSubscription): boolean {
 
 // ── Response shapes ────────────────────────────────────────────────────────
 
+export interface PostAttachmentItem {
+  id: string;
+  original_filename: string;
+  file_size_bytes: string;
+  content_type: string;
+  is_downloadable: boolean;
+  sort_order: number;
+}
+
 export interface PostFeedItem {
   id: string;
   title: string;
@@ -49,8 +60,9 @@ export interface PostFeedItem {
   cta_plan_id: string | null;  // LD-1
   published_at: Date | null;
   locked: boolean;
-  teaser: string | null;       // only when locked
-  content: object | null;      // only when !locked
+  teaser: string | null;           // only when locked
+  content: object | null;          // only when !locked
+  attachments: PostAttachmentItem[]; // always included
 }
 
 @Injectable()
@@ -66,6 +78,9 @@ export class FeedService {
     private readonly subscriptionRepository: Repository<MembershipSubscription>,
     @InjectRepository(PostChecklistProgress)
     private readonly checklistProgressRepository: Repository<PostChecklistProgress>,
+    @InjectRepository(PostAttachment)
+    private readonly postAttachmentRepository: Repository<PostAttachment>,
+    private readonly storageService: StorageService,
   ) {}
 
   // ── Public feed ─────────────────────────────────────────────────────────
@@ -169,7 +184,22 @@ export class FeedService {
     activeSub: MembershipSubscription | null,
     ctaLowestPlan: MembershipPlan | null,
   ): Promise<PostFeedItem> {
-    const access = await this.computeAccess(post, isOwner, activeSub);
+    const [access, rawAttachments] = await Promise.all([
+      this.computeAccess(post, isOwner, activeSub),
+      this.postAttachmentRepository.find({
+        where: { post_id: post.id },
+        order: { sort_order: 'ASC' },
+      }),
+    ]);
+
+    const attachments: PostAttachmentItem[] = rawAttachments.map((a) => ({
+      id: a.id,
+      original_filename: a.original_filename,
+      file_size_bytes: a.file_size_bytes,
+      content_type: a.content_type,
+      is_downloadable: a.is_downloadable,
+      sort_order: a.sort_order,
+    }));
 
     if (access === 'full') {
       return {
@@ -182,6 +212,7 @@ export class FeedService {
         locked: false,
         teaser: null,
         content: post.content,
+        attachments,
       };
     }
 
@@ -201,6 +232,7 @@ export class FeedService {
       locked: true,
       teaser: extractExcerpt(post.content),
       content: null,
+      attachments,  // attachments visible even when post is locked (filename/size only, no download URL)
     };
   }
 
@@ -370,5 +402,38 @@ export class FeedService {
       { conflictPaths: ['post_id', 'user_id'] },
     );
     return { post_id: postId, checked_item_ids: checkedItemIds };
+  }
+
+  // ── Attachment download ───────────────────────────────────────────────────
+
+  async getAttachmentDownloadUrl(attachmentId: string, viewerUserId: string): Promise<string> {
+    // Load with storage_key (normally excluded from select)
+    const att = await this.postAttachmentRepository
+      .createQueryBuilder('att')
+      .addSelect('att.storage_key')
+      .where('att.id = :id', { id: attachmentId })
+      .getOne();
+
+    if (!att) throw new NotFoundException('ATTACHMENT_NOT_FOUND');
+    if (!att.is_downloadable) throw new ForbiddenException('ATTACHMENT_NOT_DOWNLOADABLE');
+
+    // Verify viewer has access to the parent post
+    const post = await this.postRepository.findOne({ where: { id: att.post_id } });
+    if (!post || post.publish_status !== PostPublishStatus.Published) {
+      throw new NotFoundException('POST_NOT_FOUND');
+    }
+
+    const profile = await this.creatorProfileRepository.findOne({
+      where: { id: post.creator_profile_id },
+    });
+    const isOwner = await this.isCreatorOwner(viewerUserId, post.creator_profile_id);
+    const activeSub = await this.findActiveSub(viewerUserId, post.creator_profile_id);
+
+    const access = await this.computeAccess(post, isOwner, activeSub);
+    if (access !== 'full') throw new ForbiddenException('ACCESS_DENIED');
+
+    // Generate signed GET URL (60 s TTL)
+    const storageKey = (att as PostAttachment & { storage_key: string }).storage_key;
+    return this.storageService.getSignedGetUrl(storageKey, 60);
   }
 }

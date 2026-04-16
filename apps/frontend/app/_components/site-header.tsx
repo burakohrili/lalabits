@@ -209,10 +209,10 @@ export default function SiteHeader() {
         {/* Desktop nav */}
         <nav className="hidden lg:flex items-center gap-6">
           <Link
-            href="/ureticilere"
+            href="/kesfet"
             className="text-[15px] text-text-secondary hover:text-text-primary transition-colors duration-150"
           >
-            Üreticilere
+            Keşfet
           </Link>
           <Link
             href="/ozellikler"
@@ -270,7 +270,7 @@ export default function SiteHeader() {
         <div className="lg:hidden border-t border-border bg-white">
           <nav className="flex flex-col px-6 py-4 gap-1">
             {[
-              { label: 'Üreticilere', href: '/ureticilere' },
+              { label: 'Keşfet', href: '/kesfet' },
               { label: 'Özellikler', href: '/ozellikler' },
               { label: 'Fiyatlar', href: '/fiyatlar' },
               { label: 'Blog', href: '/blog' },

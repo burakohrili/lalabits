@@ -167,7 +167,7 @@ function PaymentResultInner() {
               Kütüphaneme Git
             </Link>
             <Link
-              href="/ureticilere"
+              href="/kesfet"
               className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-surface"
             >
               Üreticilere Göz At

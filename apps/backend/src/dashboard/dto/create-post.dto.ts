@@ -1,5 +1,28 @@
-import { IsString, IsNotEmpty, IsOptional, IsIn, IsObject, MaxLength, IsUUID, ValidateIf } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  IsIn,
+  IsObject,
+  MaxLength,
+  IsUUID,
+  ValidateIf,
+  IsArray,
+  IsUrl,
+  ValidateNested,
+} from 'class-validator';
+import { Type } from 'class-transformer';
 import { PostAccessLevel } from '../../content/entities/post.entity';
+
+export class PostLinkDto {
+  @IsUrl({ require_protocol: true })
+  url: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(200)
+  title?: string;
+}
 
 export class CreatePostDto {
   @IsString()
@@ -9,7 +32,12 @@ export class CreatePostDto {
 
   @IsOptional()
   @IsObject()
-  content?: { type: 'plain'; body: string } | null;
+  content?: {
+    type: 'plain' | 'checklist';
+    body?: string;
+    items?: string[];
+    links?: Array<{ url: string; title?: string }>;
+  } | null;
 
   @IsIn([PostAccessLevel.Public, PostAccessLevel.MemberOnly, PostAccessLevel.TierGated])
   access_level: PostAccessLevel;
@@ -20,4 +48,10 @@ export class CreatePostDto {
   @ValidateIf((o) => o.access_level === PostAccessLevel.TierGated && o.required_tier_id != null)
   @IsUUID()
   required_tier_id?: string | null;
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => PostLinkDto)
+  links?: PostLinkDto[];
 }

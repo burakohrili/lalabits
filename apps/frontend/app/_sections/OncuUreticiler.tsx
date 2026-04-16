@@ -106,7 +106,7 @@ export default async function OncuUreticiler() {
             </p>
           </div>
           <Link
-            href="/ureticilere"
+            href="/kesfet"
             className="shrink-0 text-sm font-semibold text-teal hover:underline"
           >
             Tüm üreticileri keşfet →

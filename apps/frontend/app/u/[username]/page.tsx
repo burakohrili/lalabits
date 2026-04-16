@@ -66,6 +66,14 @@ interface MembershipStatus {
   current_period_end?: string;
 }
 
+interface PostAttachmentItem {
+  id: string;
+  original_filename: string;
+  file_size_bytes: string;
+  content_type: string;
+  is_downloadable: boolean;
+}
+
 interface PostFeedItem {
   id: string;
   title: string;
@@ -75,7 +83,12 @@ interface PostFeedItem {
   published_at: string | null;
   locked: boolean;
   teaser: string | null;
-  content: { type: string; body: string } | null;
+  content: {
+    type: string;
+    body?: string;
+    links?: Array<{ url: string; title?: string }>;
+  } | null;
+  attachments: PostAttachmentItem[];
 }
 
 export default function CreatorPublicPage() {
@@ -269,6 +282,65 @@ export default function CreatorPublicPage() {
             <p className="mt-1 text-xs text-muted line-clamp-3 leading-relaxed">
               {post.content.body}
             </p>
+          )}
+          {/* External links */}
+          {(post.content?.links?.length ?? 0) > 0 && (
+            <div className="mt-2 flex flex-col gap-1">
+              {post.content!.links!.map((link, i) => (
+                <a
+                  key={i}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="inline-flex items-center gap-1 text-xs text-primary hover:underline truncate"
+                >
+                  <span>🔗</span>
+                  <span className="truncate">{link.title || link.url}</span>
+                </a>
+              ))}
+            </div>
+          )}
+          {/* File attachments */}
+          {post.attachments?.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {post.attachments.map((att) => (
+                att.is_downloadable ? (
+                  <button
+                    key={att.id}
+                    type="button"
+                    onClick={async (e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      if (!accessToken) return;
+                      try {
+                        const r = await fetch(`${API}/content/attachments/${att.id}/download`, {
+                          headers: { Authorization: `Bearer ${accessToken}` },
+                        });
+                        if (r.ok) {
+                          const { url } = (await r.json()) as { url: string };
+                          window.open(url, '_blank');
+                        }
+                      } catch {
+                        // silent
+                      }
+                    }}
+                    className="inline-flex items-center gap-1 rounded-md border border-primary/30 bg-primary/5 px-2 py-0.5 text-xs text-primary hover:bg-primary/10"
+                  >
+                    <span>⬇</span>
+                    <span className="truncate max-w-[140px]">{att.original_filename}</span>
+                  </button>
+                ) : (
+                  <span
+                    key={att.id}
+                    className="inline-flex items-center gap-1 rounded-md border border-border bg-background px-2 py-0.5 text-xs text-muted"
+                  >
+                    <span>📎</span>
+                    <span className="truncate max-w-[140px]">{att.original_filename}</span>
+                  </span>
+                )
+              ))}
+            </div>
           )}
           {date && <p className="mt-2 text-xs text-muted">{date}</p>}
         </Link>

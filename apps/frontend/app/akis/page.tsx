@@ -102,7 +102,7 @@ export default function AkisPage() {
           <p className="text-sm font-medium text-foreground mb-1">Henüz içerik yok</p>
           <p className="text-xs text-muted mb-6">Üreticilere abone olarak içeriklerini burada görebilirsin.</p>
           <Link
-            href="/kreatorler"
+            href="/kesfet"
             className="inline-block rounded-xl bg-primary px-5 py-2.5 text-sm font-medium text-white hover:opacity-90 transition-opacity"
           >
             Üreticileri Keşfet

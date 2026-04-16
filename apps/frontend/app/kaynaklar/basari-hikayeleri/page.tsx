@@ -19,7 +19,7 @@ export default function BasariHikayeleriPage() {
         Türkiye'nin en başarılı içerik üreticilerinin hikayeleri yakında burada.
       </p>
       <Link
-        href="/ureticilere"
+        href="/kesfet"
         className="rounded-xl bg-orange px-8 py-3 text-sm font-semibold text-white hover:bg-orange-dark transition-colors"
       >
         Üreticileri Keşfet

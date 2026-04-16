@@ -1,6 +1,6 @@
 import { IsString, IsOptional, MaxLength, IsIn, Matches } from 'class-validator';
 
-const ALLOWED_AVATAR_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
 export class UpdateProfileDto {
   @IsString()
@@ -22,6 +22,15 @@ export class UpdateProfileDto {
 
   @IsOptional()
   @IsString()
-  @IsIn(ALLOWED_AVATAR_TYPES)
+  @IsIn(ALLOWED_IMAGE_TYPES)
   avatar_content_type?: string | null;
+
+  @IsOptional()
+  @IsString()
+  cover_image_filename?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @IsIn(ALLOWED_IMAGE_TYPES)
+  cover_image_content_type?: string | null;
 }

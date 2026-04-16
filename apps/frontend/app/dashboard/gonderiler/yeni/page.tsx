@@ -32,10 +32,20 @@ export default function YeniGonderiPage() {
           title: values.title,
           content:
             values.content_type === 'checklist'
-              ? { type: 'checklist', items: values.checklist_items.filter((it) => it.text.trim()) }
-              : values.body.trim()
-              ? { type: 'plain', body: values.body }
-              : null,
+              ? {
+                  type: 'checklist',
+                  items: values.checklist_items.filter((it) => it.text.trim()),
+                  links: values.links.length > 0
+                    ? values.links.map(({ url, title }) => ({ url, title: title || undefined }))
+                    : undefined,
+                }
+              : {
+                  type: 'plain',
+                  body: values.body || undefined,
+                  links: values.links.length > 0
+                    ? values.links.map(({ url, title }) => ({ url, title: title || undefined }))
+                    : undefined,
+                },
           access_level: values.access_level,
         }),
       });
@@ -45,7 +55,9 @@ export default function YeniGonderiPage() {
         throw new ApiError(res.status, body.code ?? 'UNKNOWN', '');
       }
 
-      router.push('/dashboard/gonderiler');
+      const post = (await res.json()) as { id: string };
+      // Redirect to edit page so user can add file attachments
+      router.push(`/dashboard/gonderiler/${post.id}`);
     } catch {
       setError('Gönderi oluşturulamadı. Tekrar deneyin.');
       setBusy(false);

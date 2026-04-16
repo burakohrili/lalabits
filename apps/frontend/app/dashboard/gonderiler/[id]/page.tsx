@@ -5,7 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/auth-context';
 import { ApiError } from '@/lib/api-client';
-import PostForm, { type PostFormValues } from '../_components/post-form';
+import PostForm, { type PostFormValues, type SavedAttachment } from '../_components/post-form';
 
 const API = process.env.NEXT_PUBLIC_API_URL!;
 
@@ -17,9 +17,15 @@ interface ChecklistItem {
 interface PostDetail {
   id: string;
   title: string;
-  content: { type: string; body?: string; items?: ChecklistItem[] } | null;
+  content: {
+    type: string;
+    body?: string;
+    items?: ChecklistItem[];
+    links?: Array<{ url: string; title?: string }>;
+  } | null;
   access_level: 'public' | 'member_only';
   publish_status: 'draft' | 'published' | 'archived';
+  attachments: SavedAttachment[];
 }
 
 export default function EditGonderiPage() {
@@ -76,10 +82,20 @@ export default function EditGonderiPage() {
           title: values.title,
           content:
             values.content_type === 'checklist'
-              ? { type: 'checklist', items: values.checklist_items.filter((it) => it.text.trim()) }
-              : values.body.trim()
-              ? { type: 'plain', body: values.body }
-              : null,
+              ? {
+                  type: 'checklist',
+                  items: values.checklist_items.filter((it) => it.text.trim()),
+                  links: values.links.length > 0
+                    ? values.links.map(({ url, title }) => ({ url, title: title || undefined }))
+                    : undefined,
+                }
+              : {
+                  type: 'plain',
+                  body: values.body || undefined,
+                  links: values.links.length > 0
+                    ? values.links.map(({ url, title }) => ({ url, title: title || undefined }))
+                    : undefined,
+                },
           access_level: values.access_level,
         }),
       });
@@ -139,11 +155,20 @@ export default function EditGonderiPage() {
                 post.content?.type === 'checklist' && post.content.items
                   ? post.content.items
                   : [{ id: 'init', text: '' }],
+              links:
+                post.content?.links?.map((l) => ({
+                  id: Math.random().toString(36).slice(2),
+                  url: l.url,
+                  title: l.title ?? '',
+                })) ?? [],
+              attachments: post.attachments,
             }}
             submitLabel="Değişiklikleri kaydet"
             busy={busy}
             error={submitError}
             onSubmit={handleSubmit}
+            postId={post.id}
+            accessToken={accessToken ?? undefined}
           />
         </div>
       )}

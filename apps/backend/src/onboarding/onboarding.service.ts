@@ -26,6 +26,7 @@ import { SubmitApplicationDto } from './dto/submit-application.dto';
 import { encryptIban } from '../common/iban-crypto.util';
 
 const AVATAR_STORAGE_PREFIX = 'avatars';
+const COVER_STORAGE_PREFIX = 'covers';
 
 @Injectable()
 export class OnboardingService {
@@ -118,14 +119,23 @@ export class OnboardingService {
       throw new ConflictException('USERNAME_TAKEN');
     }
 
-    let presignedPutUrl: string | null = null;
+    let avatarPresignedUrl: string | null = null;
+    let coverPresignedUrl: string | null = null;
     let avatarUrl = profile.avatar_url;
+    let coverImageUrl = profile.cover_image_url;
 
     if (dto.avatar_filename && dto.avatar_content_type) {
       const ext = dto.avatar_filename.split('.').pop() ?? 'bin';
       const key = `${AVATAR_STORAGE_PREFIX}/${profile.id}/${randomUUID()}.${ext}`;
-      presignedPutUrl = await this.storageService.getPresignedPutUrl(key, dto.avatar_content_type);
+      avatarPresignedUrl = await this.storageService.getPresignedPutUrl(key, dto.avatar_content_type);
       avatarUrl = key;
+    }
+
+    if (dto.cover_image_filename && dto.cover_image_content_type) {
+      const ext = dto.cover_image_filename.split('.').pop() ?? 'bin';
+      const key = `${COVER_STORAGE_PREFIX}/${profile.id}/${randomUUID()}.${ext}`;
+      coverPresignedUrl = await this.storageService.getPresignedPutUrl(key, dto.cover_image_content_type);
+      coverImageUrl = key;
     }
 
     await this.creatorProfileRepository.update(
@@ -135,6 +145,7 @@ export class OnboardingService {
         display_name: dto.display_name,
         bio: dto.bio !== undefined ? dto.bio : profile.bio,
         avatar_url: avatarUrl,
+        cover_image_url: coverImageUrl,
         onboarding_last_step: Math.max(profile.onboarding_last_step, 1),
       },
     );
@@ -143,10 +154,16 @@ export class OnboardingService {
       ? await this.storageService.getSignedGetUrl(avatarUrl)
       : null;
 
+    const coverSignedUrl = coverImageUrl
+      ? await this.storageService.getSignedGetUrl(coverImageUrl)
+      : null;
+
     return {
       onboarding_last_step: Math.max(profile.onboarding_last_step, 1),
       avatar_url: avatarSignedUrl,
-      presigned_put_url: presignedPutUrl,
+      cover_image_url: coverSignedUrl,
+      presigned_put_url: avatarPresignedUrl,
+      cover_image_presigned_put_url: coverPresignedUrl,
     };
   }
 

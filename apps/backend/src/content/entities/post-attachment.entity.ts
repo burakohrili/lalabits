@@ -8,6 +8,10 @@ import {
 } from 'typeorm';
 import { Post } from './post.entity';
 
+export enum PostAttachmentType {
+  File = 'file',
+}
+
 @Entity('post_attachments')
 export class PostAttachment {
   @PrimaryGeneratedColumn('uuid')
@@ -29,6 +33,9 @@ export class PostAttachment {
 
   @Column()
   content_type: string;
+
+  @Column({ type: 'varchar', default: 'file' })
+  attachment_type: PostAttachmentType;
 
   @Column({ default: true })
   is_downloadable: boolean;

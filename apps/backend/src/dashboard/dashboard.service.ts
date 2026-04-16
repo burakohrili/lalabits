@@ -34,10 +34,12 @@ import {
   CollectionItemType,
 } from '../content/entities/collection-item.entity';
 import { Invoice, InvoiceStatus } from '../billing/entities/invoice.entity';
+import { PostAttachment, PostAttachmentType } from '../content/entities/post-attachment.entity';
 import { StorageService } from '../storage/storage.service';
 import { UpdateDashboardProfileDto } from './dto/update-profile.dto';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { AddAttachmentDto } from './dto/add-attachment.dto';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { CreateCollectionDto } from './dto/create-collection.dto';
@@ -64,6 +66,8 @@ export class DashboardService {
     private readonly collectionItemRepository: Repository<CollectionItem>,
     @InjectRepository(Invoice)
     private readonly invoiceRepository: Repository<Invoice>,
+    @InjectRepository(PostAttachment)
+    private readonly postAttachmentRepository: Repository<PostAttachment>,
     private readonly storageService: StorageService,
   ) {}
 
@@ -204,8 +208,26 @@ export class DashboardService {
   }
 
   async getPost(userId: string, postId: string) {
-    const post = await this.loadOwnPost(userId, postId);
-    return post;
+    const [post, attachments] = await Promise.all([
+      this.loadOwnPost(userId, postId),
+      this.postAttachmentRepository.find({
+        where: { post_id: postId },
+        order: { sort_order: 'ASC' },
+      }),
+    ]);
+    return {
+      ...post,
+      attachments: attachments.map((a) => ({
+        id: a.id,
+        original_filename: a.original_filename,
+        file_size_bytes: a.file_size_bytes,
+        content_type: a.content_type,
+        is_downloadable: a.is_downloadable,
+        attachment_type: a.attachment_type,
+        sort_order: a.sort_order,
+        created_at: a.created_at,
+      })),
+    };
   }
 
   async createPost(userId: string, dto: CreatePostDto) {
@@ -331,6 +353,58 @@ export class DashboardService {
     }
 
     await this.postRepository.delete({ id: post.id });
+  }
+
+  // ── Post Attachments ──────────────────────────────────────────────────────
+
+  async getPostAttachmentUploadUrl(
+    userId: string,
+    postId: string,
+    contentType: string,
+    originalFilename: string,
+  ) {
+    await this.loadOwnPost(userId, postId);
+    const profile = await this.creatorProfileRepository.findOne({ where: { user_id: userId } });
+    const storageKey = `posts/${profile!.id}/${postId}/${randomUUID()}/${originalFilename}`;
+    const uploadUrl = await this.storageService.getPresignedPutUrl(storageKey, contentType);
+    return { upload_url: uploadUrl, storage_key: storageKey };
+  }
+
+  async addPostAttachment(userId: string, postId: string, dto: AddAttachmentDto) {
+    await this.loadOwnPost(userId, postId);
+    const count = await this.postAttachmentRepository.count({ where: { post_id: postId } });
+    const attachment = this.postAttachmentRepository.create({
+      post_id: postId,
+      storage_key: dto.storage_key,
+      original_filename: dto.original_filename,
+      file_size_bytes: String(dto.file_size_bytes),
+      content_type: dto.content_type,
+      is_downloadable: dto.is_downloadable ?? true,
+      attachment_type: PostAttachmentType.File,
+      sort_order: count,
+    });
+    const saved = await this.postAttachmentRepository.save(attachment);
+    return {
+      id: saved.id,
+      post_id: saved.post_id,
+      original_filename: saved.original_filename,
+      file_size_bytes: saved.file_size_bytes,
+      content_type: saved.content_type,
+      is_downloadable: saved.is_downloadable,
+      attachment_type: saved.attachment_type,
+      sort_order: saved.sort_order,
+      created_at: saved.created_at,
+    };
+  }
+
+  async removePostAttachment(userId: string, postId: string, attachmentId: string) {
+    await this.loadOwnPost(userId, postId);
+    const att = await this.postAttachmentRepository.findOne({
+      where: { id: attachmentId, post_id: postId },
+    });
+    if (!att) throw new NotFoundException('ATTACHMENT_NOT_FOUND');
+    await this.postAttachmentRepository.delete({ id: attachmentId });
+    return { success: true };
   }
 
   // ── Products ──────────────────────────────────────────────────────────────

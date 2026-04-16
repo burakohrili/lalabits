@@ -26,6 +26,7 @@ import { CreateCollectionDto } from './dto/create-collection.dto';
 import { UpdateCollectionDto } from './dto/update-collection.dto';
 import { AddCollectionItemDto } from './dto/add-collection-item.dto';
 import { ReorderCollectionItemsDto } from './dto/reorder-collection-items.dto';
+import { AddAttachmentDto } from './dto/add-attachment.dto';
 import { PostPublishStatus } from '../content/entities/post.entity';
 import { ProductPublishStatus } from '../content/entities/product.entity';
 import { CollectionPublishStatus } from '../content/entities/collection.entity';
@@ -184,6 +185,39 @@ export class DashboardController {
     @Param('id') postId: string,
   ) {
     return this.dashboardService.deletePost(user.id, postId);
+  }
+
+  // ── Post Attachments ──────────────────────────────────────────────────────
+
+  @Post('posts/:id/attachments/upload-url')
+  @HttpCode(HttpStatus.OK)
+  getPostAttachmentUploadUrl(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id') postId: string,
+    @Body('content_type') contentType: string,
+    @Body('original_filename') originalFilename: string,
+  ) {
+    return this.dashboardService.getPostAttachmentUploadUrl(user.id, postId, contentType, originalFilename);
+  }
+
+  @Post('posts/:id/attachments')
+  @HttpCode(HttpStatus.CREATED)
+  addPostAttachment(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id') postId: string,
+    @Body() dto: AddAttachmentDto,
+  ) {
+    return this.dashboardService.addPostAttachment(user.id, postId, dto);
+  }
+
+  @Delete('posts/:id/attachments/:attachmentId')
+  @HttpCode(HttpStatus.OK)
+  removePostAttachment(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id') postId: string,
+    @Param('attachmentId') attachmentId: string,
+  ) {
+    return this.dashboardService.removePostAttachment(user.id, postId, attachmentId);
   }
 
   // ── Products ──────────────────────────────────────────────────────────────

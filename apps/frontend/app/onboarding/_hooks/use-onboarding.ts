@@ -70,11 +70,20 @@ export function useOnboarding() {
     bio?: string | null;
     avatar_filename?: string | null;
     avatar_content_type?: string | null;
-  }): Promise<{ avatar_url: string | null; presigned_put_url: string | null }> => {
+    cover_image_filename?: string | null;
+    cover_image_content_type?: string | null;
+  }): Promise<{
+    avatar_url: string | null;
+    cover_image_url: string | null;
+    presigned_put_url: string | null;
+    cover_image_presigned_put_url: string | null;
+  }> => {
     const res = await apiFetch<{
       onboarding_last_step: number;
       avatar_url: string | null;
+      cover_image_url: string | null;
       presigned_put_url: string | null;
+      cover_image_presigned_put_url: string | null;
     }>('/onboarding/profile', accessToken!, { method: 'PUT', body: JSON.stringify(data) });
 
     setStatus((prev) => prev ? {
@@ -89,7 +98,12 @@ export function useOnboarding() {
       },
     } : prev);
 
-    return { avatar_url: res.avatar_url, presigned_put_url: res.presigned_put_url };
+    return {
+      avatar_url: res.avatar_url,
+      cover_image_url: res.cover_image_url,
+      presigned_put_url: res.presigned_put_url,
+      cover_image_presigned_put_url: res.cover_image_presigned_put_url,
+    };
   }, [accessToken]);
 
   const saveCategory = useCallback(async (data: {

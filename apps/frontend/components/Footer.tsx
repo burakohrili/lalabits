@@ -176,7 +176,7 @@ export default function Footer() {
           <FooterColumn
             title="Üreticiler"
             links={[
-              { label: 'Nasıl çalışır?', href: '/ureticilere' },
+              { label: 'Nasıl çalışır?', href: '/kesfet' },
               { label: 'Üyelik sistemi', href: '/ozellikler#uyelik' },
               { label: 'Dijital ürünler', href: '/ozellikler#magaza' },
               { label: 'Üretici hikayeleri', href: '/kaynaklar/basari-hikayeleri' },

@@ -68,4 +68,14 @@ export class FeedController {
   ) {
     return this.feedService.updateChecklistProgress(id, viewer.id, checkedItemIds ?? []);
   }
+
+  @Get('content/attachments/:id/download')
+  @UseGuards(JwtAuthGuard)
+  async downloadAttachment(
+    @Param('id') attachmentId: string,
+    @CurrentUser() viewer: AuthenticatedUser,
+  ) {
+    const url = await this.feedService.getAttachmentDownloadUrl(attachmentId, viewer.id);
+    return { url };
+  }
 }

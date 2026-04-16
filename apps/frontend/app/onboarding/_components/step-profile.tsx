@@ -23,11 +23,14 @@ export default function StepProfile({ onboarding, onNext }: Props) {
   const [bio, setBio] = useState(initial.bio ?? '');
   const [avatarPreview, setAvatarPreview] = useState<string | null>(initial.avatar_url);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const coverInputRef = useRef<HTMLInputElement>(null);
 
-  function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
+  function handleAvatarChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
     if (!ALLOWED_TYPES.includes(file.type as AllowedType)) {
@@ -37,6 +40,18 @@ export default function StepProfile({ onboarding, onNext }: Props) {
     setError(null);
     setAvatarFile(file);
     setAvatarPreview(URL.createObjectURL(file));
+  }
+
+  function handleCoverChange(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!ALLOWED_TYPES.includes(file.type as AllowedType)) {
+      setError('Yalnızca JPEG, PNG veya WebP dosyası yükleyebilirsiniz.');
+      return;
+    }
+    setError(null);
+    setCoverFile(file);
+    setCoverPreview(URL.createObjectURL(file));
   }
 
   async function handleNext() {
@@ -63,9 +78,14 @@ export default function StepProfile({ onboarding, onNext }: Props) {
         payload.avatar_content_type = avatarFile.type as AllowedType;
       }
 
-      const { presigned_put_url } = await onboarding.saveProfile(payload);
+      if (coverFile) {
+        payload.cover_image_filename = coverFile.name;
+        payload.cover_image_content_type = coverFile.type as AllowedType;
+      }
 
-      // Upload avatar directly to storage if we have a new file and presigned URL
+      const { presigned_put_url, cover_image_presigned_put_url } = await onboarding.saveProfile(payload);
+
+      // Upload avatar if new file
       if (avatarFile && presigned_put_url) {
         const uploadRes = await fetch(presigned_put_url, {
           method: 'PUT',
@@ -73,7 +93,21 @@ export default function StepProfile({ onboarding, onNext }: Props) {
           body: avatarFile,
         });
         if (!uploadRes.ok) {
-          setError('Avatar yüklenemedi. Lütfen tekrar deneyin.');
+          setError('Profil fotoğrafı yüklenemedi. Lütfen tekrar deneyin.');
+          setSaving(false);
+          return;
+        }
+      }
+
+      // Upload cover if new file
+      if (coverFile && cover_image_presigned_put_url) {
+        const uploadRes = await fetch(cover_image_presigned_put_url, {
+          method: 'PUT',
+          headers: { 'Content-Type': coverFile.type },
+          body: coverFile,
+        });
+        if (!uploadRes.ok) {
+          setError('Kapak fotoğrafı yüklenemedi. Lütfen tekrar deneyin.');
           setSaving(false);
           return;
         }
@@ -96,6 +130,40 @@ export default function StepProfile({ onboarding, onNext }: Props) {
       <div className="flex flex-col gap-1">
         <h2 className="text-lg font-semibold text-foreground">Profil Bilgileri</h2>
         <p className="text-sm text-muted">Ziyaretçilere görünecek adınızı ve biyografinizi girin.</p>
+      </div>
+
+      {/* Kapak Fotoğrafı */}
+      <div className="flex flex-col gap-2">
+        <label className="text-sm font-medium text-foreground">Kapak Fotoğrafı</label>
+        <div
+          className="relative h-28 w-full rounded-xl overflow-hidden border border-border bg-background cursor-pointer hover:opacity-90 transition-opacity"
+          onClick={() => coverInputRef.current?.click()}
+        >
+          {coverPreview ? (
+            <img src={coverPreview} alt="Kapak önizleme" className="h-full w-full object-cover" />
+          ) : (
+            <div
+              className="h-full w-full flex items-center justify-center"
+              style={{ background: 'linear-gradient(135deg, #e0f2f2 0%, #f0faf9 100%)' }}
+            >
+              <span className="text-xs text-muted">Kapak fotoğrafı ekle (opsiyonel)</span>
+            </div>
+          )}
+          <div className="absolute bottom-2 right-2">
+            <span className="rounded-lg bg-white/90 border border-border px-2 py-1 text-xs text-foreground shadow-sm">
+              Fotoğraf Seç
+            </span>
+          </div>
+        </div>
+        <input
+          ref={coverInputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          className="hidden"
+          onChange={handleCoverChange}
+          disabled={saving}
+        />
+        <p className="text-xs text-muted">Önerilen boyut: 1500 × 400 px. JPEG, PNG veya WebP.</p>
       </div>
 
       {/* Avatar */}
@@ -122,7 +190,7 @@ export default function StepProfile({ onboarding, onNext }: Props) {
             type="file"
             accept="image/jpeg,image/png,image/webp"
             className="hidden"
-            onChange={handleFileChange}
+            onChange={handleAvatarChange}
           />
         </div>
       </div>
