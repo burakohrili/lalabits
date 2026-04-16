@@ -79,7 +79,7 @@ export class CheckoutController {
       // Finalization errors still redirect — fan sees failure on result page
     }
 
-    const frontendUrl = process.env.FRONTEND_URL ?? 'http://localhost:3000';
+    const frontendUrl = (process.env.FRONTEND_URL ?? 'http://localhost:3000').split(',')[0].trim();
     res.redirect(
       `${frontendUrl}/odeme/sonuc?conversation_id=${conversationId}&status=${finalStatus}`,
     );

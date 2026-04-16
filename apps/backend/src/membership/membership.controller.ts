@@ -64,7 +64,7 @@ export class MembershipController {
       // Still redirect — fan sees failure on result page
     }
 
-    const frontendUrl = process.env.FRONTEND_URL ?? 'http://localhost:3000';
+    const frontendUrl = (process.env.FRONTEND_URL ?? 'http://localhost:3000').split(',')[0].trim();
     res.redirect(
       `${frontendUrl}/odeme/sonuc?type=subscription&conversation_id=${conversationId}&status=${finalStatus}`,
     );

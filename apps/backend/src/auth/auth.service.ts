@@ -161,7 +161,7 @@ export class AuthService {
     }
 
     // Send verification email after transaction commit
-    const frontendUrl = this.config.get<string>('FRONTEND_URL', 'http://localhost:3000');
+    const frontendUrl = this.config.get<string>('FRONTEND_URL', 'http://localhost:3000').split(',')[0].trim();
     const verificationLink = `${frontendUrl}/auth/verify-email?token=${rawToken}`;
 
     await this.emailService.sendMail(
@@ -291,7 +291,7 @@ export class AuthService {
       throw err;
     }
 
-    const frontendUrl = this.config.get<string>('FRONTEND_URL', 'http://localhost:3000');
+    const frontendUrl = this.config.get<string>('FRONTEND_URL', 'http://localhost:3000').split(',')[0].trim();
     const verificationLink = `${frontendUrl}/auth/verify-email?token=${rawToken}`;
 
     await this.emailService.sendMail(
@@ -385,7 +385,7 @@ export class AuthService {
       }),
     );
 
-    const frontendUrl = this.config.get<string>('FRONTEND_URL', 'http://localhost:3000');
+    const frontendUrl = this.config.get<string>('FRONTEND_URL', 'http://localhost:3000').split(',')[0].trim();
     const verificationLink = `${frontendUrl}/auth/verify-email?token=${rawToken}`;
 
     await this.emailService.sendMail(
@@ -430,7 +430,7 @@ export class AuthService {
       }),
     );
 
-    const frontendUrl = this.config.get<string>('FRONTEND_URL', 'http://localhost:3000');
+    const frontendUrl = this.config.get<string>('FRONTEND_URL', 'http://localhost:3000').split(',')[0].trim();
     const resetLink = `${frontendUrl}/auth/reset-password?token=${rawToken}`;
 
     await this.emailService.sendMail(
