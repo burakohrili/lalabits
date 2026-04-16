@@ -28,7 +28,7 @@ export class BlogPost {
   @Column({ type: 'text' })
   content: string;
 
-  @Column({ length: 500, nullable: true })
+  @Column({ type: 'varchar', length: 500, nullable: true })
   cover_image_url: string | null;
 
   @Column({ length: 200, default: 'lalabits.art' })
