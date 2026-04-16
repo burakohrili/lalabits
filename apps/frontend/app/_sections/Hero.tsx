@@ -100,13 +100,13 @@ export default function Hero() {
             {/* Badge */}
             <div className="inline-flex items-center gap-2 rounded-full border border-border bg-white px-4 py-2 text-sm font-medium text-text-secondary shadow-sm mb-6">
               <span>🇹🇷</span>
-              <span>Türkiye&apos;nin İçerik Platformu</span>
+              <span>Türkiye&apos;nin İçerik Üreticisi Platformu</span>
             </div>
             {/* H1 */}
             <h1
               className="text-[36px] font-bold leading-[1.1] tracking-[-0.02em] text-text-primary sm:text-5xl lg:text-[56px]"
             >
-              İçerik Üreticisi Olarak
+              Üretenin Kazandığı,
               <br />
               <span
                 style={{
@@ -116,27 +116,27 @@ export default function Hero() {
                   backgroundClip: 'text',
                 }}
               >
-                Gelire Dönüştür
+                Destekleyenin Yakınlaştığı Yer
               </span>
             </h1>
             {/* Subheadline */}
             <p className="mt-6 text-lg leading-[1.7] text-text-secondary max-w-xl mx-auto lg:mx-0">
-              Üyelik, dijital ürün ve içerik ile Türk destekçilerinden
-              doğrudan kazanmaya başla.
+              İçerik üreticileri için üyelik, dijital ürün ve topluluk.
+              Hayranlar için yakınlık, özel içerik ve Türk lirası ile doğrudan destek.
             </p>
             {/* CTA çifti */}
             <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Link
-                href="/kayit/uretici"
+                href="/auth/kayit/yaratici"
                 className="rounded-xl bg-orange px-8 py-4 text-base font-semibold text-white hover:bg-orange-dark transition-colors duration-150 shadow-sm"
               >
-                Üretici olarak başla
+                Üretici hesabı aç
               </Link>
               <Link
-                href="/ureticilere"
+                href="/kesfet"
                 className="flex items-center justify-center gap-2 rounded-xl border border-border bg-white px-8 py-4 text-base font-semibold text-teal hover:bg-teal-light transition-colors duration-150"
               >
-                Nasıl çalışır?
+                Üreticileri keşfet
                 <svg className="h-4 w-4" viewBox="0 0 16 16" fill="none">
                   <path
                     d="M3 8h10M9 4l4 4-4 4"
@@ -148,10 +148,6 @@ export default function Hero() {
                 </svg>
               </Link>
             </div>
-            {/* Sosyal kanıt */}
-            <p className="mt-6 text-xs text-text-muted">
-              2.400+ üretici · ₺18.5M+ kazanıldı · Türkiye&apos;de #1
-            </p>
           </div>
 
           {/* Sağ — Mock kart */}

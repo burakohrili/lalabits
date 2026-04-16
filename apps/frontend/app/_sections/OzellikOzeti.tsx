@@ -101,10 +101,10 @@ export default function OzellikOzeti() {
         {/* Başlık */}
         <div className="text-center mb-12">
           <h2 className="text-[28px] font-bold tracking-[-0.01em] text-text-primary sm:text-[40px]">
-            Her Şey Bir Yerde
+            İki Taraf İçin, Tek Platform
           </h2>
           <p className="mt-3 text-lg text-text-secondary">
-            İçerik üreticileri için ihtiyacınız olan tüm araçlar
+            Üreticiye araçlar, destekçiye erişim — hepsi burada.
           </p>
         </div>
 

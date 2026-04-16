@@ -1,20 +1,21 @@
 import type { Metadata } from 'next';
 import Hero from './_sections/Hero';
+import DestekModeli from './_sections/DestekModeli';
+import HayraNeden from './_sections/HayraNeden';
 import NasilCalisir from './_sections/NasilCalisir';
-import OncuUreticiler from './_sections/OncuUreticiler';
 import OzellikOzeti from './_sections/OzellikOzeti';
-import Rakamlar from './_sections/Rakamlar';
 import Kategoriler from './_sections/Kategoriler';
+import GuvenSeridi from './_sections/GuvenSeridi';
 import FinalCTA from './_sections/FinalCTA';
 
 export const metadata: Metadata = {
-  title: "lalabits.art — Türkiye'nin İçerik Platformu",
+  title: "lalabits.art — Türkiye'nin İçerik Üreticisi Platformu",
   description:
-    "Üyelik, dijital ürün ve içerik ile Türk destekçilerinden doğrudan kazan. Türkiye'nin içerik üreticisi platformu.",
+    "Üyelik, dijital ürün ve içerik ile destekçilerinden doğrudan Türk lirası kazanmaya başla. Hayranlar için yakınlık, özel içerik ve topluluk.",
   openGraph: {
-    title: "lalabits.art — Türkiye'nin İçerik Platformu",
+    title: "lalabits.art — Türkiye'nin İçerik Üreticisi Platformu",
     description:
-      "Üyelik, dijital ürün ve içerik ile Türk destekçilerinden doğrudan kazan.",
+      "İçerik üreticileri için üyelik ve dijital ürün platformu. Hayranlar için özel içerik ve topluluk erişimi.",
     type: 'website',
   },
 };
@@ -23,11 +24,12 @@ export default function HomePage() {
   return (
     <main>
       <Hero />
+      <DestekModeli />
+      <HayraNeden />
       <NasilCalisir />
-      <OncuUreticiler />
       <OzellikOzeti />
-      <Rakamlar />
       <Kategoriler />
+      <GuvenSeridi />
       <FinalCTA />
     </main>
   );

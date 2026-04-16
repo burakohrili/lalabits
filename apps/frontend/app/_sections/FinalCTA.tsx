@@ -22,13 +22,13 @@ export default function FinalCTA() {
               İçerik Üreticisi Olarak Başla
             </h3>
             <p className="mt-3 text-base text-text-secondary leading-[1.7]">
-              Sayfanı oluştur, kademelerini belirle, Türk destekçilerinden kazanmaya başla.
+              Sayfanı oluştur, kademelerini belirle, Türk destekçilerinden düzenli kazan.
             </p>
             <ul className="mt-6 flex flex-col gap-3">
               {[
-                'Ücretsiz kurulum',
-                'Türk ödeme yöntemleri',
-                'Türkçe destek',
+                'Ücretsiz kurulum, sadece kazanınca komisyon',
+                'Türk lirası — IBAN\'a doğrudan transfer',
+                'Kademe, mağaza, topluluk — hepsi bir arada',
               ].map((item) => (
                 <li key={item} className="flex items-center gap-3 text-sm text-text-secondary">
                   <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-teal-light text-teal">
@@ -47,7 +47,7 @@ export default function FinalCTA() {
               ))}
             </ul>
             <Link
-              href="/kayit/uretici"
+              href="/auth/kayit/yaratici"
               className="mt-8 w-full rounded-xl bg-orange py-3.5 text-center text-sm font-semibold text-white hover:bg-orange-dark transition-colors duration-150"
             >
               Üretici hesabı aç
@@ -60,13 +60,13 @@ export default function FinalCTA() {
               Favori Üreticini Destekle
             </h3>
             <p className="mt-3 text-base text-text-secondary leading-[1.7]">
-              Türkiye&apos;nin en iyi içerik üreticilerini keşfet ve doğrudan destek ver.
+              Türkiye&apos;nin içerik üreticilerini keşfet, üye ol, özel içeriklere eriş.
             </p>
             <ul className="mt-6 flex flex-col gap-3">
               {[
-                'Özel içeriklere eriş',
-                'Topluluğun parçası ol',
-                'Türk lirası ile öde',
+                'Ücretsiz takipten premium üyeliğe — seçim sende',
+                'Türk lirası ile ödeme, istediğin zaman iptal',
+                'Özel içerikler, topluluk ve doğrudan erişim',
               ].map((item) => (
                 <li key={item} className="flex items-center gap-3 text-sm text-text-secondary">
                   <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-teal/20 text-teal">
@@ -85,7 +85,7 @@ export default function FinalCTA() {
               ))}
             </ul>
             <Link
-              href="/ureticilere"
+              href="/kesfet"
               className="mt-8 w-full rounded-xl border-2 border-teal py-3.5 text-center text-sm font-semibold text-teal hover:bg-teal hover:text-white transition-colors duration-150"
             >
               Üreticileri keşfet
