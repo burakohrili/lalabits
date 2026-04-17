@@ -75,7 +75,7 @@ function HeaderCTA() {
           Giriş yap
         </Link>
         <Link
-          href="/kayit/uretici"
+          href="/auth/kayit/yaratici"
           className="rounded-xl bg-orange px-5 py-2 text-sm font-semibold text-white hover:bg-orange-dark transition-colors duration-150"
         >
           Başla
@@ -260,7 +260,7 @@ export default function SiteHeader() {
               Giriş yap
             </Link>
             <Link
-              href="/kayit/uretici"
+              href="/auth/kayit/yaratici"
               className="w-full rounded-xl bg-orange py-3 text-center text-sm font-semibold text-white hover:bg-orange-dark transition-colors"
               onClick={() => setMobileOpen(false)}
             >
