@@ -64,7 +64,7 @@ export default function AdminOverviewPage() {
         {/* Summary cards */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 mb-8">
           <Link
-            href="/admin/yaraticilar/inceleme"
+            href="/admin/ureticiler/basvurular"
             className="flex flex-col gap-2 rounded-2xl border border-border bg-surface p-6 shadow-sm hover:border-primary/40 transition-colors"
           >
             <span className="text-xs font-medium uppercase tracking-wide text-muted">
@@ -92,7 +92,7 @@ export default function AdminOverviewPage() {
         {/* Nav grid */}
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {[
-            { label: 'Üreticiler', href: '/admin/kreatorler' },
+            { label: 'Üreticiler', href: '/admin/ureticiler' },
             { label: 'Ödemeler', href: '/admin/odemeler' },
             { label: 'İstatistikler', href: '/admin/istatistikler' },
             { label: 'Blog', href: '/admin/blog' },

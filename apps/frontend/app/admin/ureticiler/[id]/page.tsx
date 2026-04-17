@@ -76,7 +76,7 @@ function formatDate(d: string | null) {
   return new Date(d).toLocaleString('tr-TR');
 }
 
-export default function AdminKreatorDetailPage() {
+export default function AdminUreticiDetailPage() {
   const params = useParams();
   const profileId = params.id as string;
   const { accessToken, logout } = useAdminAuth();
@@ -109,9 +109,9 @@ export default function AdminKreatorDetailPage() {
       if (err instanceof ApiError && err.status === 401) {
         logout();
       } else if (err instanceof ApiError && err.status === 404) {
-        setError('Kreatör bulunamadı.');
+        setError('Üretici bulunamadı.');
       } else {
-        setError('Kreatör detayı yüklenemedi.');
+        setError('Üretici detayı yüklenemedi.');
       }
     } finally {
       setLoading(false);
@@ -147,8 +147,8 @@ export default function AdminKreatorDetailPage() {
         logout();
       } else if (err instanceof ApiError) {
         const messages: Record<string, string> = {
-          PROFILE_ALREADY_SUSPENDED: 'Kreatör zaten askıya alınmış.',
-          PROFILE_NOT_SUSPENDED: 'Kreatör askıya alınmış değil.',
+          PROFILE_ALREADY_SUSPENDED: 'Üretici zaten askıya alınmış.',
+          PROFILE_NOT_SUSPENDED: 'Üretici askıya alınmış değil.',
           INVALID_PROFILE_STATUS: 'Bu işlem için geçerli durum: Onaylı.',
         };
         setActionError(messages[err.code] ?? 'İşlem gerçekleştirilemedi.');
@@ -176,8 +176,8 @@ export default function AdminKreatorDetailPage() {
     return (
       <main className="min-h-screen bg-background px-6 py-10">
         <div className="mx-auto max-w-4xl">
-          <Link href="/admin/kreatorler" className="text-sm text-primary hover:underline">
-            ← Kreatörler
+          <Link href="/admin/ureticiler" className="text-sm text-primary hover:underline">
+            ← Üreticiler
           </Link>
           <p className="mt-6 text-sm text-red-600">{error ?? 'Bilinmeyen hata.'}</p>
         </div>
@@ -193,8 +193,8 @@ export default function AdminKreatorDetailPage() {
       <div className="mx-auto max-w-4xl">
         {/* Header */}
         <div className="mb-6 flex items-center gap-3">
-          <Link href="/admin/kreatorler" className="text-sm text-primary hover:underline">
-            ← Kreatörler
+          <Link href="/admin/ureticiler" className="text-sm text-primary hover:underline">
+            ← Üreticiler
           </Link>
           <span className="text-muted">·</span>
           <h1 className="text-xl font-semibold text-foreground">{creator.display_name}</h1>

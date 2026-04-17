@@ -192,9 +192,9 @@ export default function ReviewPanel({
       if (err instanceof ApiError && err.status === 401) {
         onAuthError();
       } else if (err instanceof ApiError && err.status === 409) {
-        setActionError('Bu yaratıcı zaten askıya alınmış.');
+        setActionError('Bu üretici zaten askıya alınmış.');
       } else if (err instanceof ApiError && err.status === 422) {
-        setActionError('Bu işlem yalnızca onaylanmış yaratıcılar için geçerlidir.');
+        setActionError('Bu işlem yalnızca onaylanmış üreticiler için geçerlidir.');
       } else {
         setActionError('İşlem başarısız. Tekrar deneyin.');
       }

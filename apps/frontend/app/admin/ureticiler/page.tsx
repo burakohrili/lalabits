@@ -50,7 +50,7 @@ function formatDate(d: string | null) {
   return new Date(d).toLocaleDateString('tr-TR');
 }
 
-export default function AdminKreatorlerPage() {
+export default function AdminUreticilerPage() {
   const { accessToken, logout } = useAdminAuth();
 
   const [items, setItems] = useState<CreatorListItem[]>([]);
@@ -83,7 +83,7 @@ export default function AdminKreatorlerPage() {
       if (err instanceof ApiError && err.status === 401) {
         logout();
       } else {
-        setError('Kreatör listesi yüklenemedi.');
+        setError('Üretici listesi yüklenemedi.');
       }
     } finally {
       setLoading(false);
@@ -106,15 +106,23 @@ export default function AdminKreatorlerPage() {
               ← Admin
             </Link>
             <span className="text-muted">·</span>
-            <h1 className="text-xl font-semibold text-foreground">Kreatörler</h1>
+            <h1 className="text-xl font-semibold text-foreground">Üreticiler</h1>
           </div>
-          <button
-            type="button"
-            onClick={logout}
-            className="text-sm text-muted hover:text-foreground"
-          >
-            Çıkış
-          </button>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/admin/ureticiler/basvurular"
+              className="text-sm text-primary hover:underline"
+            >
+              Başvurular →
+            </Link>
+            <button
+              type="button"
+              onClick={logout}
+              className="text-sm text-muted hover:text-foreground"
+            >
+              Çıkış
+            </button>
+          </div>
         </div>
 
         {/* Filter */}
@@ -155,13 +163,13 @@ export default function AdminKreatorlerPage() {
             </div>
           ) : items.length === 0 ? (
             <div className="py-16 text-center text-sm text-muted">
-              {statusFilter ? 'Bu durumda kreatör bulunamadı.' : 'Henüz kreatör yok.'}
+              {statusFilter ? 'Bu durumda üretici bulunamadı.' : 'Henüz üretici yok.'}
             </div>
           ) : (
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border bg-surface text-left text-xs font-medium uppercase tracking-wide text-muted">
-                  <th className="px-4 py-3">Kreatör</th>
+                  <th className="px-4 py-3">Üretici</th>
                   <th className="px-4 py-3">Kategori</th>
                   <th className="px-4 py-3">Durum</th>
                   <th className="px-4 py-3 text-right">Aboneler</th>
@@ -191,7 +199,7 @@ export default function AdminKreatorlerPage() {
                     <td className="px-4 py-3 text-muted">{formatDate(c.created_at)}</td>
                     <td className="px-4 py-3">
                       <Link
-                        href={`/admin/kreatorler/${c.id}`}
+                        href={`/admin/ureticiler/${c.id}`}
                         className="text-xs text-primary hover:underline"
                       >
                         Detay →

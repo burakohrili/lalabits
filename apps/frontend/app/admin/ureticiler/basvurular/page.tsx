@@ -42,7 +42,7 @@ const EMPTY_TEXT: Record<DecisionFilter, string> = {
   approved: 'Onaylanmış başvuru yok.',
 };
 
-export default function IncelemePage() {
+export default function UreticiBasvurularPage() {
   const { accessToken, logout } = useAdminAuth();
   const [decision, setDecision] = useState<DecisionFilter>('pending');
   const [items, setItems] = useState<ApplicationListItem[]>([]);
@@ -102,14 +102,14 @@ export default function IncelemePage() {
       <div className="mx-auto max-w-6xl px-6 py-10">
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-semibold text-foreground">Yaratıcı Başvuruları</h1>
+            <h1 className="text-xl font-semibold text-foreground">Üretici Başvuruları</h1>
             <p className="mt-0.5 text-sm text-muted">
               {FILTER_LABELS[decision]}
               {total > 0 && ` — ${total} adet`}
             </p>
           </div>
-          <a href="/admin" className="text-sm text-primary hover:underline">
-            ← Genel Bakış
+          <a href="/admin/ureticiler" className="text-sm text-primary hover:underline">
+            ← Üreticiler
           </a>
         </div>
 
