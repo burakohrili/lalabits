@@ -270,7 +270,7 @@ const URETICI_SECTIONS: GuideSection[] = [
         a: 'lalabits.art her işlemden platform ücreti keser. Güncel oran ve yapı Fiyatlandırma sayfasında yayınlanır. Ödeme altyapısı (banka, kart işleme) ek maliyet içerebilir; bu tutar ayrıca belirtilir.',
       },
       {
-        q: 'IBAN'ımı nasıl eklerim?',
+        q: "IBAN'ımı nasıl eklerim?",
         a: 'Onboarding\'in son adımında veya Dashboard → Ödeme Ayarları\'ndan TR ile başlayan 26 haneli IBAN\'ını girebilirsin. IBAN şifreli olarak saklanır; son 4 hanesi dışında gösterilmez.',
       },
       {
@@ -278,7 +278,7 @@ const URETICI_SECTIONS: GuideSection[] = [
         a: 'Platform gelir transferini yapar; vergi ve fatura sorumluluğu üreticiye aittir. Türkiye mevzuatına göre gelirini beyan etmen gerekebilir. Muhasebecine danışmanı öneririz.',
       },
       {
-        q: 'Gelirimi dashboard'dan takip edebilir miyim?',
+        q: "Gelirimi dashboard'dan takip edebilir miyim?",
         a: 'Evet. Dashboard → Gelir bölümünde aylık kazanç özeti, destekçi sayısı ve işlem geçmişini görebilirsin. Daha ayrıntılı analitik araçlar gelecek güncellemelerde eklenecek.',
       },
     ],
