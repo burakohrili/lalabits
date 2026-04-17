@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 
 const API = process.env.NEXT_PUBLIC_API_URL!;
@@ -123,14 +123,15 @@ export default function KesfetClient({ initialData, initialCategory }: Props) {
     }
   }, []);
 
-  const isInitialMount =
-    page === 1 && category === (initialCategory ?? '') && debouncedQuery === '';
+  const hasMounted = useRef(false);
 
   useEffect(() => {
-    if (isInitialMount) return;
+    if (!hasMounted.current) {
+      hasMounted.current = true;
+      return;
+    }
     void fetchUreticiler(page, category, debouncedQuery);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, category, debouncedQuery]);
+  }, [page, category, debouncedQuery, fetchUreticiler]);
 
   function handleCategory(val: string) {
     setCategory(val);
