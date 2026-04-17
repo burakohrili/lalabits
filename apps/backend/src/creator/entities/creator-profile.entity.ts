@@ -30,6 +30,7 @@ export enum CreatorCategory {
   VideoCreator = 'video_creator',
   AiCreator = 'ai_creator',
   GameDeveloper = 'game_developer',
+  Designer3d = 'designer_3d',
   Other = 'other',
 }
 

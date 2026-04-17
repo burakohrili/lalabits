@@ -12,7 +12,7 @@ const API = process.env.NEXT_PUBLIC_API_URL!;
 const VALID_CATEGORIES = [
   'writer', 'illustrator', 'educator', 'podcaster',
   'musician', 'designer', 'developer',
-  'video_creator', 'ai_creator', 'game_developer', 'other',
+  'video_creator', 'ai_creator', 'game_developer', 'designer_3d', 'other',
 ];
 
 interface PageProps {

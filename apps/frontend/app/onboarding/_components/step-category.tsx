@@ -23,6 +23,7 @@ const CATEGORIES = [
   { value: 'video_creator', label: 'Video Üreticisi' },
   { value: 'ai_creator', label: 'Yapay Zekâ Üreticisi' },
   { value: 'game_developer', label: 'Oyun Geliştirici' },
+  { value: 'designer_3d', label: '3D Tasarımcı' },
   { value: 'other', label: 'Diğer' },
 ] as const;
 

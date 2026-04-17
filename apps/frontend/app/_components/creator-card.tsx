@@ -20,6 +20,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   video_creator: 'Video Üreticisi',
   ai_creator: 'Yapay Zekâ Üreticisi',
   game_developer: 'Oyun Geliştirici',
+  designer_3d: '3D Tasarımcı',
   other: 'Diğer',
 };
 

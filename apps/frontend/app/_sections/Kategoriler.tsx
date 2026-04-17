@@ -123,6 +123,18 @@ const categories = [
     tekSeferlik: 'Prompt paketi, AI iş akışı kılavuzu, şablon seti',
   },
   {
+    label: '3D Tasarımcı',
+    slug: 'designer_3d',
+    icon: (
+      <svg className="h-7 w-7" viewBox="0 0 28 28" fill="none">
+        <path d="M14 3L26 9.5v9L14 25 2 18.5v-9L14 3z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+        <path d="M14 3v22M2 9.5l12 6.5 12-6.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    ),
+    uyelik: 'Model arşivi, süreç videoları, kaynak dosyalar',
+    tekSeferlik: '3D model paketi, doku seti, sahne dosyası',
+  },
+  {
     label: 'Diğer',
     slug: '',
     icon: (
