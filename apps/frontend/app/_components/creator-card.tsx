@@ -11,12 +11,15 @@ export interface CreatorCardItem {
 
 const CATEGORY_LABELS: Record<string, string> = {
   writer: 'Yazar',
-  illustrator: 'Çizer',
+  illustrator: 'Çizer / İllüstratör',
   educator: 'Eğitimci',
   podcaster: 'Podcastçı',
   musician: 'Müzisyen',
   designer: 'Tasarımcı',
   developer: 'Geliştirici',
+  video_creator: 'Video Üreticisi',
+  ai_creator: 'Yapay Zekâ Üreticisi',
+  game_developer: 'Oyun Geliştirici',
   other: 'Diğer',
 };
 

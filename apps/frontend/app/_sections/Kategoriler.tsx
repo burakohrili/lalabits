@@ -86,8 +86,8 @@ const categories = [
     tekSeferlik: 'Şablon, plugin, araç seti',
   },
   {
-    label: 'Oyun Gel.',
-    slug: 'gamedev',
+    label: 'Oyun Geliştirici',
+    slug: 'game_developer',
     icon: (
       <svg className="h-7 w-7" viewBox="0 0 28 28" fill="none">
         <rect x="3" y="9" width="22" height="14" rx="4" stroke="currentColor" strokeWidth="1.5" />
@@ -97,6 +97,30 @@ const categories = [
     ),
     uyelik: 'Geliştirme günlüğü, beta erişim, varlık paketi',
     tekSeferlik: 'Oyun modu, varlık seti, kaynak kod parçası',
+  },
+  {
+    label: 'Video Üreticisi',
+    slug: 'video_creator',
+    icon: (
+      <svg className="h-7 w-7" viewBox="0 0 28 28" fill="none">
+        <rect x="2" y="7" width="18" height="14" rx="3" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M20 11l6-3v12l-6-3V11z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+      </svg>
+    ),
+    uyelik: 'Özel videolar, arşiv, seri içerikler',
+    tekSeferlik: 'Eğitim videosu, masterclass, ders paketi',
+  },
+  {
+    label: 'Yapay Zekâ Üreticisi',
+    slug: 'ai_creator',
+    icon: (
+      <svg className="h-7 w-7" viewBox="0 0 28 28" fill="none">
+        <circle cx="14" cy="14" r="5" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M14 4v3M14 21v3M4 14h3M21 14h3M7.05 7.05l2.12 2.12M18.83 18.83l2.12 2.12M7.05 20.95l2.12-2.12M18.83 9.17l2.12-2.12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      </svg>
+    ),
+    uyelik: 'Prompt arşivi, haftalık AI rehberleri, araç incelemeleri',
+    tekSeferlik: 'Prompt paketi, AI iş akışı kılavuzu, şablon seti',
   },
   {
     label: 'Diğer',

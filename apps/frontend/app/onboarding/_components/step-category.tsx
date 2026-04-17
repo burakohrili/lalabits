@@ -14,12 +14,15 @@ interface Props {
 
 const CATEGORIES = [
   { value: 'writer', label: 'Yazar' },
-  { value: 'illustrator', label: 'İllüstratör' },
+  { value: 'illustrator', label: 'Çizer / İllüstratör' },
   { value: 'educator', label: 'Eğitimci' },
   { value: 'podcaster', label: 'Podcaster' },
   { value: 'musician', label: 'Müzisyen' },
   { value: 'designer', label: 'Tasarımcı' },
   { value: 'developer', label: 'Geliştirici' },
+  { value: 'video_creator', label: 'Video Üreticisi' },
+  { value: 'ai_creator', label: 'Yapay Zekâ Üreticisi' },
+  { value: 'game_developer', label: 'Oyun Geliştirici' },
   { value: 'other', label: 'Diğer' },
 ] as const;
 
