@@ -1,56 +1,11 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState } from 'react';
 import { useAuth } from '@/contexts/auth-context';
 import { useNotificationBadge } from '@/contexts/notification-badge-context';
 import { useChatBadge } from '@/contexts/chat-badge-context';
-
-/* ── Logo wordmark ──────────────────────────────────────────── */
-function Logo({ white = false }: { white?: boolean }) {
-  const textColor = white ? '#FFFFFF' : '#212121';
-  return (
-    <svg
-      width="142"
-      height="24"
-      viewBox="0 0 142 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-label="lalabits.art"
-    >
-      <text
-        x="0"
-        y="19"
-        fontFamily="Inter, system-ui, sans-serif"
-        fontSize="20"
-        fontWeight="400"
-        fill={textColor}
-      >
-        lala
-      </text>
-      <text
-        x="47"
-        y="19"
-        fontFamily="Inter, system-ui, sans-serif"
-        fontSize="20"
-        fontWeight="700"
-        fill="#FF5722"
-      >
-        bits
-      </text>
-      <text
-        x="92"
-        y="19"
-        fontFamily="Inter, system-ui, sans-serif"
-        fontSize="20"
-        fontWeight="400"
-        fill={textColor}
-      >
-        .art
-      </text>
-    </svg>
-  );
-}
 
 /* ── Dropdown nav ───────────────────────────────────────────── */
 function NavDropdown({
@@ -202,8 +157,16 @@ export default function SiteHeader() {
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-border">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
         {/* Logo */}
-        <Link href="/" className="shrink-0">
-          <Logo />
+        <Link href="/" className="shrink-0" aria-label="lalabits.art — Ana sayfa">
+          <Image
+            src="/brand/logo-dark-h-trim.png"
+            alt="lalabits.art"
+            width={145}
+            height={36}
+            priority
+            className="h-8 w-auto"
+            style={{ maxHeight: '32px' }}
+          />
         </Link>
 
         {/* Desktop nav */}

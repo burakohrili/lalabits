@@ -1,24 +1,8 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState } from 'react';
-
-function FooterLogo() {
-  return (
-    <svg
-      width="142"
-      height="24"
-      viewBox="0 0 142 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-label="lalabits.art"
-    >
-      <text x="0" y="19" fontFamily="Inter, system-ui, sans-serif" fontSize="20" fontWeight="400" fill="#FFFFFF">lala</text>
-      <text x="47" y="19" fontFamily="Inter, system-ui, sans-serif" fontSize="20" fontWeight="700" fill="#FF5722">bits</text>
-      <text x="92" y="19" fontFamily="Inter, system-ui, sans-serif" fontSize="20" fontWeight="400" fill="#FFFFFF">.art</text>
-    </svg>
-  );
-}
 
 function TwitterIcon() {
   return (
@@ -157,7 +141,14 @@ export default function Footer() {
           {/* Marka bloğu — 2 sütun genişliğinde */}
           <div className="lg:col-span-2 flex flex-col gap-6">
             <div>
-              <FooterLogo />
+              <Image
+                src="/brand/logo-white-h-trim.png"
+                alt="lalabits.art"
+                width={130}
+                height={32}
+                className="h-7 w-auto"
+                style={{ maxHeight: '28px' }}
+              />
               <p className="mt-4 text-sm text-white/50 leading-relaxed max-w-[260px]">
                 Türkiye&apos;nin içerik üreticileri için dijital gelir platformu.
                 Yaz, üret, kazan.

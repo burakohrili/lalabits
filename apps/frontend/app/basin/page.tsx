@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 
 export const metadata: Metadata = {
   title: 'Basın Kiti | lalabits.art',
@@ -72,50 +73,88 @@ export default function BasinPage() {
           <h2 className="text-[24px] font-bold text-text-primary mb-4">Logo ve Görsel Dosyalar</h2>
 
           <div className="rounded-[20px] bg-white border border-border p-8 mb-8">
-            <p className="text-sm text-text-secondary leading-[1.8] mb-6">
+            <p className="text-sm text-text-secondary leading-[1.8] mb-8">
               lalabits logosu, Türk mozaik sanat geleneğinden ilham alır.
               Dikdörtgen form içindeki hat motifi, &apos;lala&apos; kültürel mirasını;
               sağ üst köşeden dağılan turuncu pikseller &apos;bits&apos; dijital çıktısını temsil eder.
               İkisi birleşince hem geçmişe hem geleceğe bakan bir marka kimliği ortaya çıkar.
             </p>
 
-            {/* Logo önizleme */}
+            {/* Yatay varyantlar */}
+            <p className="text-xs font-semibold uppercase tracking-widest text-text-muted mb-3">Yatay — Wordmark</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-              <div className="rounded-[16px] bg-white border border-border p-8 flex items-center justify-center">
-                <span className="text-[28px] font-sans">
-                  <span style={{ fontWeight: 400, color: '#212121' }}>lala</span>
-                  <span style={{ fontWeight: 700, color: '#FF5722' }}>bits</span>
-                  <span style={{ fontWeight: 400, color: '#212121' }}>.art</span>
-                </span>
+              <div className="rounded-[16px] bg-white border border-border p-8 flex items-center justify-center min-h-[120px]">
+                <Image
+                  src="/brand/logo-dark-h-trim.png"
+                  alt="lalabits.art — koyu yatay"
+                  width={280}
+                  height={70}
+                  className="w-full max-w-[280px] h-auto"
+                />
               </div>
-              <div className="rounded-[16px] bg-[#1a1a1a] p-8 flex items-center justify-center">
-                <span className="text-[28px] font-sans">
-                  <span style={{ fontWeight: 400, color: '#FFFFFF' }}>lala</span>
-                  <span style={{ fontWeight: 700, color: '#FF5722' }}>bits</span>
-                  <span style={{ fontWeight: 400, color: '#FFFFFF' }}>.art</span>
-                </span>
+              <div className="rounded-[16px] bg-[#1a1a1a] p-8 flex items-center justify-center min-h-[120px]">
+                <Image
+                  src="/brand/logo-white-h-trim.png"
+                  alt="lalabits.art — beyaz yatay"
+                  width={280}
+                  height={70}
+                  className="w-full max-w-[280px] h-auto"
+                />
+              </div>
+            </div>
+
+            {/* Dikey / stacked varyantlar */}
+            <p className="text-xs font-semibold uppercase tracking-widest text-text-muted mb-3">Dikey — Stacked</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+              <div className="rounded-[16px] bg-white border border-border p-8 flex items-center justify-center min-h-[200px]">
+                <Image
+                  src="/brand/logo-dark-stacked-trim.png"
+                  alt="lalabits.art — koyu dikey"
+                  width={200}
+                  height={164}
+                  className="h-auto max-h-[164px] w-auto"
+                />
+              </div>
+              <div className="rounded-[16px] bg-[#1a1a1a] p-8 flex items-center justify-center min-h-[200px]">
+                <Image
+                  src="/brand/logo-white-stacked-trim.png"
+                  alt="lalabits.art — beyaz dikey"
+                  width={200}
+                  height={164}
+                  className="h-auto max-h-[164px] w-auto"
+                />
+              </div>
+            </div>
+
+            {/* Kullanım kılavuzu */}
+            <div className="rounded-[12px] bg-[#f4fafa] border border-teal/10 px-5 py-4 mb-6">
+              <p className="text-xs font-semibold text-text-primary mb-2">Kullanım kılavuzu</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-1.5 text-xs text-text-secondary">
+                <span>· Açık zemin → koyu logo (siyah/gri arka plan dışında)</span>
+                <span>· Koyu zemin → beyaz logo</span>
+                <span>· Header / yatay alanlar → yatay wordmark</span>
+                <span>· Baskı / tanıtım kartları → dikey stacked</span>
               </div>
             </div>
 
             {/* İndirme butonları */}
             <div className="flex flex-wrap gap-3">
               {[
-                'PNG — Şeffaf arka plan (2000px)',
-                'SVG — Vektör dosyası',
-                'Wordmark yatay — Koyu zemin',
-                'Wordmark yatay — Açık zemin',
-                'Favicon / App ikonu — 512×512px',
+                { label: 'Yatay koyu — PNG', href: '/brand/logo-dark-h-trim.png' },
+                { label: 'Yatay beyaz — PNG', href: '/brand/logo-white-h-trim.png' },
+                { label: 'Dikey koyu — PNG', href: '/brand/logo-dark-stacked-trim.png' },
+                { label: 'Dikey beyaz — PNG', href: '/brand/logo-white-stacked-trim.png' },
               ].map((dosya) => (
-                <div
-                  key={dosya}
-                  className="rounded-lg border border-border bg-background px-4 py-2 text-xs text-text-muted cursor-not-allowed select-none"
-                  title="Yakında"
+                <a
+                  key={dosya.href}
+                  href={dosya.href}
+                  download
+                  className="rounded-lg border border-border bg-background px-4 py-2 text-xs text-text-secondary hover:text-text-primary hover:border-teal/40 transition-colors"
                 >
-                  ↓ {dosya}
-                </div>
+                  ↓ {dosya.label}
+                </a>
               ))}
             </div>
-            <p className="mt-4 text-xs text-text-muted">Logo dosyaları hazırlanıyor. Talep için iletisim@lalabits.art</p>
           </div>
 
           {/* Renk Paleti */}
