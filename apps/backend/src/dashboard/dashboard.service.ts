@@ -96,11 +96,11 @@ export class DashboardService {
     ).length;
 
     return {
-      // Existing fields — preserved for backward compatibility
       status: p.status,
       display_name: p.display_name,
+      username: p.username,
+      category: p.category,
       onboarding_last_step: p.onboarding_last_step,
-      // New fields
       plan_count: plans.length,
       published_plan_count: publishedCount,
       active_member_count: activeMembers,
@@ -980,6 +980,15 @@ export class DashboardService {
     if (dto.display_name !== undefined) updates.display_name = dto.display_name.trim();
     if (dto.bio !== undefined) updates.bio = dto.bio;
 
+    if (dto.username !== undefined) {
+      const normalized = dto.username.toLowerCase().trim();
+      const conflict = await this.creatorProfileRepository.findOne({ where: { username: normalized } });
+      if (conflict && conflict.id !== profile.id) throw new ConflictException('USERNAME_TAKEN');
+      updates.username = normalized;
+    }
+
+    if (dto.category !== undefined) updates.category = dto.category;
+
     let avatarUploadUrl: string | undefined;
     if (dto.avatar_filename && dto.avatar_content_type) {
       const ext = dto.avatar_filename.split('.').pop() ?? 'bin';
@@ -1010,6 +1019,8 @@ export class DashboardService {
 
     return {
       display_name: updates.display_name ?? profile.display_name,
+      username: updates.username ?? profile.username,
+      category: updates.category ?? profile.category,
       bio: updates.bio !== undefined ? updates.bio : profile.bio,
       avatar_url: avatarUrl,
       cover_image_url: coverUrl,

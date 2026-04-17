@@ -1,4 +1,5 @@
-import { IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
+import { IsOptional, IsString, MaxLength, MinLength, Matches, IsEnum } from 'class-validator';
+import { CreatorCategory } from '../../creator/entities/creator-profile.entity';
 
 export class UpdateDashboardProfileDto {
   @IsOptional()
@@ -9,8 +10,17 @@ export class UpdateDashboardProfileDto {
 
   @IsOptional()
   @IsString()
-  @MaxLength(1000)
+  @Matches(/^[a-z0-9][a-z0-9_-]{2,29}$/)
+  username?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(2000)
   bio?: string | null;
+
+  @IsOptional()
+  @IsEnum(CreatorCategory)
+  category?: CreatorCategory;
 
   @IsOptional()
   @IsString()

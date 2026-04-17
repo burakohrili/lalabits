@@ -15,11 +15,12 @@ const NAV_ITEMS = [
   { label: 'Mağaza', href: '/dashboard/magaza' },
   { label: 'Koleksiyonlar', href: '/dashboard/koleksiyonlar' },
   { label: 'İstatistikler', href: '/dashboard/istatistikler' },
+  { label: 'Profil Düzenle', href: '/dashboard/profil-duzenle' },
   { label: 'Ayarlar', href: '/dashboard/ayarlar' },
 ] as const;
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const { status: authStatus, user } = useAuth();
+  const { status: authStatus, user, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -86,7 +87,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <p className="text-xs font-medium uppercase tracking-wide text-muted">lalabits.art</p>
           <p className="mt-1 truncate text-sm font-semibold text-foreground">{displayName}</p>
         </div>
-        <nav className="flex-1 px-3 pb-6">
+        <nav className="flex-1 px-3 pb-4">
           <ul className="flex flex-col gap-0.5">
             {NAV_ITEMS.map((item) => {
               const isActive =
@@ -111,6 +112,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             })}
           </ul>
         </nav>
+        <div className="px-3 pb-5 border-t border-border pt-4">
+          <button
+            type="button"
+            onClick={() => void logout()}
+            className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted hover:bg-background hover:text-red-500 transition-colors"
+          >
+            <svg className="h-4 w-4" viewBox="0 0 16 16" fill="none">
+              <path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3M11 11l3-3-3-3M14 8H6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            Çıkış Yap
+          </button>
+        </div>
       </aside>
 
       {/* Main area */}
