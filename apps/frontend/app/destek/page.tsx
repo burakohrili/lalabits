@@ -129,6 +129,14 @@ const SSS_DESTEKCI = [
     cevap: 'Giriş yaptıktan sonra üyesi olduğunuz üreticinin profiline gidin. Kilitli içerikler otomatik olarak açılacaktır. Ayrıca Kütüphane bölümünden tüm satın alımlarınıza ulaşabilirsiniz.',
   },
   {
+    soru: 'Satın aldığım dosyalara nereden ulaşabilirim?',
+    cevap: 'Giriş yaptıktan sonra /kutuphane adresine gidin (veya üst menüden "Kütüphane"). "Ürünler" sekmesinde satın aldığınız tüm dijital dosyalar listelenir; "İndir" butonuyla dosyanızı bilgisayarınıza indirebilirsiniz. Aktif üyeliğinizle erişilen içerikler ise "Üyelikler" sekmesinde görünür.',
+  },
+  {
+    soru: 'Üyeliğimi iptal edersem içeriklere erişimim ne olur?',
+    cevap: 'Aboneliği iptal ettiğinizde mevcut ödeme dönemi sonuna kadar tüm kilitli içeriklere erişiminiz devam eder. Dönem bittikten sonra o üreticinin üyeliğe özel içerikleri kapanır. Satın aldığınız dijital ürünler (mağaza ürünleri, koleksiyonlar) abonelikten bağımsızdır ve Kütüphane\'nizde kalır.',
+  },
+  {
     soru: 'Üretici içerik yayınlamayı bırakırsa ne olur?',
     cevap: 'Üreticinin hesabı askıya alınır veya silinirse aboneliğiniz otomatik iptal edilir ve o döneme ait ücret iade edilir.',
   },

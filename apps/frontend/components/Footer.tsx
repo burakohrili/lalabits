@@ -225,6 +225,8 @@ export default function Footer() {
             <Link href="/gizlilik" className="text-xs text-white/30 hover:text-white/60 transition-colors">Gizlilik</Link>
             <Link href="/kvkk" className="text-xs text-white/30 hover:text-white/60 transition-colors">KVKK</Link>
             <Link href="/cerez-politikasi" className="text-xs text-white/30 hover:text-white/60 transition-colors">Çerez</Link>
+            <Link href="/mesafeli-satis-sozlesmesi" className="text-xs text-white/30 hover:text-white/60 transition-colors">Mesafeli Satış</Link>
+            <Link href="/iade-politikasi" className="text-xs text-white/30 hover:text-white/60 transition-colors">İade Politikası</Link>
             <span className="text-xs text-white/20 border border-white/10 rounded-full px-2 py-0.5 ml-1">🇹🇷 Türkçe · ₺</span>
           </nav>
         </div>

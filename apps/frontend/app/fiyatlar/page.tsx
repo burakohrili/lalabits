@@ -32,6 +32,14 @@ const faq = [
     q: 'İşlem ücreti nedir?',
     a: 'İşlem ücreti ödeme altyapısının (ödeme sağlayıcısının) belirlediği bir oran olup platform komisyonundan bağımsızdır. Mevcut oran net gelir tablosunuzda ayrıca gösterilir.',
   },
+  {
+    q: 'Komisyon oranı ileride değişebilir mi?',
+    a: 'Tüm üreticiler için geçerli oran şu an %8\'dir. Komisyon yapısında yapılacak herhangi bir değişiklik, yürürlük tarihinden en az 30 gün önce kayıtlı e-posta adresinize bildirilir. Kullanım Şartları\'nda farklı oranlardan söz ediliyorsa bu, henüz aktif olmayan gelecek planlama notlarıdır; tek geçerli oran %8\'dir.',
+  },
+  {
+    q: 'Kazancım üzerinden vergi ödemem gerekiyor mu?',
+    a: 'Platform, üretici adına herhangi bir vergi kesintisi yapmaz veya beyanname vermez. Türkiye\'deki gelir vergisi ve diğer yasal yükümlülükler tamamen üreticinin sorumluluğundadır. Kendi durumunuza uygun vergi yükümlülükleri için bir mali müşavire danışmanızı öneririz.',
+  },
 ];
 
 export default function FiyatlarPage() {
@@ -126,6 +134,53 @@ export default function FiyatlarPage() {
                 </div>
               ))}
             </div>
+          </div>
+
+          {/* Fan ödeme bilgisi */}
+          <div className="mb-16 rounded-[20px] bg-white border border-border p-8">
+            <h2 className="text-[24px] font-bold text-text-primary mb-2">Destekçiler İçin Ödeme</h2>
+            <p className="text-text-secondary mb-6 leading-[1.7]">
+              Bir üreticiyi desteklemek veya dijital ürün satın almak istiyorsanız, tüm ödemeler
+              güvenli altyapımız üzerinden gerçekleşir.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {[
+                {
+                  baslik: 'Güvenli Ödeme',
+                  aciklama: 'Tüm işlemler SSL ile şifrelenir. Kart bilgileriniz lalabits.art sunucularında saklanmaz.',
+                  renk: 'bg-teal-light text-teal',
+                  simge: '🔒',
+                },
+                {
+                  baslik: 'Türk Lirası',
+                  aciklama: 'Tüm ödemeler ₺ (TRY) üzerinden alınır. Yabancı para birimi dönüşümü gerekmez.',
+                  renk: 'bg-orange-light text-orange-dark',
+                  simge: '₺',
+                },
+                {
+                  baslik: 'İade Garantisi',
+                  aciklama: 'Teknik sorun yaşarsanız 7 gün içinde iade talep edebilirsiniz.',
+                  renk: 'bg-teal-light text-teal',
+                  simge: '↩',
+                },
+              ].map((m) => (
+                <div key={m.baslik} className="rounded-[16px] border border-border p-5">
+                  <div className={`inline-flex h-10 w-10 items-center justify-center rounded-xl ${m.renk} text-lg mb-3`}>
+                    {m.simge}
+                  </div>
+                  <p className="font-semibold text-text-primary mb-1">{m.baslik}</p>
+                  <p className="text-sm text-text-secondary leading-[1.6]">{m.aciklama}</p>
+                </div>
+              ))}
+            </div>
+            <p className="mt-5 text-xs text-text-muted">
+              Kabul edilen kartlar: Visa, Mastercard (Türk kredi / banka kartları). Ödeme sonrası satın alınanlar{' '}
+              <Link href="/kutuphane" className="text-teal hover:underline">kütüphanenize</Link>{' '}
+              anında eklenir.
+              İade politikası için{' '}
+              <Link href="/iade-politikasi" className="text-teal hover:underline">İade Politikası</Link>{' '}
+              sayfasını inceleyin.
+            </p>
           </div>
 
           {/* Hesap makinesi */}
