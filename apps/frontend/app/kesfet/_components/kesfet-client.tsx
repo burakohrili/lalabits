@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
+import { useAuth } from '@/contexts/auth-context';
 
 const API = process.env.NEXT_PUBLIC_API_URL!;
 
@@ -50,9 +51,7 @@ function UreticiKart({ item }: { item: UreticiItem }) {
 
   return (
     <div className="group flex flex-col bg-white border border-border rounded-[20px] overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.08)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.12)] hover:scale-[1.01] transition-all duration-300">
-      {/* Cover */}
       <div className="h-[140px] bg-gradient-to-br from-teal-light to-teal/20" />
-      {/* Avatar */}
       <div className="px-5 -mt-7">
         {item.avatar_url ? (
           <img
@@ -66,7 +65,6 @@ function UreticiKart({ item }: { item: UreticiItem }) {
           </div>
         )}
       </div>
-      {/* İçerik */}
       <div className="flex flex-col flex-1 px-5 pt-2 pb-5">
         <div className="flex items-start gap-2 justify-between">
           <p className="font-semibold text-text-primary text-base leading-tight truncate">{item.display_name}</p>
@@ -92,6 +90,7 @@ function UreticiKart({ item }: { item: UreticiItem }) {
 }
 
 export default function KesfetClient({ initialData, initialCategory }: Props) {
+  const { user, status: authStatus } = useAuth();
   const [data, setData] = useState<UreticilerResponse>(initialData);
   const [page, setPage] = useState(1);
   const [category, setCategory] = useState(initialCategory ?? '');
@@ -99,6 +98,9 @@ export default function KesfetClient({ initialData, initialCategory }: Props) {
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+
+  const isLoggedInFan = authStatus !== 'loading' && !!user && !user.creator_profile;
+  const featuredCreators = initialData.items.slice(0, 6);
 
   useEffect(() => {
     const t = setTimeout(() => setDebouncedQuery(query), 300);
@@ -144,6 +146,26 @@ export default function KesfetClient({ initialData, initialCategory }: Props) {
 
   return (
     <div>
+      {/* Öne Çıkanlar — sadece giriş yapmış fan için */}
+      {isLoggedInFan && featuredCreators.length > 0 && (
+        <section className="mb-10">
+          <div className="mb-5">
+            <h2 className="text-xl font-bold text-text-primary">Öne Çıkanlar</h2>
+            <p className="text-sm text-text-muted mt-0.5">En yeni içerik üreticileri</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {featuredCreators.map((c) => (
+              <UreticiKart key={c.username ?? c.display_name} item={c} />
+            ))}
+          </div>
+          <div className="mt-10 border-t border-border" />
+          <div className="mt-10 mb-6">
+            <h2 className="text-xl font-bold text-text-primary">Tüm Üreticiler</h2>
+            <p className="text-sm text-text-muted mt-0.5">Kategori ve arama ile filtrele</p>
+          </div>
+        </section>
+      )}
+
       {/* Arama + filtre */}
       <div className="mb-8 flex flex-col gap-4">
         <input
