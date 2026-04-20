@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useAuth } from '@/contexts/auth-context';
 
 export default function HesabimPage() {
-  const { status: authStatus } = useAuth();
+  const { status: authStatus, user } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -38,6 +38,11 @@ export default function HesabimPage() {
       href: '/hesabim/faturalarim',
       title: 'Faturalarım',
       description: 'Geçmiş ödemelerini ve aktif aboneliklerini görüntüle.',
+    },
+    {
+      href: '/hesabim/bildirimler',
+      title: 'Bildirim Tercihleri',
+      description: 'Hangi bildirimler almak istediğini özelleştir.',
     },
     {
       href: '/hesabim/hesabimi-sil',
@@ -76,6 +81,19 @@ export default function HesabimPage() {
           </Link>
         ))}
       </div>
+
+      {!user?.creator_profile && (
+        <div className="mt-8 rounded-2xl border border-primary/20 bg-primary/5 p-5">
+          <p className="text-sm font-semibold text-foreground mb-1">İçerik üreticisi olmak ister misin?</p>
+          <p className="text-xs text-muted mb-4">Üyelikler oluştur, premium içerik sat ve topluluk kur.</p>
+          <Link
+            href="/auth/kayit/yaratici"
+            className="inline-block rounded-xl bg-primary px-5 py-2 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
+          >
+            Üretici Başvurusu Yap →
+          </Link>
+        </div>
+      )}
     </main>
   );
 }

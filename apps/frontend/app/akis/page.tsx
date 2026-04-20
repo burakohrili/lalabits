@@ -35,8 +35,16 @@ function relativeDate(dateStr: string | null): string {
   return new Date(dateStr).toLocaleDateString('tr-TR');
 }
 
+const CATEGORIES = [
+  { label: 'Yazarlar', q: 'yazar' },
+  { label: 'Video', q: 'video' },
+  { label: 'Podcast', q: 'podcast' },
+  { label: 'Tasarım', q: 'tasarim' },
+  { label: 'Müzik', q: 'muzik' },
+];
+
 export default function AkisPage() {
-  const { accessToken, status: authStatus } = useAuth();
+  const { accessToken, status: authStatus, user } = useAuth();
 
   const [posts, setPosts] = useState<FeedPost[]>([]);
   const [total, setTotal] = useState(0);
@@ -87,7 +95,9 @@ export default function AkisPage() {
   return (
     <main className="mx-auto max-w-2xl px-4 py-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-foreground">Akış</h1>
+        <h1 className="text-2xl font-bold text-foreground">
+          Merhaba{user?.display_name ? `, ${user.display_name}` : ''} 👋
+        </h1>
         <p className="mt-1 text-sm text-muted">Abone olduğun üreticilerin son içerikleri.</p>
       </div>
 
@@ -98,15 +108,32 @@ export default function AkisPage() {
       )}
 
       {posts.length === 0 && !error && (
-        <div className="rounded-2xl border border-border bg-surface px-6 py-16 text-center">
-          <p className="text-sm font-medium text-foreground mb-1">Henüz içerik yok</p>
-          <p className="text-xs text-muted mb-6">Üreticilere abone olarak içeriklerini burada görebilirsin.</p>
+        <div className="rounded-2xl border border-border bg-surface px-6 py-12 text-center">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10">
+            <svg className="h-7 w-7 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+              <polyline points="9 22 9 12 15 12 15 22" />
+            </svg>
+          </div>
+          <p className="text-base font-semibold text-foreground mb-1">Henüz üye olduğun üretici yok</p>
+          <p className="text-sm text-muted mb-6">Üreticileri keşfet ve abone olarak içeriklerini burada takip et.</p>
           <Link
             href="/kesfet"
-            className="inline-block rounded-xl bg-primary px-5 py-2.5 text-sm font-medium text-white hover:opacity-90 transition-opacity"
+            className="inline-block rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-white hover:opacity-90 transition-opacity mb-6"
           >
-            Üreticileri Keşfet
+            Keşfet →
           </Link>
+          <div className="flex flex-wrap justify-center gap-2">
+            {CATEGORIES.map((c) => (
+              <Link
+                key={c.q}
+                href={`/kesfet?kategori=${c.q}`}
+                className="rounded-full border border-border px-3 py-1.5 text-xs font-medium text-text-secondary hover:border-primary hover:text-primary transition-colors"
+              >
+                {c.label}
+              </Link>
+            ))}
+          </div>
         </div>
       )}
 
@@ -145,9 +172,18 @@ export default function AkisPage() {
 
             {/* Teaser or locked indicator */}
             {post.locked ? (
-              <p className="text-xs text-muted italic">
-                {post.teaser ?? 'Bu içerik üyelere özeldir.'}
-              </p>
+              <div className="mt-2 flex items-center justify-between gap-3 rounded-lg bg-gray-50 border border-border px-3 py-2">
+                <p className="text-xs text-muted italic line-clamp-1">
+                  {post.teaser ?? 'Bu içerik üyelere özeldir.'}
+                </p>
+                <Link
+                  href={`/u/${post.creator_username}`}
+                  onClick={(e) => e.stopPropagation()}
+                  className="shrink-0 rounded-lg bg-primary px-3 py-1 text-[11px] font-semibold text-white hover:opacity-90 transition-opacity"
+                >
+                  Üye Ol
+                </Link>
+              </div>
             ) : (
               post.teaser && (
                 <p className="text-xs text-muted leading-relaxed line-clamp-2">{post.teaser}</p>
