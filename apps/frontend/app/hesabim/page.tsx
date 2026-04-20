@@ -1,27 +1,10 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/auth-context';
 
 export default function HesabimPage() {
-  const { status: authStatus, user } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (authStatus === 'unauthenticated') {
-      router.replace('/auth/giris?next=/hesabim');
-    }
-  }, [authStatus, router]);
-
-  if (authStatus === 'loading') {
-    return (
-      <main className="mx-auto max-w-lg px-4 py-10">
-        <div className="h-8 w-48 rounded-lg bg-gray-100 animate-pulse" />
-      </main>
-    );
-  }
+  const { user } = useAuth();
 
   const items = [
     {

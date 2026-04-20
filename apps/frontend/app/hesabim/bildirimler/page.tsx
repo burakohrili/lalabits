@@ -39,7 +39,7 @@ export default function BildirimTercihlerPage() {
   }, [accessToken]);
 
   async function toggle(key: keyof NotificationPrefs) {
-    if (!prefs || !accessToken) return;
+    if (!prefs || !accessToken || saving !== null) return;
     const updated = { ...prefs, [key]: !prefs[key] };
     setPrefs(updated);
     setSaving(key);

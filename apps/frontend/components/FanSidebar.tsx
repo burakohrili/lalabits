@@ -34,7 +34,7 @@ function NavItem({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const isActive = pathname === href || (href !== '/akis' && pathname.startsWith(href));
+  const isActive = pathname === href || pathname.startsWith(href + '/');
 
   return (
     <Link
@@ -77,7 +77,7 @@ export default function FanSidebar() {
       })
       .catch(() => setSubscriptions([]))
       .finally(() => setLoadingSubs(false));
-  }, [accessToken]);
+  }, [user?.id]);
 
   const isCreator = !!user?.creator_profile;
 
@@ -85,7 +85,6 @@ export default function FanSidebar() {
     <aside className="hidden md:flex w-60 shrink-0 flex-col border-r border-border bg-white">
       <div className="flex flex-col flex-1 overflow-y-auto px-3 py-4 gap-1">
 
-        {/* Logo */}
         <div className="px-3 pb-3 mb-1">
           <Link href="/" aria-label="Ana sayfa">
             <Image
@@ -99,7 +98,6 @@ export default function FanSidebar() {
           </Link>
         </div>
 
-        {/* Ana navigasyon */}
         <NavItem href="/akis" label="Akış">
           <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6">
             <path d="M3 9.5L10 3l7 6.5V17a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z" strokeLinejoin="round" />
@@ -140,9 +138,8 @@ export default function FanSidebar() {
           </svg>
         </NavItem>
 
-        {/* Üyeliklerim */}
         <div className="mt-4 px-3">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-text-muted mb-2">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted mb-2">
             Üyeliklerim
           </p>
         </div>
@@ -160,7 +157,7 @@ export default function FanSidebar() {
 
         {!loadingSubs && subscriptions.length === 0 && (
           <div className="px-3">
-            <p className="text-xs text-text-muted mb-2">Henüz üye olmadığın üretici yok.</p>
+            <p className="text-xs text-muted mb-2">Henüz üye olmadığın üretici yok.</p>
             <Link
               href="/kesfet"
               className="text-xs font-medium text-teal hover:underline"
@@ -194,7 +191,6 @@ export default function FanSidebar() {
         ))}
       </div>
 
-      {/* Alt CTA */}
       {!isCreator && (
         <div className="border-t border-border px-3 py-4">
           <Link

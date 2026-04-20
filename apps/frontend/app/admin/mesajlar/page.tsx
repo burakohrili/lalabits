@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useAdminAuth } from '@/lib/admin-auth';
+import { relativeDate } from '@/lib/date-utils';
 
 const API = process.env.NEXT_PUBLIC_API_URL!;
 const PAGE_SIZE = 20;
@@ -13,17 +14,6 @@ interface Conversation {
   fan_email: string | null;
   last_message_at: string | null;
   created_at: string;
-}
-
-function relativeDate(dateStr: string | null): string {
-  if (!dateStr) return '—';
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const hours = Math.floor(diff / 3600000);
-  const days = Math.floor(diff / 86400000);
-  if (hours < 1) return 'az önce';
-  if (hours < 24) return `${hours} saat önce`;
-  if (days < 7) return `${days} gün önce`;
-  return new Date(dateStr).toLocaleDateString('tr-TR');
 }
 
 export default function AdminMesajlarPage() {

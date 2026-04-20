@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/auth-context';
+import { relativeDate } from '@/lib/date-utils';
 
 const API = process.env.NEXT_PUBLIC_API_URL!;
 
@@ -23,17 +24,6 @@ const ACCESS_BADGE: Record<string, string> = {
   member_only: 'Üyelere Özel',
   tier_gated: 'Katmana Özel',
 };
-
-function relativeDate(dateStr: string | null): string {
-  if (!dateStr) return '';
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const days = Math.floor(diff / 86400000);
-  const hours = Math.floor(diff / 3600000);
-  if (hours < 1) return 'az önce';
-  if (hours < 24) return `${hours} saat önce`;
-  if (days < 7) return `${days} gün önce`;
-  return new Date(dateStr).toLocaleDateString('tr-TR');
-}
 
 const CATEGORIES = [
   { label: 'Yazarlar', q: 'yazar' },
@@ -96,7 +86,7 @@ export default function AkisPage() {
     <main className="mx-auto max-w-2xl px-4 py-8">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-foreground">
-          Merhaba{user?.display_name ? `, ${user.display_name}` : ''} 👋
+          Merhaba{user?.display_name ? `, ${user.display_name}` : ''}
         </h1>
         <p className="mt-1 text-sm text-muted">Abone olduğun üreticilerin son içerikleri.</p>
       </div>
@@ -144,7 +134,6 @@ export default function AkisPage() {
             href={`/post/${post.id}`}
             className="rounded-2xl border border-border bg-surface p-5 hover:border-primary/40 transition-colors"
           >
-            {/* Creator */}
             <div className="flex items-center gap-2.5 mb-3">
               <div className="h-7 w-7 rounded-full bg-background border border-border overflow-hidden shrink-0">
                 {post.creator_avatar_url ? (
@@ -167,10 +156,8 @@ export default function AkisPage() {
               </span>
             </div>
 
-            {/* Title */}
             <p className="text-sm font-semibold text-foreground leading-snug mb-1.5">{post.title}</p>
 
-            {/* Teaser or locked indicator */}
             {post.locked ? (
               <div className="mt-2 flex items-center justify-between gap-3 rounded-lg bg-gray-50 border border-border px-3 py-2">
                 <p className="text-xs text-muted italic line-clamp-1">
@@ -193,7 +180,6 @@ export default function AkisPage() {
         ))}
       </div>
 
-      {/* Pagination */}
       {totalPages > 1 && (
         <div className="mt-8 flex items-center justify-center gap-3">
           <button

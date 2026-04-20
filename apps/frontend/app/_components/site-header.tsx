@@ -7,8 +7,7 @@ import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/auth-context';
 import { useNotificationBadge } from '@/contexts/notification-badge-context';
 import { useChatBadge } from '@/contexts/chat-badge-context';
-
-const FAN_PANEL_PREFIXES = ['/akis', '/kutuphane', '/bildirimler', '/mesajlar', '/hesabim'];
+import { FAN_PANEL_PATHS } from '@/components/FanSidebar';
 
 /* ── Dropdown nav ───────────────────────────────────────────── */
 function NavDropdown({
@@ -59,7 +58,7 @@ function HeaderCTA() {
   const { unreadCount } = useNotificationBadge();
   const { unreadCount: chatUnreadCount } = useChatBadge();
   const pathname = usePathname();
-  const isFanPanel = FAN_PANEL_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + '/'));
+  const isFanPanel = FAN_PANEL_PATHS.some((p) => pathname === p || pathname.startsWith(p + '/'));
 
   if (status === 'loading') {
     return (
