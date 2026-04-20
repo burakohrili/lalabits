@@ -3,9 +3,12 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/auth-context';
 import { useNotificationBadge } from '@/contexts/notification-badge-context';
 import { useChatBadge } from '@/contexts/chat-badge-context';
+
+const FAN_PANEL_PREFIXES = ['/akis', '/kutuphane', '/bildirimler', '/mesajlar', '/hesabim'];
 
 /* ── Dropdown nav ───────────────────────────────────────────── */
 function NavDropdown({
@@ -55,6 +58,8 @@ function HeaderCTA() {
   const { user, status } = useAuth();
   const { unreadCount } = useNotificationBadge();
   const { unreadCount: chatUnreadCount } = useChatBadge();
+  const pathname = usePathname();
+  const isFanPanel = FAN_PANEL_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + '/'));
 
   if (status === 'loading') {
     return (
@@ -95,6 +100,8 @@ function HeaderCTA() {
       </Link>
     );
   }
+
+  if (isFanPanel) return null;
 
   return (
     <div className="flex items-center gap-3">

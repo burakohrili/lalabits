@@ -18,7 +18,7 @@ function resolveRedirect(user: {
 }, next: string | null): string {
   if (!user.email_verified_at) return '/auth/emaili-dogrula';
   if (user.is_admin) return next ?? '/admin';
-  if (!user.creator_profile) return next ?? '/kesfet';
+  if (!user.creator_profile) return next ?? '/akis';
   const s = user.creator_profile.status;
   if (s === 'approved') return next ?? '/dashboard';
   return '/onboarding';
