@@ -85,19 +85,6 @@ export default function FanSidebar() {
     <aside className="hidden md:flex w-60 shrink-0 flex-col border-r border-border bg-white">
       <div className="flex flex-col flex-1 overflow-y-auto px-3 py-4 gap-1">
 
-        <div className="px-3 pb-3 mb-1">
-          <Link href="/" aria-label="Ana sayfa">
-            <Image
-              src="/brand/logo-dark-h-trim.png"
-              alt="lalabits.art"
-              width={120}
-              height={30}
-              className="h-7 w-auto"
-              style={{ maxHeight: '28px' }}
-            />
-          </Link>
-        </div>
-
         <NavItem href="/akis" label="Akış">
           <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6">
             <path d="M3 9.5L10 3l7 6.5V17a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z" strokeLinejoin="round" />
