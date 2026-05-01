@@ -609,8 +609,8 @@ export default function RehberlerPage() {
         <svg className="absolute inset-0 w-full h-full pointer-events-none" aria-hidden="true">
           <defs>
             <pattern id="guide-mosaic" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-              <rect x="0" y="0" width="19" height="19" rx="2" fill="#008080" opacity="0.04" />
-              <rect x="21" y="21" width="19" height="19" rx="2" fill="#FF5722" opacity="0.03" />
+              <rect x="0" y="0" width="19" height="19" rx="2" fill="var(--color-teal)" opacity="0.04" />
+              <rect x="21" y="21" width="19" height="19" rx="2" fill="var(--color-orange)" opacity="0.03" />
             </pattern>
           </defs>
           <rect width="100%" height="100%" fill="url(#guide-mosaic)" />
@@ -629,7 +629,7 @@ export default function RehberlerPage() {
 
             <h1 className="text-[36px] sm:text-[48px] font-bold tracking-[-0.02em] text-text-primary leading-[1.1]">
               Her şeyi öğren,{' '}
-              <span style={{ background: 'linear-gradient(90deg, #008080 0%, #FF5722 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+              <span style={{ background: 'linear-gradient(90deg, var(--color-teal) 0%, var(--color-orange) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                 harekete geç
               </span>
             </h1>
@@ -754,7 +754,7 @@ export default function RehberlerPage() {
             <div className="mt-14 rounded-[24px] overflow-hidden relative">
               <div
                 className="px-8 py-12 text-center relative z-10"
-                style={{ background: 'linear-gradient(135deg, #008080 0%, #005f5f 60%, #FF5722 150%)' }}
+                style={{ background: 'linear-gradient(135deg, var(--color-teal) 0%, var(--color-teal-dark) 60%, var(--color-orange) 150%)' }}
               >
                 <div className="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1.5 text-xs font-medium text-white mb-5">
                   <span>✦</span>

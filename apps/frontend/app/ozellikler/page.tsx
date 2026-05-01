@@ -12,7 +12,7 @@ const features = [
     id: 'uyelik',
     icon: (
       <svg className="h-8 w-8" viewBox="0 0 32 32" fill="none">
-        <path d="M16 4l2.5 7.5H26l-6.5 4.5 2.5 7.5L16 19l-6 4.5 2.5-7.5L6 11.5h7.5z" stroke="#008080" strokeWidth="1.5" strokeLinejoin="round" />
+        <path d="M16 4l2.5 7.5H26l-6.5 4.5 2.5 7.5L16 19l-6 4.5 2.5-7.5L6 11.5h7.5z" stroke="var(--color-teal)" strokeWidth="1.5" strokeLinejoin="round" />
       </svg>
     ),
     color: 'bg-teal-light border-teal/10',
@@ -32,9 +32,9 @@ const features = [
     id: 'magaza',
     icon: (
       <svg className="h-8 w-8" viewBox="0 0 32 32" fill="none">
-        <rect x="4" y="8" width="24" height="20" rx="3" stroke="#FF5722" strokeWidth="1.5" />
-        <path d="M11 8V6a5 5 0 0 1 10 0v2" stroke="#FF5722" strokeWidth="1.5" strokeLinecap="round" />
-        <path d="M11 16h10M11 20h6" stroke="#FF5722" strokeWidth="1.5" strokeLinecap="round" />
+        <rect x="4" y="8" width="24" height="20" rx="3" stroke="var(--color-orange)" strokeWidth="1.5" />
+        <path d="M11 8V6a5 5 0 0 1 10 0v2" stroke="var(--color-orange)" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M11 16h10M11 20h6" stroke="var(--color-orange)" strokeWidth="1.5" strokeLinecap="round" />
       </svg>
     ),
     color: 'bg-orange-light border-orange/10',
@@ -54,9 +54,9 @@ const features = [
     id: 'akis',
     icon: (
       <svg className="h-8 w-8" viewBox="0 0 32 32" fill="none">
-        <rect x="4" y="6" width="24" height="4" rx="2" fill="#008080" opacity="0.15" stroke="#008080" strokeWidth="1.5" />
-        <rect x="4" y="14" width="24" height="4" rx="2" fill="#008080" opacity="0.10" stroke="#008080" strokeWidth="1.5" />
-        <rect x="4" y="22" width="16" height="4" rx="2" fill="#008080" opacity="0.08" stroke="#008080" strokeWidth="1.5" />
+        <rect x="4" y="6" width="24" height="4" rx="2" fill="var(--color-teal)" opacity="0.15" stroke="var(--color-teal)" strokeWidth="1.5" />
+        <rect x="4" y="14" width="24" height="4" rx="2" fill="var(--color-teal)" opacity="0.10" stroke="var(--color-teal)" strokeWidth="1.5" />
+        <rect x="4" y="22" width="16" height="4" rx="2" fill="var(--color-teal)" opacity="0.08" stroke="var(--color-teal)" strokeWidth="1.5" />
       </svg>
     ),
     color: 'bg-teal-light border-teal/10',
@@ -98,8 +98,8 @@ const features = [
     id: 'topluluk',
     icon: (
       <svg className="h-8 w-8" viewBox="0 0 32 32" fill="none">
-        <path d="M8 20H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h24a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-4l-8 6-8-6z" stroke="#008080" strokeWidth="1.5" strokeLinejoin="round" />
-        <path d="M10 12h12M10 16h7" stroke="#008080" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M8 20H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h24a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-4l-8 6-8-6z" stroke="var(--color-teal)" strokeWidth="1.5" strokeLinejoin="round" />
+        <path d="M10 12h12M10 16h7" stroke="var(--color-teal)" strokeWidth="1.5" strokeLinecap="round" />
       </svg>
     ),
     color: 'bg-teal-light border-teal/10',
@@ -119,8 +119,8 @@ const features = [
     id: 'bildirimler',
     icon: (
       <svg className="h-8 w-8" viewBox="0 0 32 32" fill="none">
-        <path d="M16 4a10 10 0 0 0-10 10v6l-2 4h24l-2-4v-6A10 10 0 0 0 16 4z" stroke="#FF5722" strokeWidth="1.5" strokeLinejoin="round" />
-        <path d="M13 26a3 3 0 0 0 6 0" stroke="#FF5722" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M16 4a10 10 0 0 0-10 10v6l-2 4h24l-2-4v-6A10 10 0 0 0 16 4z" stroke="var(--color-orange)" strokeWidth="1.5" strokeLinejoin="round" />
+        <path d="M13 26a3 3 0 0 0 6 0" stroke="var(--color-orange)" strokeWidth="1.5" strokeLinecap="round" />
       </svg>
     ),
     color: 'bg-orange-light border-orange/10',
@@ -151,7 +151,7 @@ export default function OzelliklerPage() {
             <br />
             <span
               style={{
-                background: 'linear-gradient(90deg, #008080 0%, #FF5722 100%)',
+                background: 'linear-gradient(90deg, var(--color-teal) 0%, var(--color-orange) 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text',

@@ -123,7 +123,7 @@ export default function StepPayout({ onboarding, onNext, onBack }: Props) {
       </div>
 
       {displayError && (
-        <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">{displayError}</p>
+        <p role="alert" className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">{displayError}</p>
       )}
 
       <div className="flex items-center justify-between">

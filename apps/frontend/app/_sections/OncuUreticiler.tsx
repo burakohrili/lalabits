@@ -50,9 +50,9 @@ function UreticiKart({ item }: { item: CreatorItem }) {
       <div className="h-[200px] bg-gradient-to-br from-teal-light to-teal/20 relative overflow-hidden">
         <div className="absolute inset-0 flex items-center justify-center opacity-10">
           <svg viewBox="0 0 100 100" className="h-32 w-32">
-            <rect x="10" y="10" width="35" height="35" rx="4" fill="#008080" />
-            <rect x="55" y="55" width="35" height="35" rx="4" fill="#FF5722" />
-            <rect x="55" y="10" width="35" height="35" rx="4" fill="#008080" opacity="0.5" />
+            <rect x="10" y="10" width="35" height="35" rx="4" fill="var(--color-teal)" />
+            <rect x="55" y="55" width="35" height="35" rx="4" fill="var(--color-orange)" />
+            <rect x="55" y="10" width="35" height="35" rx="4" fill="var(--color-teal)" opacity="0.5" />
           </svg>
         </div>
       </div>

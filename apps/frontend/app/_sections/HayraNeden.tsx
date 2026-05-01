@@ -4,17 +4,17 @@ const reasons = [
   {
     icon: (
       <svg className="h-9 w-9" viewBox="0 0 36 36" fill="none">
-        <circle cx="18" cy="18" r="14" fill="#008080" fillOpacity="0.08" />
+        <circle cx="18" cy="18" r="14" fill="var(--color-teal)" fillOpacity="0.08" />
         <path
           d="M12 18c0-3.3 2.7-6 6-6s6 2.7 6 6"
-          stroke="#008080"
+          stroke="var(--color-teal)"
           strokeWidth="1.8"
           strokeLinecap="round"
         />
-        <circle cx="18" cy="18" r="3" fill="#008080" fillOpacity="0.5" />
+        <circle cx="18" cy="18" r="3" fill="var(--color-teal)" fillOpacity="0.5" />
         <path
           d="M18 10V8M10 18H8M26 18h2M21.5 12.5l1.5-1.5M12.5 12.5 11 11"
-          stroke="#008080"
+          stroke="var(--color-teal)"
           strokeWidth="1.6"
           strokeLinecap="round"
         />
@@ -27,17 +27,17 @@ const reasons = [
   {
     icon: (
       <svg className="h-9 w-9" viewBox="0 0 36 36" fill="none">
-        <rect x="6" y="8" width="24" height="20" rx="4" fill="#008080" fillOpacity="0.08" />
-        <rect x="6" y="8" width="24" height="20" rx="4" stroke="#008080" strokeWidth="1.8" />
+        <rect x="6" y="8" width="24" height="20" rx="4" fill="var(--color-teal)" fillOpacity="0.08" />
+        <rect x="6" y="8" width="24" height="20" rx="4" stroke="var(--color-teal)" strokeWidth="1.8" />
         <path
           d="M12 16h12M12 20h8"
-          stroke="#008080"
+          stroke="var(--color-teal)"
           strokeWidth="1.6"
           strokeLinecap="round"
         />
         <path
           d="M26 6v4M28 8h-4"
-          stroke="#FF5722"
+          stroke="var(--color-orange)"
           strokeWidth="1.6"
           strokeLinecap="round"
         />
@@ -50,13 +50,13 @@ const reasons = [
   {
     icon: (
       <svg className="h-9 w-9" viewBox="0 0 36 36" fill="none">
-        <circle cx="18" cy="18" r="14" fill="#008080" fillOpacity="0.08" />
-        <circle cx="12" cy="18" r="3" stroke="#008080" strokeWidth="1.6" />
-        <circle cx="24" cy="18" r="3" stroke="#008080" strokeWidth="1.6" />
-        <circle cx="18" cy="11" r="3" stroke="#008080" strokeWidth="1.6" />
+        <circle cx="18" cy="18" r="14" fill="var(--color-teal)" fillOpacity="0.08" />
+        <circle cx="12" cy="18" r="3" stroke="var(--color-teal)" strokeWidth="1.6" />
+        <circle cx="24" cy="18" r="3" stroke="var(--color-teal)" strokeWidth="1.6" />
+        <circle cx="18" cy="11" r="3" stroke="var(--color-teal)" strokeWidth="1.6" />
         <path
           d="M14.8 16.6 16.4 13M21.2 16.6 19.6 13M15 19.5l2 1.5 2-1.5"
-          stroke="#008080"
+          stroke="var(--color-teal)"
           strokeWidth="1.4"
           strokeLinecap="round"
         />
@@ -69,15 +69,15 @@ const reasons = [
   {
     icon: (
       <svg className="h-9 w-9" viewBox="0 0 36 36" fill="none">
-        <circle cx="18" cy="18" r="14" fill="#FF5722" fillOpacity="0.07" />
+        <circle cx="18" cy="18" r="14" fill="var(--color-orange)" fillOpacity="0.07" />
         <path
           d="M18 10v8l5 3"
-          stroke="#FF5722"
+          stroke="var(--color-orange)"
           strokeWidth="1.8"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
-        <circle cx="18" cy="18" r="10" stroke="#FF5722" strokeWidth="1.6" strokeDasharray="3 2" />
+        <circle cx="18" cy="18" r="10" stroke="var(--color-orange)" strokeWidth="1.6" strokeDasharray="3 2" />
       </svg>
     ),
     title: 'Üretimin Devamını Sağla',

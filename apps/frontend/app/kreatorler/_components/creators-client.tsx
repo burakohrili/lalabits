@@ -94,6 +94,7 @@ export default function CreatorsClient({ initialData, initialCategory }: Creator
       <div className="mb-6 flex flex-col gap-4">
         <input
           type="search"
+          aria-label="İsim veya kullanıcı adı ara"
           value={query}
           onChange={(e) => handleQueryChange(e.target.value)}
           placeholder="İsim veya kullanıcı adı ara..."

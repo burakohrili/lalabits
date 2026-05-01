@@ -6,15 +6,15 @@ const items = [
       <svg className="h-7 w-7 shrink-0" viewBox="0 0 28 28" fill="none">
         <path
           d="M14 3l9 4v7c0 5.5-3.9 10.6-9 12C8.9 24.6 5 19.5 5 14V7l9-4z"
-          stroke="#008080"
+          stroke="var(--color-teal)"
           strokeWidth="1.6"
           strokeLinejoin="round"
-          fill="#008080"
+          fill="var(--color-teal)"
           fillOpacity="0.08"
         />
         <path
           d="M9 14l3 3 6-6"
-          stroke="#008080"
+          stroke="var(--color-teal)"
           strokeWidth="1.8"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -27,10 +27,10 @@ const items = [
   {
     icon: (
       <svg className="h-7 w-7 shrink-0" viewBox="0 0 28 28" fill="none">
-        <rect x="4" y="8" width="20" height="14" rx="3" stroke="#008080" strokeWidth="1.6" fill="#008080" fillOpacity="0.08" />
-        <path d="M4 12h20" stroke="#008080" strokeWidth="1.6" />
-        <path d="M8 17h4M8 19.5h2" stroke="#008080" strokeWidth="1.4" strokeLinecap="round" />
-        <path d="M14 6V4M18 8V5M10 8V5" stroke="#FF5722" strokeWidth="1.4" strokeLinecap="round" />
+        <rect x="4" y="8" width="20" height="14" rx="3" stroke="var(--color-teal)" strokeWidth="1.6" fill="var(--color-teal)" fillOpacity="0.08" />
+        <path d="M4 12h20" stroke="var(--color-teal)" strokeWidth="1.6" />
+        <path d="M8 17h4M8 19.5h2" stroke="var(--color-teal)" strokeWidth="1.4" strokeLinecap="round" />
+        <path d="M14 6V4M18 8V5M10 8V5" stroke="var(--color-orange)" strokeWidth="1.4" strokeLinecap="round" />
       </svg>
     ),
     title: 'Şeffaf Komisyon',
@@ -39,11 +39,11 @@ const items = [
   {
     icon: (
       <svg className="h-7 w-7 shrink-0" viewBox="0 0 28 28" fill="none">
-        <rect x="5" y="4" width="18" height="22" rx="3" stroke="#008080" strokeWidth="1.6" fill="#008080" fillOpacity="0.08" />
-        <path d="M9 10h10M9 14h10M9 18h6" stroke="#008080" strokeWidth="1.4" strokeLinecap="round" />
+        <rect x="5" y="4" width="18" height="22" rx="3" stroke="var(--color-teal)" strokeWidth="1.6" fill="var(--color-teal)" fillOpacity="0.08" />
+        <path d="M9 10h10M9 14h10M9 18h6" stroke="var(--color-teal)" strokeWidth="1.4" strokeLinecap="round" />
         <path
           d="M19 19l2 2 3-3"
-          stroke="#FF5722"
+          stroke="var(--color-orange)"
           strokeWidth="1.6"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -56,16 +56,16 @@ const items = [
   {
     icon: (
       <svg className="h-7 w-7 shrink-0" viewBox="0 0 28 28" fill="none">
-        <circle cx="14" cy="10" r="5" stroke="#008080" strokeWidth="1.6" fill="#008080" fillOpacity="0.08" />
+        <circle cx="14" cy="10" r="5" stroke="var(--color-teal)" strokeWidth="1.6" fill="var(--color-teal)" fillOpacity="0.08" />
         <path
           d="M5 24c0-5 4-9 9-9s9 4 9 9"
-          stroke="#008080"
+          stroke="var(--color-teal)"
           strokeWidth="1.6"
           strokeLinecap="round"
         />
         <path
           d="M22 16l1.5 1.5L26 15"
-          stroke="#FF5722"
+          stroke="var(--color-orange)"
           strokeWidth="1.6"
           strokeLinecap="round"
           strokeLinejoin="round"

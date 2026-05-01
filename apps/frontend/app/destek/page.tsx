@@ -196,7 +196,7 @@ export default function DestekPage() {
           </p>
           <a
             href="mailto:destek@lalabits.art"
-            className="inline-flex items-center gap-2.5 rounded-xl bg-[#FF5722] px-7 py-3.5 text-sm font-semibold text-white hover:bg-[#e64a19] transition-colors"
+            className="inline-flex items-center gap-2.5 rounded-xl bg-orange px-7 py-3.5 text-sm font-semibold text-white hover:bg-orange-dark transition-colors"
           >
             <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none">
               <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" strokeWidth="1.5" />
@@ -336,7 +336,7 @@ export default function DestekPage() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <a
                 href="mailto:destek@lalabits.art"
-                className="rounded-xl bg-[#FF5722] px-8 py-3 text-sm font-semibold text-white hover:bg-[#e64a19] transition-colors"
+                className="rounded-xl bg-orange px-8 py-3 text-sm font-semibold text-white hover:bg-orange-dark transition-colors"
               >
                 destek@lalabits.art
               </a>

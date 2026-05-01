@@ -48,8 +48,7 @@ function StatCard({
   return (
     <div className="text-center">
       <div
-        className="text-[52px] font-extrabold leading-none tracking-tight"
-        style={{ color: '#FF5722' }}
+        className="text-[52px] font-extrabold leading-none tracking-tight text-orange"
       >
         {displayValue}
       </div>

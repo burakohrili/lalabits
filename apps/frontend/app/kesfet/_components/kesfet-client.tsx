@@ -174,6 +174,7 @@ export default function KesfetClient({ initialData, initialCategory }: Props) {
       <div className="mb-8 flex flex-col gap-4">
         <input
           type="search"
+          aria-label="İsim veya kullanıcı adı ara"
           value={query}
           onChange={(e) => { setQuery(e.target.value); setPage(1); }}
           placeholder="İsim veya kullanıcı adı ara..."

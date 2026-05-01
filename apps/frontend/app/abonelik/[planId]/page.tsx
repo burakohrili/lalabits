@@ -192,7 +192,7 @@ export default function SubscriptionCheckoutPage() {
         </div>
 
         {errorMessage && (
-          <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">{errorMessage}</p>
+          <p role="alert" className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">{errorMessage}</p>
         )}
 
         <button

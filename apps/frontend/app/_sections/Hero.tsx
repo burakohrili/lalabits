@@ -17,8 +17,8 @@ function MosaicPattern() {
           height="40"
           patternUnits="userSpaceOnUse"
         >
-          <rect x="0" y="0" width="19" height="19" rx="2" fill="#008080" opacity="0.04" />
-          <rect x="21" y="21" width="19" height="19" rx="2" fill="#FF5722" opacity="0.03" />
+          <rect x="0" y="0" width="19" height="19" rx="2" fill="var(--color-teal)" opacity="0.04" />
+          <rect x="21" y="21" width="19" height="19" rx="2" fill="var(--color-orange)" opacity="0.03" />
         </pattern>
       </defs>
       <rect width="100%" height="100%" fill="url(#mosaic)" />
@@ -35,7 +35,7 @@ function MockCreatorCard() {
         {/* Cover */}
         <div
           className="h-28 w-full"
-          style={{ background: 'linear-gradient(135deg, #008080 0%, #005f5f 100%)' }}
+          style={{ background: 'linear-gradient(135deg, var(--color-teal) 0%, var(--color-teal-dark) 100%)' }}
         />
         {/* Avatar */}
         <div className="px-5 -mt-8">
@@ -110,7 +110,7 @@ export default function Hero() {
               <br />
               <span
                 style={{
-                  background: 'linear-gradient(90deg, #008080 0%, #FF5722 100%)',
+                  background: 'linear-gradient(90deg, var(--color-teal) 0%, var(--color-orange) 100%)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   backgroundClip: 'text',

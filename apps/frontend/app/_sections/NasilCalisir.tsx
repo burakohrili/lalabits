@@ -9,12 +9,12 @@ const ureticiSteps = [
       <svg className="h-8 w-8" viewBox="0 0 32 32" fill="none">
         <path
           d="M6 26V8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v18l-10-4-10 4z"
-          stroke="#008080"
+          stroke="var(--color-teal)"
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
-        <path d="M11 12h10M11 16h6" stroke="#008080" strokeWidth="2" strokeLinecap="round" />
+        <path d="M11 12h10M11 16h6" stroke="var(--color-teal)" strokeWidth="2" strokeLinecap="round" />
       </svg>
     ),
     title: 'Sayfanı Oluştur',
@@ -24,11 +24,11 @@ const ureticiSteps = [
     number: '2',
     icon: (
       <svg className="h-8 w-8" viewBox="0 0 32 32" fill="none">
-        <rect x="5" y="7" width="22" height="18" rx="3" stroke="#008080" strokeWidth="2" />
-        <path d="M11 14h10M11 18h6" stroke="#008080" strokeWidth="2" strokeLinecap="round" />
+        <rect x="5" y="7" width="22" height="18" rx="3" stroke="var(--color-teal)" strokeWidth="2" />
+        <path d="M11 14h10M11 18h6" stroke="var(--color-teal)" strokeWidth="2" strokeLinecap="round" />
         <path
           d="M24 4l4 4-4 4"
-          stroke="#FF5722"
+          stroke="var(--color-orange)"
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -44,12 +44,12 @@ const ureticiSteps = [
       <svg className="h-8 w-8" viewBox="0 0 32 32" fill="none">
         <path
           d="M8 20h16M12 16h8M10 12h12"
-          stroke="#008080"
+          stroke="var(--color-teal)"
           strokeWidth="2"
           strokeLinecap="round"
         />
-        <circle cx="16" cy="8" r="3" fill="#FF5722" fillOpacity="0.8" />
-        <path d="M16 26v-6" stroke="#008080" strokeWidth="2" strokeLinecap="round" />
+        <circle cx="16" cy="8" r="3" fill="var(--color-orange)" fillOpacity="0.8" />
+        <path d="M16 26v-6" stroke="var(--color-teal)" strokeWidth="2" strokeLinecap="round" />
       </svg>
     ),
     title: 'Türk Lirası ile Kazan',
@@ -62,11 +62,11 @@ const destekciSteps = [
     number: '1',
     icon: (
       <svg className="h-8 w-8" viewBox="0 0 32 32" fill="none">
-        <circle cx="16" cy="16" r="10" stroke="#008080" strokeWidth="2" />
-        <path d="M12 16h8M16 12v8" stroke="#008080" strokeWidth="2" strokeLinecap="round" />
+        <circle cx="16" cy="16" r="10" stroke="var(--color-teal)" strokeWidth="2" />
+        <path d="M12 16h8M16 12v8" stroke="var(--color-teal)" strokeWidth="2" strokeLinecap="round" />
         <path
           d="M22 8l3-3M10 8 7 5M22 24l3 3M10 24l-3 3"
-          stroke="#FF5722"
+          stroke="var(--color-orange)"
           strokeWidth="1.5"
           strokeLinecap="round"
         />
@@ -79,16 +79,16 @@ const destekciSteps = [
     number: '2',
     icon: (
       <svg className="h-8 w-8" viewBox="0 0 32 32" fill="none">
-        <circle cx="16" cy="10" r="5" stroke="#008080" strokeWidth="2" />
+        <circle cx="16" cy="10" r="5" stroke="var(--color-teal)" strokeWidth="2" />
         <path
           d="M6 28c0-5.5 4.5-10 10-10s10 4.5 10 10"
-          stroke="#008080"
+          stroke="var(--color-teal)"
           strokeWidth="2"
           strokeLinecap="round"
         />
         <path
           d="M22 20l2 2 4-4"
-          stroke="#FF5722"
+          stroke="var(--color-orange)"
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -102,15 +102,15 @@ const destekciSteps = [
     number: '3',
     icon: (
       <svg className="h-8 w-8" viewBox="0 0 32 32" fill="none">
-        <rect x="4" y="8" width="24" height="18" rx="3" stroke="#008080" strokeWidth="2" />
+        <rect x="4" y="8" width="24" height="18" rx="3" stroke="var(--color-teal)" strokeWidth="2" />
         <path
           d="M10 17l4 4 8-8"
-          stroke="#FF5722"
+          stroke="var(--color-orange)"
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
-        <path d="M10 8V6M22 8V6" stroke="#008080" strokeWidth="2" strokeLinecap="round" />
+        <path d="M10 8V6M22 8V6" stroke="var(--color-teal)" strokeWidth="2" strokeLinecap="round" />
       </svg>
     ),
     title: 'Özel İçeriklere Eriş',

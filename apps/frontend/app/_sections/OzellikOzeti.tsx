@@ -4,9 +4,9 @@ const features = [
       <svg className="h-8 w-8" viewBox="0 0 32 32" fill="none">
         <path
           d="M16 4l2.5 7.5H26l-6.5 4.5 2.5 7.5L16 19l-6 4.5 2.5-7.5L6 11.5h7.5z"
-          fill="#008080"
+          fill="var(--color-teal)"
           opacity="0.15"
-          stroke="#008080"
+          stroke="var(--color-teal)"
           strokeWidth="1.5"
           strokeLinejoin="round"
         />
@@ -42,8 +42,8 @@ const features = [
   {
     icon: (
       <svg className="h-7 w-7" viewBox="0 0 28 28" fill="none">
-        <rect x="3" y="5" width="22" height="18" rx="3" stroke="#FF5722" strokeWidth="1.5" />
-        <path d="M9 12h10M9 16h6" stroke="#FF5722" strokeWidth="1.5" strokeLinecap="round" />
+        <rect x="3" y="5" width="22" height="18" rx="3" stroke="var(--color-orange)" strokeWidth="1.5" />
+        <path d="M9 12h10M9 16h6" stroke="var(--color-orange)" strokeWidth="1.5" strokeLinecap="round" />
       </svg>
     ),
     bg: 'bg-orange-light',
@@ -75,12 +75,12 @@ const features = [
       <svg className="h-7 w-7" viewBox="0 0 28 28" fill="none">
         <path
           d="M4 20h3v-8H4v8zm5 0h3V8H9v12zm5 0h3v-5h-3v5zm5 0h3v-10h-3v10z"
-          fill="#008080"
+          fill="var(--color-teal)"
           opacity="0.2"
         />
         <path
           d="M4 20h3v-8H4v8zm5 0h3V8H9v12zm5 0h3v-5h-3v5zm5 0h3v-10h-3v10z"
-          stroke="#008080"
+          stroke="var(--color-teal)"
           strokeWidth="1.5"
           strokeLinejoin="round"
         />

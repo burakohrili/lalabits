@@ -65,6 +65,7 @@ function NavSection({ title, links }: { title: string; links: { label: string; h
         className="w-full flex items-center justify-between py-3 lg:py-0 lg:cursor-default lg:pointer-events-none"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
+        aria-label={`${title} bölümünü ${open ? 'kapat' : 'aç'}`}
       >
         <span className="text-xs font-semibold uppercase tracking-widest text-white/40">
           {title}
@@ -89,7 +90,7 @@ function NavSection({ title, links }: { title: string; links: { label: string; h
               href={link.href}
               className={`text-sm transition-colors ${
                 link.label.endsWith('→')
-                  ? 'text-[#FF5722]/80 hover:text-[#FF5722]'
+                  ? 'text-orange/80 hover:text-orange'
                   : 'text-white/55 hover:text-white'
               }`}
             >
@@ -120,7 +121,7 @@ export default function Footer() {
           <div className="flex items-center gap-3 shrink-0">
             <Link
               href="/auth/kayit/yaratici"
-              className="rounded-xl bg-[#FF5722] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#e64a19] transition-colors"
+              className="rounded-xl bg-orange px-5 py-2.5 text-sm font-semibold text-white hover:bg-orange-dark transition-colors"
             >
               Üretici ol
             </Link>
