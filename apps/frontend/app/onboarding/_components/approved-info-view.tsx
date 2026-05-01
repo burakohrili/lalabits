@@ -6,7 +6,7 @@ export default function ApprovedInfoView() {
           <div className="flex flex-col gap-2">
             <h1 className="text-2xl font-semibold text-foreground">Hesabınız Onaylandı</h1>
             <p className="text-sm text-muted">
-              Yaratıcı hesabınız onaylanmıştır. Kontrol paneliniz yakında hazır olacak.
+              Üretici hesabınız onaylanmıştır. Kontrol paneliniz yakında hazır olacak.
             </p>
           </div>
         </div>

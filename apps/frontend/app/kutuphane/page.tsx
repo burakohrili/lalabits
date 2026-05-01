@@ -136,7 +136,7 @@ export default function LibraryPage() {
       {isEmpty ? (
         <div className="rounded-2xl border border-border bg-surface px-6 py-16 text-center">
           <p className="text-sm font-medium text-foreground">Henüz satın alınan içerik yok.</p>
-          <p className="mt-2 text-sm text-muted">Kreatörleri keşfet ve dijital ürünlerini satın al.</p>
+          <p className="mt-2 text-sm text-muted">Üreticileri keşfet ve dijital ürünlerini satın al.</p>
         </div>
       ) : (
         <>

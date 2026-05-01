@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export const metadata: Metadata = {
   title: 'Blog — lalabits.art',
@@ -71,11 +72,13 @@ export default async function BlogPage() {
               className="group rounded-2xl border border-border bg-surface overflow-hidden hover:border-primary/40 transition-colors"
             >
               {post.cover_image_url && (
-                <div className="aspect-video w-full overflow-hidden bg-gray-100">
-                  <img
+                <div className="aspect-video w-full overflow-hidden bg-gray-100 relative">
+                  <Image
                     src={post.cover_image_url}
                     alt={post.title}
-                    className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   />
                 </div>
               )}

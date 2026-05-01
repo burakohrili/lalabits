@@ -98,7 +98,7 @@ export default function MesajlarPage() {
         <div className="rounded-xl border border-border bg-white py-16 text-center">
           <p className="text-sm text-muted">Henüz mesajınız yok.</p>
           <p className="mt-2 text-xs text-muted">
-            Bir kreatörün sayfasından abone olarak mesaj başlatabilirsiniz.
+            Bir üreticinin sayfasından abone olarak mesaj başlatabilirsiniz.
           </p>
         </div>
       ) : (

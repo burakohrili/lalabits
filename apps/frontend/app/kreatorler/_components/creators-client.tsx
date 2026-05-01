@@ -133,14 +133,14 @@ export default function CreatorsClient({ initialData, initialCategory }: Creator
       {/* Count */}
       {!loading && !error && data.total > 0 && (
         <p className="mb-4 text-xs text-muted">
-          {data.total} kreatörden {from}–{to} gösteriliyor
+          {data.total} üreticiden {from}–{to} gösteriliyor
         </p>
       )}
 
       {/* Error */}
       {error && (
         <div className="rounded-2xl border border-border bg-surface px-6 py-10 text-center">
-          <p className="text-sm text-muted">Kreatörler yüklenemedi.</p>
+          <p className="text-sm text-muted">Üreticiler yüklenemedi.</p>
           <button
             type="button"
             onClick={() => void fetchCreators(page, category, debouncedQuery)}
@@ -175,8 +175,8 @@ export default function CreatorsClient({ initialData, initialCategory }: Creator
         <div className="rounded-2xl border border-border bg-surface px-6 py-10 text-center">
           <p className="text-sm text-muted">
             {category || debouncedQuery
-              ? 'Bu filtreyle eşleşen kreatör bulunamadı.'
-              : 'Henüz kreatör yok.'}
+              ? 'Bu filtreyle eşleşen üretici bulunamadı.'
+              : 'Henüz üretici yok.'}
           </p>
         </div>
       )}

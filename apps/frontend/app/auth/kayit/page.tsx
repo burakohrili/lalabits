@@ -20,7 +20,7 @@ export default function RegisterSelectPage() {
           >
             <span className="text-base font-medium text-foreground">Fan olarak katıl</span>
             <span className="text-sm text-muted">
-              İçeriklere eriş, yaratıcılara destek ol, üyelik al.
+              İçeriklere eriş, üreticilere destek ol, üyelik al.
             </span>
           </Link>
 
@@ -28,7 +28,7 @@ export default function RegisterSelectPage() {
             href="/auth/kayit/yaratici"
             className="flex flex-col gap-1 rounded-2xl border border-border bg-surface px-6 py-5 hover:border-primary/50 hover:shadow-sm transition-shadow"
           >
-            <span className="text-base font-medium text-foreground">Yaratıcı olarak katıl</span>
+            <span className="text-base font-medium text-foreground">Üretici olarak katıl</span>
             <span className="text-sm text-muted">
               İçerik yayınla, üyelik planı oluştur, kazan.
             </span>

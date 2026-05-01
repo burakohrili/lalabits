@@ -5,6 +5,7 @@ import { NotificationBadgeProvider } from "@/contexts/notification-badge-context
 import { ChatBadgeProvider } from "@/contexts/chat-badge-context";
 import SiteHeader from "./_components/site-header";
 import Footer from "@/components/Footer";
+import StickyCTA from "@/components/StickyCTA";
 import "./globals.css";
 
 const inter = Inter({
@@ -33,6 +34,7 @@ export default function RootLayout({
               <SiteHeader />
               <div className="flex-1">{children}</div>
               <Footer />
+              <StickyCTA />
             </ChatBadgeProvider>
           </NotificationBadgeProvider>
         </AuthProvider>

@@ -249,7 +249,7 @@ export default function BillingPage() {
           <div className="rounded-2xl border border-border bg-surface px-6 py-10 text-center">
             <p className="text-sm text-muted">Aktif üyeliğiniz bulunmuyor.</p>
             <p className="mt-1 text-xs text-muted">
-              Kreatörleri keşfet ve bir üyelik planına abone ol.
+              Üreticileri keşfet ve bir üyelik planına abone ol.
             </p>
           </div>
         ) : (

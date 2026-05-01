@@ -13,9 +13,9 @@ export default function StepAgreement({ agreed, onAgreeChange, onNext, onBack }:
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-1">
-        <h2 className="text-lg font-semibold text-foreground">Yaratıcı Sözleşmesi</h2>
+        <h2 className="text-lg font-semibold text-foreground">Üretici Sözleşmesi</h2>
         <p className="text-sm text-muted">
-          Başvurunuzu tamamlamadan önce lütfen Yaratıcı Sözleşmesi&apos;ni okuyun ve kabul edin.
+          Başvurunuzu tamamlamadan önce lütfen Üretici Sözleşmesi&apos;ni okuyun ve kabul edin.
         </p>
       </div>
 
@@ -29,7 +29,7 @@ export default function StepAgreement({ agreed, onAgreeChange, onNext, onBack }:
           rel="noopener noreferrer"
           className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
         >
-          Yaratıcı Sözleşmesi&apos;ni Oku
+          Üretici Sözleşmesi&apos;ni Oku
           <svg className="h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
             <path d="M4.5 11.5l7-7M6 4.5h5.5V10" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
@@ -44,7 +44,7 @@ export default function StepAgreement({ agreed, onAgreeChange, onNext, onBack }:
           className="mt-0.5 h-4 w-4 rounded border-border text-primary accent-primary shrink-0"
         />
         <span className="text-sm text-foreground">
-          Yaratıcı Sözleşmesi&apos;ni okudum ve kabul ediyorum.
+          Üretici Sözleşmesi&apos;ni okudum ve kabul ediyorum.
         </span>
       </label>
 

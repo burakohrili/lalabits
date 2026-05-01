@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuth } from '@/contexts/auth-context';
 import { relativeDate } from '@/lib/date-utils';
 
@@ -137,10 +138,13 @@ export default function AkisPage() {
             <div className="flex items-center gap-2.5 mb-3">
               <div className="h-7 w-7 rounded-full bg-background border border-border overflow-hidden shrink-0">
                 {post.creator_avatar_url ? (
-                  <img
+                  <Image
                     src={post.creator_avatar_url}
                     alt={post.creator_display_name}
+                    width={28}
+                    height={28}
                     className="h-full w-full object-cover"
+                    sizes="28px"
                   />
                 ) : (
                   <div className="h-full w-full flex items-center justify-center text-xs font-bold text-muted">

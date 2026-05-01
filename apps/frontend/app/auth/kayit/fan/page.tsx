@@ -10,7 +10,7 @@ export default function FanRegisterPage() {
         <div className="mb-8 text-center">
           <h1 className="text-2xl font-semibold text-foreground">Fan Olarak Kayıt Ol</h1>
           <p className="mt-2 text-sm text-muted">
-            İçeriklere eriş, yaratıcılara destek ol.
+            İçeriklere eriş, üreticilere destek ol.
           </p>
         </div>
         <div className="rounded-2xl border border-border bg-surface p-8 shadow-sm">

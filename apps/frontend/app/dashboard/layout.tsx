@@ -70,7 +70,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     return (
       <main className="flex flex-1 items-center justify-center min-h-screen px-4 py-12">
         <div className="rounded-2xl border border-border bg-surface p-8 shadow-sm text-center max-w-sm w-full">
-          <p className="text-sm text-muted">Yaratıcı profili bulunamadı.</p>
+          <p className="text-sm text-muted">Üretici profili bulunamadı.</p>
         </div>
       </main>
     );

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuth } from '@/contexts/auth-context';
 import ReportModal from '@/components/ReportModal';
 
@@ -408,7 +409,14 @@ export default function CreatorPublicPage() {
       <div className="flex items-start gap-5 mb-10">
         <div className="h-20 w-20 shrink-0 rounded-full bg-background border border-border overflow-hidden">
           {profile.avatar_url ? (
-            <img src={profile.avatar_url} alt={profile.display_name} className="h-full w-full object-cover" />
+            <Image
+              src={profile.avatar_url}
+              alt={profile.display_name}
+              width={80}
+              height={80}
+              className="h-full w-full object-cover"
+              sizes="80px"
+            />
           ) : (
             <div className="h-full w-full flex items-center justify-center text-2xl font-bold text-muted">
               {profile.display_name.charAt(0).toUpperCase()}

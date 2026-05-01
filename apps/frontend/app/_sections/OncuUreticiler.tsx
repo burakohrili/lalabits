@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface CreatorItem {
   username: string | null;
@@ -58,10 +59,13 @@ function UreticiKart({ item }: { item: CreatorItem }) {
       {/* Avatar */}
       <div className="px-5 -mt-8">
         {item.avatar_url ? (
-          <img
+          <Image
             src={item.avatar_url}
             alt={item.display_name}
+            width={64}
+            height={64}
             className="h-16 w-16 rounded-full border-4 border-white object-cover shadow-sm"
+            sizes="64px"
           />
         ) : (
           <div className="h-16 w-16 rounded-full border-4 border-white bg-teal flex items-center justify-center text-white text-xl font-bold shadow-sm">

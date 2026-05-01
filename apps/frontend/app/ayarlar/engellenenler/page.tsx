@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuth } from '@/contexts/auth-context';
 
 const API = process.env.NEXT_PUBLIC_API_URL!;
@@ -109,10 +110,13 @@ export default function EngellendiPage() {
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 shrink-0 rounded-full bg-background border border-border overflow-hidden">
                   {item.avatar_url ? (
-                    <img
+                    <Image
                       src={item.avatar_url}
                       alt={item.display_name}
+                      width={40}
+                      height={40}
                       className="h-full w-full object-cover"
+                      sizes="40px"
                     />
                   ) : (
                     <div className="h-full w-full flex items-center justify-center text-sm font-bold text-muted">

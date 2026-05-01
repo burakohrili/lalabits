@@ -6,7 +6,7 @@ export default function DashboardSuspendedView() {
           <div className="flex flex-col gap-2">
             <h1 className="text-2xl font-semibold text-foreground">Hesabınız Askıya Alındı</h1>
             <p className="text-sm text-muted">
-              Yaratıcı hesabınız askıya alınmıştır. Daha fazla bilgi için destek
+              Üretici hesabınız askıya alınmıştır. Daha fazla bilgi için destek
               ekibiyle iletişime geçiniz.
             </p>
           </div>

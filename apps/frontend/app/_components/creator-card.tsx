@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 export interface CreatorCardItem {
   username: string | null;
@@ -32,10 +33,13 @@ export default function CreatorCard({ item }: { item: CreatorCardItem }) {
     <div className="flex flex-col rounded-2xl border border-border bg-surface p-5 gap-3">
       <div className="flex items-center gap-3">
         {item.avatar_url ? (
-          <img
+          <Image
             src={item.avatar_url}
             alt={item.display_name}
+            width={48}
+            height={48}
             className="h-12 w-12 rounded-full object-cover shrink-0"
+            sizes="48px"
           />
         ) : (
           <div className="h-12 w-12 rounded-full bg-teal shrink-0 flex items-center justify-center">

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const API = process.env.NEXT_PUBLIC_API_URL!;
 
@@ -56,11 +57,14 @@ export default async function BlogPostPage({
         </Link>
 
         {post.cover_image_url && (
-          <div className="mb-8 overflow-hidden rounded-2xl aspect-video bg-gray-100">
-            <img
+          <div className="mb-8 overflow-hidden rounded-2xl aspect-video bg-gray-100 relative">
+            <Image
               src={post.cover_image_url}
               alt={post.title}
-              className="h-full w-full object-cover"
+              fill
+              className="object-cover"
+              priority
+              sizes="(max-width: 768px) 100vw, 800px"
             />
           </div>
         )}

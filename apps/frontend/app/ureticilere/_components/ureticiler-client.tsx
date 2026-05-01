@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const API = process.env.NEXT_PUBLIC_API_URL!;
 
@@ -51,10 +52,13 @@ function UreticiKart({ item }: { item: UreticiItem }) {
       {/* Avatar */}
       <div className="px-5 -mt-7">
         {item.avatar_url ? (
-          <img
+          <Image
             src={item.avatar_url}
             alt={item.display_name}
+            width={56}
+            height={56}
             className="h-14 w-14 rounded-full border-4 border-white object-cover shadow-sm"
+            sizes="56px"
           />
         ) : (
           <div className="h-14 w-14 rounded-full border-4 border-white bg-teal flex items-center justify-center text-white text-lg font-bold shadow-sm">
