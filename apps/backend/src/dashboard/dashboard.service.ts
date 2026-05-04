@@ -5,6 +5,7 @@ import {
   ForbiddenException,
   UnprocessableEntityException,
   BadRequestException,
+  Logger,
 } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -46,9 +47,12 @@ import { CreateCollectionDto } from './dto/create-collection.dto';
 import { UpdateCollectionDto } from './dto/update-collection.dto';
 import { AddCollectionItemDto } from './dto/add-collection-item.dto';
 import { ReorderCollectionItemsDto } from './dto/reorder-collection-items.dto';
+import { MilestoneService } from '../milestone/milestone.service';
 
 @Injectable()
 export class DashboardService {
+  private readonly logger = new Logger(DashboardService.name);
+
   constructor(
     @InjectRepository(CreatorProfile)
     private readonly creatorProfileRepository: Repository<CreatorProfile>,
@@ -69,6 +73,7 @@ export class DashboardService {
     @InjectRepository(PostAttachment)
     private readonly postAttachmentRepository: Repository<PostAttachment>,
     private readonly storageService: StorageService,
+    private readonly milestoneService: MilestoneService,
   ) {}
 
   // ── Overview ──────────────────────────────────────────────────────────────
@@ -310,6 +315,10 @@ export class DashboardService {
     await this.postRepository.update(
       { id: post.id },
       { publish_status: PostPublishStatus.Published, published_at: new Date() },
+    );
+
+    this.milestoneService.checkAndTriggerForCreator(post.creator_profile_id).catch((err) =>
+      this.logger.error(`Milestone check failed for creator ${post.creator_profile_id}: ${(err as Error).message}`),
     );
 
     return { id: post.id, publish_status: PostPublishStatus.Published };

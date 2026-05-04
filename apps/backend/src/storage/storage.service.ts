@@ -77,4 +77,24 @@ export class StorageService {
     this.logger.debug(`Signed GET URL generated for key: ${key}`);
     return url;
   }
+
+  async uploadBuffer(
+    key: string,
+    buffer: Buffer,
+    contentType: string,
+  ): Promise<string> {
+    const command = new PutObjectCommand({
+      Bucket: this.bucket,
+      Key: key,
+      Body: buffer,
+      ContentType: contentType,
+      ContentLength: buffer.length,
+    });
+
+    await this.client.send(command);
+    this.logger.debug(`Buffer uploaded for key: ${key}`);
+
+    const endpoint = this.config.get<string>('STORAGE_ENDPOINT')!;
+    return `${endpoint}/${this.bucket}/${key}`;
+  }
 }

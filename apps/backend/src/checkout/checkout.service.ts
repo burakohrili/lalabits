@@ -26,6 +26,7 @@ import { StorageService } from '../storage/storage.service';
 import { IyzicoService } from '../iyzico/iyzico.service';
 import { NotificationService } from '../notification/notification.service';
 import { NotificationType } from '../moderation/entities/notification.entity';
+import { MilestoneService } from '../milestone/milestone.service';
 
 @Injectable()
 export class CheckoutService {
@@ -51,6 +52,7 @@ export class CheckoutService {
     private readonly configService: ConfigService,
     private readonly dataSource: DataSource,
     private readonly notificationService: NotificationService,
+    private readonly milestoneService: MilestoneService,
   ) {}
 
   // ── PUBLIC STORE ENDPOINTS — move to StoreModule when extracted ──────────
@@ -575,7 +577,24 @@ export class CheckoutService {
       actionUrl: '/kutuphane',
     });
 
-    // TODO: analytics event — purchase_completed
+    this.milestoneService.checkAndTriggerForFan(order.fan_user_id).catch((err) =>
+      this.logger.error(`Milestone check failed for fan ${order.fan_user_id}: ${(err as Error).message}`),
+    );
+
+    if (order.order_type === OrderType.ProductPurchase) {
+      const product = await this.productRepository.findOne({
+        where: { id: order.reference_id },
+        select: { creator_profile_id: true },
+      });
+      if (product) {
+        this.milestoneService.checkProductSoldMilestone(product.creator_profile_id).catch((err) =>
+          this.logger.error(`Product sold milestone failed for creator ${product.creator_profile_id}: ${(err as Error).message}`),
+        );
+        this.milestoneService.checkAndTriggerForCreator(product.creator_profile_id).catch((err) =>
+          this.logger.error(`Milestone check failed for creator ${product.creator_profile_id}: ${(err as Error).message}`),
+        );
+      }
+    }
 
     return { conversationId, status: OrderStatus.Completed };
   }

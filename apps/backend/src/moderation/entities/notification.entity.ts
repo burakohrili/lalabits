@@ -21,6 +21,7 @@ export enum NotificationType {
   OrderConfirmed = 'order_confirmed',
   ContentRemoved = 'content_removed',
   MembershipResumed = 'membership_resumed',
+  MilestoneUnlocked = 'milestone_unlocked',
 }
 
 @Entity('notifications')

@@ -15,6 +15,7 @@ const NAV_ITEMS = [
   { label: 'Mağaza', href: '/dashboard/magaza' },
   { label: 'Koleksiyonlar', href: '/dashboard/koleksiyonlar' },
   { label: 'İstatistikler', href: '/dashboard/istatistikler' },
+  { label: 'Rozetlerim', href: '/dashboard/milestones' },
   { label: 'Profil Düzenle', href: '/dashboard/profil-duzenle' },
   { label: 'Ayarlar', href: '/dashboard/ayarlar' },
 ] as const;

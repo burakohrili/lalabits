@@ -40,6 +40,9 @@ export class User {
   @Column({ default: false })
   is_admin: boolean;
 
+  @Column({ type: 'int', nullable: true })
+  fan_rank: number | null;
+
   @Column({
     type: 'enum',
     enum: UserAccountStatus,

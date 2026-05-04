@@ -42,12 +42,21 @@ export default function AkisPage() {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [subCount, setSubCount] = useState<number | null>(null);
 
   const LIMIT = 20;
 
   useEffect(() => {
     if (authStatus === 'loading' || !accessToken) return;
     void load(1);
+    fetch(`${API}/membership/subscriptions`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    })
+      .then((r) => r.json())
+      .then((d: { total?: number; items?: unknown[] }) => {
+        setSubCount(d.total ?? d.items?.length ?? 0);
+      })
+      .catch(() => {});
   }, [authStatus, accessToken]);
 
   async function load(p: number) {
@@ -86,9 +95,16 @@ export default function AkisPage() {
   return (
     <main className="mx-auto max-w-2xl px-4 py-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-foreground">
-          Merhaba{user?.display_name ? `, ${user.display_name}` : ''}
-        </h1>
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <h1 className="text-2xl font-bold text-foreground">
+            Merhaba{user?.display_name ? `, ${user.display_name}` : ''}
+          </h1>
+          {subCount !== null && subCount > 0 && (
+            <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
+              {subCount} üyelik
+            </span>
+          )}
+        </div>
         <p className="mt-1 text-sm text-muted">Abone olduğun üreticilerin son içerikleri.</p>
       </div>
 

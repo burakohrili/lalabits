@@ -1,8 +1,9 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { BillingModule } from '../billing/billing.module';
 import { CreatorModule } from '../creator/creator.module';
 import { IyzicoModule } from '../iyzico/iyzico.module';
 import { NotificationModule } from '../notification/notification.module';
+import { MilestoneModule } from '../milestone/milestone.module';
 import { MembershipService } from './membership.service';
 import { MembershipController } from './membership.controller';
 
@@ -12,6 +13,7 @@ import { MembershipController } from './membership.controller';
     CreatorModule,   // MembershipPlan, CreatorProfile repositories
     IyzicoModule,    // IyzicoService (real subscription gateway)
     NotificationModule,
+    forwardRef(() => MilestoneModule),
   ],
   providers: [MembershipService],
   controllers: [MembershipController],

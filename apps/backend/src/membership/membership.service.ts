@@ -25,6 +25,7 @@ import { SubscribeDto } from './dto/subscribe.dto';
 import { IyzicoService } from '../iyzico/iyzico.service';
 import { NotificationService } from '../notification/notification.service';
 import { NotificationType } from '../moderation/entities/notification.entity';
+import { MilestoneService } from '../milestone/milestone.service';
 
 // LD-1: Entitlement rule — active access = status IN (active, cancelled, grace_period) AND current_period_end > NOW()
 // grace_period = renewal failed, still within grace window
@@ -63,6 +64,7 @@ export class MembershipService {
     private readonly iyzicoService: IyzicoService,
     private readonly configService: ConfigService,
     private readonly notificationService: NotificationService,
+    private readonly milestoneService: MilestoneService,
   ) {}
 
   // ── SUBSCRIBE ────────────────────────────────────────────────────────────
@@ -139,6 +141,13 @@ export class MembershipService {
       body: `${plan.name} üyeliğiniz aktif. Erişim: ${sub.current_period_end.toLocaleDateString('tr-TR')}.`,
       actionUrl: '/uyeliklerim',
     });
+
+    this.milestoneService.checkAndTriggerForFan(userId).catch((err) =>
+      this.logger.error(`Milestone check failed for fan ${userId}: ${(err as Error).message}`),
+    );
+    this.milestoneService.checkAndTriggerForCreator(plan.creator_profile_id).catch((err) =>
+      this.logger.error(`Milestone check failed for creator ${plan.creator_profile_id}: ${(err as Error).message}`),
+    );
 
     return {
       subscription_id: sub.id,
@@ -302,7 +311,12 @@ export class MembershipService {
       actionUrl: '/uyeliklerim',
     });
 
-    // TODO: analytics event — subscription_started
+    this.milestoneService.checkAndTriggerForFan(pendingSub.fan_user_id).catch((err) =>
+      this.logger.error(`Milestone check failed for fan ${pendingSub.fan_user_id}: ${(err as Error).message}`),
+    );
+    this.milestoneService.checkAndTriggerForCreator(pendingSub.creator_profile_id).catch((err) =>
+      this.logger.error(`Milestone check failed for creator ${pendingSub.creator_profile_id}: ${(err as Error).message}`),
+    );
 
     return {
       conversationId: iyzicoResult.referenceCode ?? '',
@@ -565,6 +579,13 @@ export class MembershipService {
         issued_at: now,
         paid_at: now,
       }),
+    );
+
+    this.milestoneService.checkAndTriggerForFan(sub.fan_user_id).catch((err) =>
+      this.logger.error(`Milestone check failed for fan ${sub.fan_user_id}: ${(err as Error).message}`),
+    );
+    this.milestoneService.checkAndTriggerForCreator(sub.creator_profile_id).catch((err) =>
+      this.logger.error(`Milestone check failed for creator ${sub.creator_profile_id}: ${(err as Error).message}`),
     );
   }
 

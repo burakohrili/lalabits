@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import { DatabaseModule } from './database/database.module';
 import { RedisModule } from './redis/redis.module';
 import { StorageModule } from './storage/storage.module';
@@ -23,10 +24,12 @@ import { NotificationModule } from './notification/notification.module';
 import { ChatModule } from './chat/chat.module';
 import { BlockModule } from './moderation/block.module';
 import { BlogModule } from './blog/blog.module';
+import { MilestoneModule } from './milestone/milestone.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    ScheduleModule.forRoot(),
     DatabaseModule,
     RedisModule,
     StorageModule,
@@ -50,6 +53,7 @@ import { BlogModule } from './blog/blog.module';
     ChatModule,
     BlockModule,
     BlogModule,
+    MilestoneModule,
   ],
 })
 export class AppModule {}

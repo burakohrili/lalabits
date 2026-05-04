@@ -92,6 +92,9 @@ export class CreatorProfile {
   @Column({ type: 'boolean', nullable: true })
   payout_iban_format_valid: boolean | null;
 
+  @Column({ type: 'int', nullable: true })
+  creator_rank: number | null;
+
   @Column({ type: 'jsonb', nullable: true })
   social_links: {
     youtube?: string | null;

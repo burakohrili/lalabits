@@ -23,6 +23,11 @@ export default function HesabimPage() {
       description: 'Geçmiş ödemelerini ve aktif aboneliklerini görüntüle.',
     },
     {
+      href: '/hesabim/milestones',
+      title: 'Rozetlerim',
+      description: 'Destekçi yolculuğundaki dönüm noktaların ve kazandığın sertifikalar.',
+    },
+    {
       href: '/hesabim/bildirimler',
       title: 'Bildirim Tercihleri',
       description: 'Hangi bildirimler almak istediğini özelleştir.',

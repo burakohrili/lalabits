@@ -56,9 +56,10 @@ function formatBytes(bytes: string | number): string {
 }
 
 const ACCEPTED_MIME =
-  'audio/*,application/zip,application/x-zip-compressed,model/stl,model/obj,application/octet-stream';
+  'video/*,audio/*,application/pdf,application/zip,application/x-zip-compressed,model/stl,model/obj,application/octet-stream';
 
-const MAX_FILE_BYTES = 200 * 1024 * 1024; // 200 MB
+const MAX_FILE_BYTES = 1024 * 1024 * 1024; // 1 GB (video için)
+const MAX_FILE_BYTES_STANDARD = 200 * 1024 * 1024; // 200 MB (ses, zip, diğer)
 
 export default function PostForm({
   initial,
@@ -105,8 +106,10 @@ export default function PostForm({
     const file = e.target.files?.[0];
     if (!file || !postId || !accessToken) return;
 
-    if (file.size > MAX_FILE_BYTES) {
-      setUploadError('Dosya 200 MB sınırını aşıyor.');
+    const limit = file.type.startsWith('video/') ? MAX_FILE_BYTES : MAX_FILE_BYTES_STANDARD;
+    const limitLabel = file.type.startsWith('video/') ? '1 GB' : '200 MB';
+    if (file.size > limit) {
+      setUploadError(`Dosya ${limitLabel} sınırını aşıyor.`);
       if (fileInputRef.current) fileInputRef.current.value = '';
       return;
     }
@@ -456,7 +459,7 @@ export default function PostForm({
                 disabled={uploadStatus === 'uploading'}
               />
               <span className="text-muted">
-                Ses, ZIP, STL/OBJ — maks 200 MB
+                Video (1 GB), Ses · PDF · ZIP · STL/OBJ (200 MB)
                 <span className="ml-1 text-primary font-medium">Dosya seç</span>
               </span>
             </label>

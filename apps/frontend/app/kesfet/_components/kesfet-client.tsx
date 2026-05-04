@@ -93,8 +93,13 @@ function UreticiKart({ item }: { item: UreticiItem }) {
   );
 }
 
+interface SubscriptionItem {
+  creator_username: string;
+  creator_category?: string;
+}
+
 export default function KesfetClient({ initialData, initialCategory }: Props) {
-  const { user, status: authStatus } = useAuth();
+  const { user, status: authStatus, accessToken } = useAuth();
   const [data, setData] = useState<UreticilerResponse>(initialData);
   const [page, setPage] = useState(1);
   const [category, setCategory] = useState(initialCategory ?? '');
@@ -102,6 +107,8 @@ export default function KesfetClient({ initialData, initialCategory }: Props) {
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [sanaOzel, setSanaOzel] = useState<UreticiItem[]>([]);
+  const [subscribedUsernames, setSubscribedUsernames] = useState<Set<string>>(new Set());
 
   const isLoggedInFan = authStatus !== 'loading' && !!user && !user.creator_profile;
   const featuredCreators = initialData.items.slice(0, 6);
@@ -110,6 +117,43 @@ export default function KesfetClient({ initialData, initialCategory }: Props) {
     const t = setTimeout(() => setDebouncedQuery(query), 300);
     return () => clearTimeout(t);
   }, [query]);
+
+  useEffect(() => {
+    if (!isLoggedInFan || !accessToken) return;
+    fetch(`${API}/membership/subscriptions`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    })
+      .then((r) => r.json())
+      .then(async (d: { items?: SubscriptionItem[] }) => {
+        const items = d.items ?? [];
+        const usernames = new Set(items.map((s) => s.creator_username));
+        setSubscribedUsernames(usernames);
+
+        const categories = [...new Set(items.map((s) => s.creator_category).filter(Boolean))] as string[];
+        if (categories.length === 0) return;
+
+        const results = await Promise.all(
+          categories.map((cat) =>
+            fetch(`${API}/creators?category=${cat}&limit=6`)
+              .then((r) => r.json())
+              .then((j: UreticilerResponse) => j.items ?? [])
+              .catch(() => [] as UreticiItem[])
+          )
+        );
+
+        const merged = results.flat();
+        const seen = new Set<string>();
+        const unique = merged.filter((c) => {
+          const key = c.username ?? c.display_name;
+          if (seen.has(key) || usernames.has(c.username ?? '')) return false;
+          seen.add(key);
+          return true;
+        });
+        setSanaOzel(unique.slice(0, 6));
+      })
+      .catch(() => {});
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoggedInFan, accessToken]);
 
   const fetchUreticiler = useCallback(async (p: number, cat: string, q: string) => {
     setLoading(true);
@@ -162,12 +206,32 @@ export default function KesfetClient({ initialData, initialCategory }: Props) {
               <UreticiKart key={c.username ?? c.display_name} item={c} />
             ))}
           </div>
-          <div className="mt-10 border-t border-border" />
-          <div className="mt-10 mb-6">
+        </section>
+      )}
+
+      {/* Sana Özel — abone kategorilerine göre öneriler */}
+      {isLoggedInFan && sanaOzel.length > 0 && (
+        <section className="mb-10">
+          <div className="mb-5">
+            <h2 className="text-xl font-bold text-text-primary">Sana Özel</h2>
+            <p className="text-sm text-text-muted mt-0.5">Üye olduğun kategorilerdeki üreticiler</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {sanaOzel.map((c) => (
+              <UreticiKart key={c.username ?? c.display_name} item={c} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {isLoggedInFan && (featuredCreators.length > 0 || sanaOzel.length > 0) && (
+        <>
+          <div className="mb-10 border-t border-border" />
+          <div className="mb-6">
             <h2 className="text-xl font-bold text-text-primary">Tüm Üreticiler</h2>
             <p className="text-sm text-text-muted mt-0.5">Kategori ve arama ile filtrele</p>
           </div>
-        </section>
+        </>
       )}
 
       {/* Arama + filtre */}
