@@ -361,6 +361,7 @@ export class DashboardService {
       throw new BadRequestException('POST_NOT_DELETABLE');
     }
 
+    await this.postAttachmentRepository.delete({ post_id: post.id });
     await this.postRepository.delete({ id: post.id });
   }
 

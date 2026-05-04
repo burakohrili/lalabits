@@ -47,7 +47,7 @@ export class PostAttachment {
   created_at: Date;
 
   // ─── Relations ────────────────────────────────────────────────────────────
-  @ManyToOne(() => Post, (p) => p.attachments)
+  @ManyToOne(() => Post, (p) => p.attachments, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'post_id' })
   post: Post;
 }
