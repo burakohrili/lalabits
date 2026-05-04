@@ -73,6 +73,9 @@ export class Post {
   @Column({ type: 'int', nullable: true })
   price_try: number | null;
 
+  @Column({ type: 'varchar', nullable: true })
+  cover_image_key: string | null;
+
   @Column({ type: 'timestamptz', nullable: true })
   published_at: Date | null;
 

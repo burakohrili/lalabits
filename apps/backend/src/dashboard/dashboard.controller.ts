@@ -220,6 +220,36 @@ export class DashboardController {
     return this.dashboardService.removePostAttachment(user.id, postId, attachmentId);
   }
 
+  // ── Post Cover Image ─────────────────────────────────────────────────────
+
+  @Post('posts/:id/cover-image/upload-url')
+  @HttpCode(HttpStatus.OK)
+  getPostCoverImageUploadUrl(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id') postId: string,
+  ) {
+    return this.dashboardService.getPostCoverImageUploadUrl(user.id, postId);
+  }
+
+  @Put('posts/:id/cover-image')
+  @HttpCode(HttpStatus.OK)
+  setPostCoverImage(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id') postId: string,
+    @Body('storage_key') storageKey: string,
+  ) {
+    return this.dashboardService.setPostCoverImage(user.id, postId, storageKey);
+  }
+
+  @Delete('posts/:id/cover-image')
+  @HttpCode(HttpStatus.OK)
+  deletePostCoverImage(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id') postId: string,
+  ) {
+    return this.dashboardService.deletePostCoverImage(user.id, postId);
+  }
+
   // ── Products ──────────────────────────────────────────────────────────────
 
   @Post('products/upload-url')

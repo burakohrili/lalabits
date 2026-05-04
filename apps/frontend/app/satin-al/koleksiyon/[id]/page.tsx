@@ -6,6 +6,26 @@ import Link from 'next/link';
 import { useAuth } from '@/contexts/auth-context';
 import { ApiError } from '@/lib/api-client';
 
+function LegalConsent({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <div className="rounded-lg border border-border bg-background p-3 flex gap-3">
+      <input
+        id="legal-consent-col"
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-primary"
+      />
+      <label htmlFor="legal-consent-col" className="text-xs text-muted leading-relaxed cursor-pointer">
+        <Link href="/mesafeli-satis-sozlesmesi" target="_blank" className="font-medium text-primary hover:underline">Mesafeli Satış Sözleşmesi</Link>
+        {' '}ve{' '}
+        <Link href="/iade-politikasi" target="_blank" className="font-medium text-primary hover:underline">İade Politikası</Link>
+        &apos;nı okudum, anladım ve kabul ediyorum. Dijital içeriklerde erişim anında başladığından cayma hakkımın kullanılamayacağını onaylıyorum.
+      </label>
+    </div>
+  );
+}
+
 const API = process.env.NEXT_PUBLIC_API_URL!;
 
 interface CollectionPreview {
@@ -29,6 +49,7 @@ export default function CollectionCheckoutPage() {
   const [pageState, setPageState] = useState<PageState>('loading');
   const [busy, setBusy] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [legalAccepted, setLegalAccepted] = useState(false);
 
   useEffect(() => {
     if (!collectionId) return;
@@ -186,21 +207,19 @@ export default function CollectionCheckoutPage() {
         </div>
 
         {errorMessage && (
-          <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">{errorMessage}</p>
+          <p role="alert" className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">{errorMessage}</p>
         )}
+
+        <LegalConsent checked={legalAccepted} onChange={setLegalAccepted} />
 
         <button
           type="button"
           onClick={handlePurchase}
-          disabled={busy}
+          disabled={busy || !legalAccepted}
           className="w-full rounded-lg bg-primary py-3 text-sm font-medium text-white hover:bg-primary/90 disabled:opacity-50"
         >
           {busy ? 'İşleniyor…' : 'Ödemeyi Tamamla'}
         </button>
-
-        <p className="text-xs text-muted text-center">
-          Satın alma işlemi test modundadır.
-        </p>
       </div>
     </main>
   );

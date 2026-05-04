@@ -14,7 +14,7 @@ const faq = [
   },
   {
     q: 'Hangi ödeme yöntemlerini kabul ediyorsunuz?',
-    a: 'Türk kredi/banka kartları, Papara ve IBAN banka transferi ile ödeme alabilirsiniz. Tüm yöntemler Türk lirası üzerinden çalışır.',
+    a: 'Türk kredi/banka kartları, dijital cüzdan uygulamaları ve IBAN banka transferi ile ödeme alabilirsiniz. Tüm yöntemler Türk lirası üzerinden çalışır.',
   },
   {
     q: 'Kazancımı ne zaman çekebilirim?',
@@ -117,9 +117,9 @@ export default function FiyatlarPage() {
                   desc: 'Tüm Türk kredi ve banka kartları kabul edilir.',
                 },
                 {
-                  icon: '📱',
-                  title: 'Papara',
-                  desc: 'Papara hesabı ile hızlı ve kolay ödeme.',
+                  icon: '📲',
+                  title: 'Dijital Cüzdan',
+                  desc: 'Dijital cüzdan uygulamalarıyla hızlı ve kolay ödeme.',
                 },
                 {
                   icon: '🏦',

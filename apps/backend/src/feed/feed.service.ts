@@ -62,6 +62,7 @@ export interface PostFeedItem {
   locked: boolean;
   teaser: string | null;           // only when locked
   content: object | null;          // only when !locked
+  cover_image_url: string | null;  // presigned URL, null when no cover
   attachments: PostAttachmentItem[]; // always included
 }
 
@@ -184,12 +185,15 @@ export class FeedService {
     activeSub: MembershipSubscription | null,
     ctaLowestPlan: MembershipPlan | null,
   ): Promise<PostFeedItem> {
-    const [access, rawAttachments] = await Promise.all([
+    const [access, rawAttachments, cover_image_url] = await Promise.all([
       this.computeAccess(post, isOwner, activeSub),
       this.postAttachmentRepository.find({
         where: { post_id: post.id },
         order: { sort_order: 'ASC' },
       }),
+      post.cover_image_key
+        ? this.storageService.getSignedGetUrl(post.cover_image_key)
+        : Promise.resolve(null),
     ]);
 
     const attachments: PostAttachmentItem[] = rawAttachments.map((a) => ({
@@ -212,6 +216,7 @@ export class FeedService {
         locked: false,
         teaser: null,
         content: post.content,
+        cover_image_url,
         attachments,
       };
     }
@@ -232,6 +237,7 @@ export class FeedService {
       locked: true,
       teaser: extractExcerpt(post.content),
       content: null,
+      cover_image_url,
       attachments,  // attachments visible even when post is locked (filename/size only, no download URL)
     };
   }

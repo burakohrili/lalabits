@@ -220,8 +220,12 @@ export class DashboardService {
         order: { sort_order: 'ASC' },
       }),
     ]);
+    const cover_image_url = post.cover_image_key
+      ? await this.storageService.getSignedGetUrl(post.cover_image_key)
+      : null;
     return {
       ...post,
+      cover_image_url,
       attachments: attachments.map((a) => ({
         id: a.id,
         original_filename: a.original_filename,
@@ -414,6 +418,28 @@ export class DashboardService {
     });
     if (!att) throw new NotFoundException('ATTACHMENT_NOT_FOUND');
     await this.postAttachmentRepository.delete({ id: attachmentId });
+    return { success: true };
+  }
+
+  // ── Post Cover Image ─────────────────────────────────────────────────────
+
+  async getPostCoverImageUploadUrl(userId: string, postId: string) {
+    await this.loadOwnPost(userId, postId);
+    const profile = await this.creatorProfileRepository.findOne({ where: { user_id: userId } });
+    const storageKey = `posts/${profile!.id}/${postId}/cover/${randomUUID()}.jpg`;
+    const uploadUrl = await this.storageService.getPresignedPutUrl(storageKey, 'image/jpeg');
+    return { upload_url: uploadUrl, storage_key: storageKey };
+  }
+
+  async setPostCoverImage(userId: string, postId: string, storageKey: string) {
+    const post = await this.loadOwnPost(userId, postId);
+    await this.postRepository.update(post.id, { cover_image_key: storageKey });
+    return { success: true };
+  }
+
+  async deletePostCoverImage(userId: string, postId: string) {
+    const post = await this.loadOwnPost(userId, postId);
+    await this.postRepository.update(post.id, { cover_image_key: null });
     return { success: true };
   }
 

@@ -34,7 +34,7 @@ export interface PostFormValues {
 }
 
 interface Props {
-  initial?: Partial<PostFormValues> & { attachments?: SavedAttachment[] };
+  initial?: Partial<PostFormValues> & { attachments?: SavedAttachment[]; cover_image_url?: string | null };
   submitLabel: string;
   busy: boolean;
   error: string | null;
@@ -93,6 +93,66 @@ export default function PostForm({
   }
   function removeLink(id: string) {
     setLinks((prev) => prev.filter((l) => l.id !== id));
+  }
+
+  // ── Cover image ───────────────────────────────────────────────────────────
+  const coverInputRef = useRef<HTMLInputElement>(null);
+  const [coverPreviewUrl, setCoverPreviewUrl] = useState<string | null>(initial?.cover_image_url ?? null);
+  const [coverUploading, setCoverUploading] = useState(false);
+  const [coverError, setCoverError] = useState<string | null>(null);
+
+  async function handleCoverImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file || !postId || !accessToken) return;
+    if (file.size > 16 * 1024 * 1024) {
+      setCoverError('Kapak görseli en fazla 16 MB olabilir.');
+      if (coverInputRef.current) coverInputRef.current.value = '';
+      return;
+    }
+    setCoverUploading(true);
+    setCoverError(null);
+    try {
+      const urlRes = await fetch(`${API}/dashboard/posts/${postId}/cover-image/upload-url`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      if (!urlRes.ok) throw new Error('Upload URL alınamadı.');
+      const { upload_url, storage_key } = (await urlRes.json()) as { upload_url: string; storage_key: string };
+
+      const putRes = await fetch(upload_url, {
+        method: 'PUT',
+        headers: { 'Content-Type': file.type || 'image/jpeg' },
+        body: file,
+      });
+      if (!putRes.ok) throw new Error('Görsel yüklenemedi.');
+
+      const regRes = await fetch(`${API}/dashboard/posts/${postId}/cover-image`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
+        body: JSON.stringify({ storage_key }),
+      });
+      if (!regRes.ok) throw new Error('Görsel kaydedilemedi.');
+
+      setCoverPreviewUrl(URL.createObjectURL(file));
+    } catch (err) {
+      setCoverError(err instanceof Error ? err.message : 'Kapak görseli yüklenemedi.');
+    } finally {
+      setCoverUploading(false);
+      if (coverInputRef.current) coverInputRef.current.value = '';
+    }
+  }
+
+  async function handleRemoveCoverImage() {
+    if (!postId || !accessToken) return;
+    try {
+      await fetch(`${API}/dashboard/posts/${postId}/cover-image`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      setCoverPreviewUrl(null);
+    } catch {
+      // silent
+    }
   }
 
   // ── File attachments ──────────────────────────────────────────────────────
@@ -388,6 +448,52 @@ export default function PostForm({
             />
           </div>
         ))}
+      </div>
+
+      {/* Cover image */}
+      <div className="flex flex-col gap-2">
+        <span className="text-sm font-medium text-foreground">Kapak Görseli</span>
+        {!postId ? (
+          <p className="rounded-lg border border-border bg-background px-3 py-2 text-xs text-muted">
+            Kapak görseli eklemek için önce taslağı kaydedin.
+          </p>
+        ) : coverPreviewUrl ? (
+          <div className="relative w-full overflow-hidden rounded-lg border border-border bg-background">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={coverPreviewUrl} alt="Kapak görseli" className="h-44 w-full object-cover" />
+            <button
+              type="button"
+              onClick={() => void handleRemoveCoverImage()}
+              className="absolute right-2 top-2 rounded-lg bg-black/60 px-2 py-1 text-xs text-white hover:bg-black/80 transition-colors"
+            >
+              Kaldır
+            </button>
+          </div>
+        ) : (
+          <>
+            {coverError && <p className="text-xs text-red-600">{coverError}</p>}
+            <label className={[
+              'flex cursor-pointer items-center justify-center rounded-lg border-2 border-dashed px-4 py-6 text-center text-sm transition-colors',
+              coverUploading
+                ? 'cursor-not-allowed border-border bg-background opacity-50'
+                : 'border-border bg-background hover:border-primary/50 hover:bg-primary/5',
+            ].join(' ')}>
+              <input
+                ref={coverInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/gif,image/webp"
+                className="sr-only"
+                onChange={(e) => void handleCoverImageChange(e)}
+                disabled={coverUploading}
+              />
+              <span className="text-muted">
+                {coverUploading ? 'Yükleniyor…' : (
+                  <>JPEG · PNG · GIF · WebP (max 16 MB)<span className="ml-1 text-primary font-medium">Görsel seç</span></>
+                )}
+              </span>
+            </label>
+          </>
+        )}
       </div>
 
       {/* File attachments */}

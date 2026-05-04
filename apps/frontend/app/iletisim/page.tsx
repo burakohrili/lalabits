@@ -20,28 +20,49 @@ export default function IletisimPage() {
 
       <section className="py-16">
         <div className="mx-auto max-w-3xl px-6">
+
+          {/* Şirket / Satıcı Bilgileri */}
+          <div className="mb-10 rounded-[20px] bg-white border border-border overflow-hidden">
+            <div className="px-6 py-4 border-b border-border bg-gray-50">
+              <p className="text-sm font-semibold text-text-primary">Satıcı / İşletme Bilgileri</p>
+              <p className="text-xs text-text-secondary mt-0.5">6502 s. Kanun ve Mesafeli Sözleşmeler Yönetmeliği kapsamında</p>
+            </div>
+            <dl className="divide-y divide-border text-sm">
+              {[
+                ['Ticari Unvan', 'Noesis Social / Burak OHRİLİ'],
+                ['Adres', 'Gazi Osman Paşa Mah. 5499/1 Sokak No:9, Bornova / İzmir'],
+                ['Vergi Dairesi / VKN', 'Ege Vergi Dairesi / 35509755908'],
+                ['KEP Adresi', 'burak.ohrili@hs06.kep.tr'],
+                ['Telefon', '0532 744 94 34'],
+                ['E-posta', 'destek@lalabits.art'],
+              ].map(([label, value]) => (
+                <div key={label} className="flex gap-4 px-6 py-3">
+                  <dt className="w-44 shrink-0 font-medium text-text-primary">{label}</dt>
+                  <dd className="text-text-secondary">{value}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+
+          {/* İletişim Kanalları */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {[
               {
-                icon: '📧',
                 baslik: 'Genel',
                 aciklama: 'Her türlü soru ve öneri için',
                 eposta: 'merhaba@lalabits.art',
               },
               {
-                icon: '🛠️',
                 baslik: 'Destek',
                 aciklama: 'Teknik yardım ve hesap sorunları',
                 eposta: 'destek@lalabits.art',
               },
               {
-                icon: '📰',
                 baslik: 'Basın',
                 aciklama: 'Medya ve basın soruları',
                 eposta: 'basin@lalabits.art',
               },
               {
-                icon: '💼',
                 baslik: 'Kariyer',
                 aciklama: 'Açık pozisyonlar ve başvurular',
                 eposta: 'kariyer@lalabits.art',
@@ -51,7 +72,6 @@ export default function IletisimPage() {
                 key={item.baslik}
                 className="rounded-[20px] bg-white border border-border p-6 flex flex-col gap-3"
               >
-                <div className="text-3xl">{item.icon}</div>
                 <div>
                   <p className="font-semibold text-text-primary text-base">{item.baslik}</p>
                   <p className="text-sm text-text-secondary mt-1">{item.aciklama}</p>

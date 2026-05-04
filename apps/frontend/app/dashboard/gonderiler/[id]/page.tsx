@@ -25,6 +25,7 @@ interface PostDetail {
   } | null;
   access_level: 'public' | 'member_only';
   publish_status: 'draft' | 'published' | 'archived';
+  cover_image_url?: string | null;
   attachments: SavedAttachment[];
 }
 
@@ -162,6 +163,7 @@ export default function EditGonderiPage() {
                   title: l.title ?? '',
                 })) ?? [],
               attachments: post.attachments,
+              cover_image_url: post.cover_image_url,
             }}
             submitLabel="Değişiklikleri kaydet"
             busy={busy}
