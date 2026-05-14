@@ -103,6 +103,100 @@ function NavSection({ title, links }: { title: string; links: { label: string; h
   );
 }
 
+const SECONDARY_LEGAL = [
+  {
+    category: 'Alışveriş & Ödeme',
+    links: [
+      { label: 'Mesafeli Satış', href: '/mesafeli-satis-sozlesmesi' },
+      { label: 'Ön Bilgilendirme', href: '/on-bilgilendirme' },
+      { label: 'Üyelik İptali', href: '/uyelik-iptal-politikasi' },
+      { label: 'Dijital Teslimat', href: '/dijital-teslimat-politikasi' },
+      { label: 'Harcama İtirazı', href: '/harcama-itirazi' },
+    ],
+  },
+  {
+    category: 'Topluluk & İçerik',
+    links: [
+      { label: 'Yasaklı İçerik', href: '/yasakli-icerik-politikasi' },
+      { label: 'Topluluk Kuralları', href: '/topluluk-kurallari' },
+      { label: 'Moderasyon', href: '/moderasyon-politikasi' },
+      { label: 'Telif Şikâyeti', href: '/telif-sikayeti' },
+    ],
+  },
+  {
+    category: 'Hukuk',
+    links: [
+      { label: 'Güvenlik', href: '/guvenlik-politikasi' },
+    ],
+  },
+];
+
+function LegalBar() {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <div style={{ backgroundColor: '#0d0d0d' }} className="border-t border-white/5">
+      {/* Expandable panel */}
+      <div
+        className={`overflow-hidden transition-all duration-300 ease-in-out ${expanded ? 'max-h-56' : 'max-h-0'}`}
+        aria-hidden={!expanded}
+      >
+        <div className="mx-auto max-w-7xl px-6 pt-5 pb-4 border-b border-white/8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+            {SECONDARY_LEGAL.map((col) => (
+              <div key={col.category}>
+                <p className="text-[10px] uppercase tracking-widest text-white/20 mb-2">{col.category}</p>
+                <ul className="flex flex-col gap-1.5">
+                  {col.links.map((link) => (
+                    <li key={link.href}>
+                      <Link href={link.href} className="text-xs text-white/40 hover:text-white/70 transition-colors">
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Primary bar */}
+      <div className="mx-auto max-w-7xl px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <p className="text-xs text-white/30 order-last sm:order-first shrink-0">
+          © {new Date().getFullYear()} lalabits.art
+        </p>
+
+        <nav aria-label="Yasal bağlantılar" className="flex items-center gap-x-3 gap-y-1 flex-wrap justify-center">
+          <Link href="/kullanim-sartlari" className="text-xs text-white/30 hover:text-white/60 transition-colors">Kullanım Şartları</Link>
+          <span className="text-white/10 text-xs">·</span>
+          <Link href="/gizlilik" className="text-xs text-white/30 hover:text-white/60 transition-colors">Gizlilik</Link>
+          <span className="text-white/10 text-xs">·</span>
+          <Link href="/kvkk" className="text-xs text-white/30 hover:text-white/60 transition-colors">KVKK</Link>
+          <span className="text-white/10 text-xs">·</span>
+          <Link href="/iade-politikasi" className="text-xs text-white/30 hover:text-white/60 transition-colors">İade Politikası</Link>
+          <span className="text-white/10 text-xs">·</span>
+          <Link href="/cerez-politikasi" className="text-xs text-white/30 hover:text-white/60 transition-colors">Çerez</Link>
+
+          <button
+            type="button"
+            onClick={() => setExpanded((v) => !v)}
+            aria-expanded={expanded}
+            aria-controls="legal-panel"
+            className="rounded-full border border-white/10 px-2.5 py-0.5 text-[11px] text-white/30 hover:border-white/20 hover:text-white/50 transition-all ml-1"
+          >
+            {expanded ? '⊗ Kapat' : '⊕ Diğer belgeler'}
+          </button>
+        </nav>
+
+        <span className="text-xs text-white/20 border border-white/10 rounded-full px-2 py-0.5 shrink-0">
+          🇹🇷 Türkçe · ₺
+        </span>
+      </div>
+    </div>
+  );
+}
+
 export default function Footer() {
   return (
     <footer style={{ backgroundColor: '#111111' }} className="text-white">
@@ -215,32 +309,8 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* ── Alt Yardımcı Bar ───────────────────────────────────── */}
-      <div style={{ backgroundColor: '#0d0d0d' }} className="border-t border-white/5">
-        <div className="mx-auto max-w-7xl px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-xs text-white/30 order-2 sm:order-1">
-            © {new Date().getFullYear()} lalabits.art
-          </p>
-          <nav aria-label="Yasal bağlantılar" className="flex items-center gap-x-4 gap-y-1 flex-wrap justify-center order-1 sm:order-2">
-            <Link href="/kullanim-sartlari" className="text-xs text-white/30 hover:text-white/60 transition-colors">Kullanım Şartları</Link>
-            <Link href="/gizlilik" className="text-xs text-white/30 hover:text-white/60 transition-colors">Gizlilik</Link>
-            <Link href="/kvkk" className="text-xs text-white/30 hover:text-white/60 transition-colors">KVKK</Link>
-            <Link href="/cerez-politikasi" className="text-xs text-white/30 hover:text-white/60 transition-colors">Çerez</Link>
-            <Link href="/mesafeli-satis-sozlesmesi" className="text-xs text-white/30 hover:text-white/60 transition-colors">Mesafeli Satış</Link>
-            <Link href="/on-bilgilendirme" className="text-xs text-white/30 hover:text-white/60 transition-colors">Ön Bilgilendirme</Link>
-            <Link href="/iade-politikasi" className="text-xs text-white/30 hover:text-white/60 transition-colors">İade Politikası</Link>
-            <Link href="/uyelik-iptal-politikasi" className="text-xs text-white/30 hover:text-white/60 transition-colors">Üyelik İptali</Link>
-            <Link href="/dijital-teslimat-politikasi" className="text-xs text-white/30 hover:text-white/60 transition-colors">Dijital Teslimat</Link>
-            <Link href="/yasakli-icerik-politikasi" className="text-xs text-white/30 hover:text-white/60 transition-colors">Yasaklı İçerik</Link>
-            <Link href="/topluluk-kurallari" className="text-xs text-white/30 hover:text-white/60 transition-colors">Topluluk Kuralları</Link>
-            <Link href="/moderasyon-politikasi" className="text-xs text-white/30 hover:text-white/60 transition-colors">Moderasyon</Link>
-            <Link href="/telif-sikayeti" className="text-xs text-white/30 hover:text-white/60 transition-colors">Telif Şikâyeti</Link>
-            <Link href="/harcama-itirazi" className="text-xs text-white/30 hover:text-white/60 transition-colors">Harcama İtirazı</Link>
-            <Link href="/guvenlik-politikasi" className="text-xs text-white/30 hover:text-white/60 transition-colors">Güvenlik</Link>
-            <span className="text-xs text-white/20 border border-white/10 rounded-full px-2 py-0.5 ml-1">🇹🇷 Türkçe · ₺</span>
-          </nav>
-        </div>
-      </div>
+      {/* ── Alt Yasal Bar ─────────────────────────────────────── */}
+      <LegalBar />
     </footer>
   );
 }
