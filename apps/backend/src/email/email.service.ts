@@ -162,6 +162,29 @@ export class EmailService implements OnModuleInit {
     );
   }
 
+  async sendRenewalReminderEmail(
+    to: string,
+    creatorName: string,
+    planName: string,
+    renewalDate: string,
+    cancelUrl: string,
+  ): Promise<void> {
+    await this.sendMail(
+      to,
+      `Üyelik yenileme hatırlatması — ${creatorName}`,
+      `<p>Merhaba,</p>
+       <p><strong>${creatorName}</strong> üreticisindeki <strong>${planName}</strong> üyeliğiniz <strong>${renewalDate}</strong> tarihinde otomatik olarak yenilenecektir.</p>
+       <p>Üyeliğinizi iptal etmek istiyorsanız aşağıdaki bağlantıyı kullanabilirsiniz:</p>
+       <p style="margin: 24px 0;">
+         <a href="${cancelUrl}"
+            style="background:#FF5722;color:#fff;padding:12px 24px;border-radius:6px;text-decoration:none;display:inline-block;font-weight:600;">
+           Üyeliği İptal Et
+         </a>
+       </p>
+       <p style="font-size:13px;color:#6B7280;">Bu e-postayı 3 gün sonra yenilenecek aktif üyelikleriniz için gönderiyoruz.</p>`,
+    );
+  }
+
   async sendNewPostNotification(
     to: string,
     creatorName: string,

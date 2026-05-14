@@ -26,6 +26,12 @@ import { ModerationDecisionDto } from './dto/moderation-decision.dto';
 import { EmailService } from '../email/email.service';
 import { NotificationService } from '../notification/notification.service';
 import { NotificationType } from '../moderation/entities/notification.entity';
+import { ContentPolicyViolation, ViolationStatus } from '../moderation/entities/content-policy-violation.entity';
+import { CreateContentViolationDto, UpdateContentViolationDto } from './dto/content-violation.dto';
+import { CreatorEarning, EarningStatus } from '../billing/entities/creator-earning.entity';
+import { CreatorPayout, PayoutStatus } from '../billing/entities/creator-payout.entity';
+import { RefundRequest, RefundStatus } from '../billing/entities/refund-request.entity';
+import { RiskEvent, RiskSeverity } from '../billing/entities/risk-event.entity';
 
 @Injectable()
 export class AdminService {
@@ -58,6 +64,16 @@ export class AdminService {
     private readonly conversationRepository: Repository<ChatConversation>,
     @InjectRepository(ChatMessage)
     private readonly chatMessageRepository: Repository<ChatMessage>,
+    @InjectRepository(ContentPolicyViolation)
+    private readonly violationRepository: Repository<ContentPolicyViolation>,
+    @InjectRepository(CreatorEarning)
+    private readonly earningRepository: Repository<CreatorEarning>,
+    @InjectRepository(CreatorPayout)
+    private readonly payoutRepository: Repository<CreatorPayout>,
+    @InjectRepository(RefundRequest)
+    private readonly refundRequestRepository: Repository<RefundRequest>,
+    @InjectRepository(RiskEvent)
+    private readonly riskEventRepository: Repository<RiskEvent>,
     private readonly dataSource: DataSource,
     private readonly emailService: EmailService,
     private readonly notificationService: NotificationService,
@@ -1217,5 +1233,215 @@ export class AdminService {
     });
 
     return { conversation_id: conversationId, items: messages, total, page, limit };
+  }
+
+  // ── Content Policy Violations ─────────────────────────────────────────────
+
+  async listContentViolations(status?: ViolationStatus, page = 1, limit = 20) {
+    const offset = (page - 1) * limit;
+    const qb = this.violationRepository
+      .createQueryBuilder('v')
+      .leftJoin('v.creator', 'cp')
+      .addSelect(['cp.username', 'cp.display_name'])
+      .orderBy('v.created_at', 'DESC')
+      .skip(offset)
+      .take(limit);
+
+    if (status) {
+      qb.where('v.status = :status', { status });
+    }
+
+    const [violations, total] = await qb.getManyAndCount();
+
+    const items = violations.map((v) => ({
+      id: v.id,
+      target_type: v.target_type,
+      target_id: v.target_id,
+      creator_id: v.creator_id,
+      creator_username: v.creator?.username ?? null,
+      creator_display_name: v.creator?.display_name ?? null,
+      violation_type: v.violation_type,
+      severity: v.severity,
+      status: v.status,
+      notes: v.notes,
+      actioned_by: v.actioned_by,
+      actioned_at: v.actioned_at,
+      created_at: v.created_at,
+    }));
+
+    return { items, total, page, limit };
+  }
+
+  async getContentViolation(id: string) {
+    const violation = await this.violationRepository.findOne({
+      where: { id },
+      relations: ['creator'],
+    });
+    if (!violation) throw new NotFoundException('VIOLATION_NOT_FOUND');
+    return violation;
+  }
+
+  async createContentViolation(dto: CreateContentViolationDto, adminUserId: string) {
+    const violation = this.violationRepository.create({
+      target_type: dto.target_type,
+      target_id: dto.target_id,
+      creator_id: dto.creator_id,
+      violation_type: dto.violation_type,
+      severity: dto.severity,
+      notes: dto.notes ?? null,
+    });
+    return this.violationRepository.save(violation);
+  }
+
+  async updateContentViolation(id: string, dto: UpdateContentViolationDto, adminUserId: string) {
+    const violation = await this.violationRepository.findOne({ where: { id } });
+    if (!violation) throw new NotFoundException('VIOLATION_NOT_FOUND');
+
+    violation.status = dto.status;
+    if (dto.severity) violation.severity = dto.severity;
+    if (dto.notes !== undefined) violation.notes = dto.notes ?? null;
+
+    if (dto.status !== ViolationStatus.Open) {
+      violation.actioned_by = adminUserId;
+      violation.actioned_at = new Date();
+    }
+
+    return this.violationRepository.save(violation);
+  }
+
+  // ── Admin Finance: Earnings ────────────────────────────────────────────────
+
+  async listEarnings(opts: {
+    creatorId?: string;
+    month?: number;
+    year?: number;
+    status?: EarningStatus;
+    page: number;
+    limit: number;
+  }) {
+    const offset = (opts.page - 1) * opts.limit;
+    const qb = this.earningRepository
+      .createQueryBuilder('e')
+      .leftJoin('e.creator_profile', 'cp')
+      .addSelect(['cp.username', 'cp.display_name'])
+      .orderBy('e.created_at', 'DESC')
+      .skip(offset)
+      .take(opts.limit);
+
+    if (opts.creatorId) qb.andWhere('e.creator_profile_id = :creatorId', { creatorId: opts.creatorId });
+    if (opts.month) qb.andWhere('e.period_month = :month', { month: opts.month });
+    if (opts.year) qb.andWhere('e.period_year = :year', { year: opts.year });
+    if (opts.status) qb.andWhere('e.status = :status', { status: opts.status });
+
+    const [items, total] = await qb.getManyAndCount();
+    return { items, total, page: opts.page, limit: opts.limit };
+  }
+
+  // ── Admin Finance: Payouts ─────────────────────────────────────────────────
+
+  async listPayouts(opts: { creatorId?: string; status?: PayoutStatus; page: number; limit: number }) {
+    const offset = (opts.page - 1) * opts.limit;
+    const qb = this.payoutRepository
+      .createQueryBuilder('p')
+      .leftJoin('p.creator_profile', 'cp')
+      .addSelect(['cp.username', 'cp.display_name'])
+      .orderBy('p.created_at', 'DESC')
+      .skip(offset)
+      .take(opts.limit);
+
+    if (opts.creatorId) qb.andWhere('p.creator_profile_id = :creatorId', { creatorId: opts.creatorId });
+    if (opts.status) qb.andWhere('p.status = :status', { status: opts.status });
+
+    const [items, total] = await qb.getManyAndCount();
+    return { items, total, page: opts.page, limit: opts.limit };
+  }
+
+  async markPayoutPaid(payoutId: string) {
+    const payout = await this.payoutRepository.findOne({ where: { id: payoutId } });
+    if (!payout) throw new NotFoundException('PAYOUT_NOT_FOUND');
+
+    await this.payoutRepository.update({ id: payoutId }, {
+      status: PayoutStatus.Paid,
+      paid_at: new Date(),
+    });
+
+    return { payout_id: payoutId, status: PayoutStatus.Paid };
+  }
+
+  // ── Admin Finance: Refunds ─────────────────────────────────────────────────
+
+  async listRefundRequests(opts: { status?: RefundStatus; page: number; limit: number }) {
+    const offset = (opts.page - 1) * opts.limit;
+    const qb = this.refundRequestRepository
+      .createQueryBuilder('r')
+      .leftJoin('r.user', 'u')
+      .addSelect(['u.email'])
+      .orderBy('r.created_at', 'DESC')
+      .skip(offset)
+      .take(opts.limit);
+
+    if (opts.status) qb.andWhere('r.status = :status', { status: opts.status });
+
+    const [items, total] = await qb.getManyAndCount();
+    const mapped = items.map((r) => ({
+      id: r.id,
+      user_email: r.user?.email ?? null,
+      subscription_id: r.subscription_id,
+      invoice_id: r.invoice_id,
+      reason: r.reason,
+      status: r.status,
+      amount_try: r.amount_try,
+      processed_at: r.processed_at,
+      created_at: r.created_at,
+    }));
+    return { items: mapped, total, page: opts.page, limit: opts.limit };
+  }
+
+  async updateRefundRequest(id: string, dto: { status: RefundStatus; notes?: string }, adminUserId: string) {
+    const refund = await this.refundRequestRepository.findOne({ where: { id } });
+    if (!refund) throw new NotFoundException('REFUND_NOT_FOUND');
+
+    await this.refundRequestRepository.update({ id }, {
+      status: dto.status,
+      notes: dto.notes ?? refund.notes,
+      processed_by: adminUserId,
+      processed_at: new Date(),
+    });
+
+    return { refund_id: id, status: dto.status };
+  }
+
+  // ── Admin Finance: Risk Events ─────────────────────────────────────────────
+
+  async listRiskEvents(opts: {
+    severity?: RiskSeverity;
+    resolved?: boolean;
+    page: number;
+    limit: number;
+  }) {
+    const offset = (opts.page - 1) * opts.limit;
+    const qb = this.riskEventRepository
+      .createQueryBuilder('re')
+      .orderBy('re.created_at', 'DESC')
+      .skip(offset)
+      .take(opts.limit);
+
+    if (opts.severity) qb.andWhere('re.severity = :severity', { severity: opts.severity });
+    if (opts.resolved !== undefined) qb.andWhere('re.resolved = :resolved', { resolved: opts.resolved });
+
+    const [items, total] = await qb.getManyAndCount();
+    return { items, total, page: opts.page, limit: opts.limit };
+  }
+
+  async resolveRiskEvent(id: string) {
+    const event = await this.riskEventRepository.findOne({ where: { id } });
+    if (!event) throw new NotFoundException('RISK_EVENT_NOT_FOUND');
+
+    await this.riskEventRepository.update({ id }, {
+      resolved: true,
+      resolved_at: new Date(),
+    });
+
+    return { risk_event_id: id, resolved: true };
   }
 }

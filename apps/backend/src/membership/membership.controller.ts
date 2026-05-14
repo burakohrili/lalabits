@@ -10,6 +10,7 @@ import {
   HttpStatus,
   UseGuards,
   Res,
+  BadRequestException,
 } from '@nestjs/common';
 import type { Response } from 'express';
 import { MembershipService } from './membership.service';
@@ -130,6 +131,18 @@ export class MembershipController {
     @Param('id') subscriptionId: string,
   ) {
     return this.membershipService.cancel(user.id, subscriptionId);
+  }
+
+  // ── TOKEN-BASED CANCEL (email link — no auth required) ───────────────────
+
+  @Get('cancel-by-token')
+  @HttpCode(HttpStatus.OK)
+  cancelByToken(
+    @Query('sub') subscriptionId: string,
+    @Query('token') token: string,
+  ) {
+    if (!subscriptionId || !token) throw new BadRequestException('MISSING_PARAMS');
+    return this.membershipService.cancelByToken(subscriptionId, token);
   }
 
   // ── PAUSE / RESUME ────────────────────────────────────────────────────────

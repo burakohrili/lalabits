@@ -22,8 +22,14 @@ export default function FanRegisterForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [agreeTerms, setAgreeTerms] = useState(false);
+  const [agreeKvkk, setAgreeKvkk] = useState(false);
+
+  const allAgreed = agreeTerms && agreeKvkk;
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    if (!allAgreed) return;
     setError(null);
     setLoading(true);
 
@@ -31,7 +37,13 @@ export default function FanRegisterForm() {
       const res = await fetch(`${API}/auth/register/fan`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, display_name: displayName, password }),
+        body: JSON.stringify({
+          email,
+          display_name: displayName,
+          password,
+          consent_version: '2025-v1',
+          consented_at: new Date().toISOString(),
+        }),
       });
 
       if (!res.ok) {
@@ -39,11 +51,10 @@ export default function FanRegisterForm() {
         throw new ApiError(res.status, body.code ?? 'UNKNOWN', body.message ?? '');
       }
 
-      // Auto-login so the email verification page can show user email and send resend
       try {
         await login({ email, password });
       } catch {
-        // login failure is non-fatal — redirect to verify page anyway
+        // login failure is non-fatal
       }
 
       router.replace('/auth/emaili-dogrula');
@@ -115,21 +126,55 @@ export default function FanRegisterForm() {
         <p className="text-xs text-muted">En az 8 karakter</p>
       </div>
 
+      <div className="flex flex-col gap-3 rounded-lg border border-border bg-surface/50 px-4 py-3">
+        <p className="text-xs font-medium text-foreground">Onaylar (zorunlu)</p>
+
+        <label className="flex items-start gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={agreeTerms}
+            onChange={(e) => setAgreeTerms(e.target.checked)}
+            className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-primary"
+          />
+          <span className="text-xs text-foreground leading-relaxed">
+            <Link href="/kullanim-sartlari" target="_blank" className="font-semibold text-primary hover:underline">
+              Kullanım Koşulları
+            </Link>
+            &apos;nı ve{' '}
+            <Link href="/mesafeli-satis-sozlesmesi" target="_blank" className="font-semibold text-primary hover:underline">
+              Mesafeli Satış Sözleşmesi
+            </Link>
+            &apos;ni okudum, anladım ve kabul ediyorum.
+          </span>
+        </label>
+
+        <label className="flex items-start gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={agreeKvkk}
+            onChange={(e) => setAgreeKvkk(e.target.checked)}
+            className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-primary"
+          />
+          <span className="text-xs text-foreground leading-relaxed">
+            Kişisel verilerimin platform hizmetleri ve ödeme altyapısı için 6698 sayılı KVKK kapsamında işleneceğini okudum ve onaylıyorum.{' '}
+            <Link href="/gizlilik" target="_blank" className="text-primary hover:underline">
+              Gizlilik Politikası
+            </Link>
+          </span>
+        </label>
+      </div>
+
       {error && (
         <p role="alert" className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">{error}</p>
       )}
 
       <button
         type="submit"
-        disabled={loading}
+        disabled={loading || !allAgreed}
         className="rounded-lg bg-primary px-4 py-3 text-sm font-medium text-white hover:bg-primary/90 disabled:opacity-50"
       >
         {loading ? 'Kayıt yapılıyor…' : 'Kayıt Ol'}
       </button>
-
-      <p className="text-center text-xs text-muted">
-        Kayıt olarak Kullanım Koşulları&apos;nı ve Gizlilik Politikası&apos;nı kabul etmiş olursun.
-      </p>
 
       <p className="text-center text-sm text-muted">
         Zaten hesabın var mı?{' '}

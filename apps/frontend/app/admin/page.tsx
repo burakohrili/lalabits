@@ -93,6 +93,7 @@ export default function AdminOverviewPage() {
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {[
             { label: 'Üreticiler', href: '/admin/ureticiler' },
+            { label: 'Finans', href: '/admin/finans' },
             { label: 'Ödemeler', href: '/admin/odemeler' },
             { label: 'İstatistikler', href: '/admin/istatistikler' },
             { label: 'Blog', href: '/admin/blog' },

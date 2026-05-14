@@ -5,8 +5,10 @@ import { Invoice, InvoiceType } from './entities/invoice.entity';
 import { MembershipSubscription } from './entities/membership-subscription.entity';
 import { CreatorProfile } from '../creator/entities/creator-profile.entity';
 import { PaymentDispute, PaymentDisputeStatus } from './entities/payment-dispute.entity';
+import { FanBillingProfile } from './entities/fan-billing-profile.entity';
 import { CreateDisputeDto } from './dto/create-dispute.dto';
 import { UpdateDisputeDto } from './dto/update-dispute.dto';
+import { UpsertFanBillingProfileDto } from './dto/upsert-fan-billing-profile.dto';
 
 @Injectable()
 export class BillingService {
@@ -19,6 +21,8 @@ export class BillingService {
     private readonly creatorProfileRepository: Repository<CreatorProfile>,
     @InjectRepository(PaymentDispute)
     private readonly disputeRepository: Repository<PaymentDispute>,
+    @InjectRepository(FanBillingProfile)
+    private readonly fanBillingProfileRepository: Repository<FanBillingProfile>,
   ) {}
 
   async listInvoices(userId: string, page = 1, limit = 20) {
@@ -153,5 +157,28 @@ export class BillingService {
     if (dto.admin_notes !== undefined) dispute.admin_notes = dto.admin_notes;
 
     return this.disputeRepository.save(dispute);
+  }
+
+  // ── Fan Billing Profile ───────────────────────────────────────────────────
+
+  async getFanBillingProfile(userId: string): Promise<FanBillingProfile | null> {
+    return this.fanBillingProfileRepository.findOne({ where: { user_id: userId } });
+  }
+
+  async upsertFanBillingProfile(userId: string, dto: UpsertFanBillingProfileDto): Promise<FanBillingProfile> {
+    let profile = await this.fanBillingProfileRepository.findOne({ where: { user_id: userId } });
+
+    if (!profile) {
+      profile = this.fanBillingProfileRepository.create({ user_id: userId });
+    }
+
+    if (dto.legal_full_name !== undefined) profile.legal_full_name = dto.legal_full_name ?? null;
+    if (dto.tax_number !== undefined) profile.tax_number = dto.tax_number ?? null;
+    if (dto.billing_address !== undefined) profile.billing_address = dto.billing_address ?? null;
+    if (dto.city !== undefined) profile.city = dto.city ?? null;
+    if (dto.postal_code !== undefined) profile.postal_code = dto.postal_code ?? null;
+    if (dto.billing_email !== undefined) profile.billing_email = dto.billing_email ?? null;
+
+    return this.fanBillingProfileRepository.save(profile);
   }
 }

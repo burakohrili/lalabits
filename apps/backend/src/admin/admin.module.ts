@@ -14,6 +14,11 @@ import { MembershipSubscription } from '../billing/entities/membership-subscript
 import { Invoice } from '../billing/entities/invoice.entity';
 import { ChatConversation } from '../chat/entities/chat-conversation.entity';
 import { ChatMessage } from '../chat/entities/chat-message.entity';
+import { ContentPolicyViolation } from '../moderation/entities/content-policy-violation.entity';
+import { CreatorEarning } from '../billing/entities/creator-earning.entity';
+import { CreatorPayout } from '../billing/entities/creator-payout.entity';
+import { RefundRequest } from '../billing/entities/refund-request.entity';
+import { RiskEvent } from '../billing/entities/risk-event.entity';
 import { NotificationModule } from '../notification/notification.module';
 import { AdminService } from './admin.service';
 import { AdminController } from './admin.controller';
@@ -35,6 +40,11 @@ import { AdminController } from './admin.controller';
       Invoice,
       ChatConversation,
       ChatMessage,
+      ContentPolicyViolation,
+      CreatorEarning,
+      CreatorPayout,
+      RefundRequest,
+      RiskEvent,
     ]),
     NotificationModule,
   ],

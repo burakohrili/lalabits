@@ -16,6 +16,8 @@ const NAV_ITEMS = [
   { label: 'Koleksiyonlar', href: '/dashboard/koleksiyonlar' },
   { label: 'İstatistikler', href: '/dashboard/istatistikler' },
   { label: 'Rozetlerim', href: '/dashboard/milestones' },
+  { label: 'Ödemelerim', href: '/dashboard/odemeler' },
+  { label: 'Vergi Belgesi', href: '/dashboard/vergi-belgesi' },
   { label: 'Profil Düzenle', href: '/dashboard/profil-duzenle' },
   { label: 'Ayarlar', href: '/dashboard/ayarlar' },
 ] as const;

@@ -76,6 +76,9 @@ export class MembershipSubscription {
   @Column({ type: 'timestamptz', nullable: true })
   pause_resumes_at: Date | null;
 
+  @Column({ type: 'timestamptz', nullable: true })
+  last_reminder_sent_at: Date | null;
+
   @CreateDateColumn({ type: 'timestamptz' })
   created_at: Date;
 

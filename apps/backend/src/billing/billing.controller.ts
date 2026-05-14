@@ -20,6 +20,7 @@ import type { AuthenticatedUser } from '../auth/interfaces/authenticated-user.in
 import { CreateDisputeDto } from './dto/create-dispute.dto';
 import { UpdateDisputeDto } from './dto/update-dispute.dto';
 import { PaymentDisputeStatus } from './entities/payment-dispute.entity';
+import { UpsertFanBillingProfileDto } from './dto/upsert-fan-billing-profile.dto';
 
 @Controller('billing')
 export class BillingController {
@@ -56,6 +57,35 @@ export class BillingController {
     @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit = 20,
   ) {
     return this.billingService.listFanDisputes(user.id, page, limit);
+  }
+
+  // ── Fan Billing Profile ───────────────────────────────────────────────────
+
+  @Get('billing/fan-profile')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  getFanBillingProfile(@CurrentUser() user: AuthenticatedUser) {
+    return this.billingService.getFanBillingProfile(user.id);
+  }
+
+  @Post('billing/fan-profile')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  createFanBillingProfile(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() dto: UpsertFanBillingProfileDto,
+  ) {
+    return this.billingService.upsertFanBillingProfile(user.id, dto);
+  }
+
+  @Put('billing/fan-profile')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  updateFanBillingProfile(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() dto: UpsertFanBillingProfileDto,
+  ) {
+    return this.billingService.upsertFanBillingProfile(user.id, dto);
   }
 
   // ── Admin Disputes ────────────────────────────────────────────────────────

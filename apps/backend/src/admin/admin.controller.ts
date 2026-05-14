@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Post,
+  Patch,
   Body,
   Param,
   Query,
@@ -19,11 +20,17 @@ import type { AuthenticatedUser } from '../auth/interfaces/authenticated-user.in
 import { RejectApplicationDto } from './dto/reject-application.dto';
 import { SuspendCreatorDto } from './dto/suspend-creator.dto';
 import { ModerationDecisionDto } from './dto/moderation-decision.dto';
+import { CreateContentViolationDto, UpdateContentViolationDto } from './dto/content-violation.dto';
 import { CreatorApplicationDecision } from '../creator/entities/creator-application.entity';
 import { CreatorProfileStatus } from '../creator/entities/creator-profile.entity';
 import { ReportStatus, ReportTargetType } from '../moderation/entities/report.entity';
+import { ViolationStatus } from '../moderation/entities/content-policy-violation.entity';
 import { InvoiceStatus } from '../billing/entities/invoice.entity';
 import { MembershipSubscriptionStatus } from '../billing/entities/membership-subscription.entity';
+import { EarningStatus } from '../billing/entities/creator-earning.entity';
+import { PayoutStatus } from '../billing/entities/creator-payout.entity';
+import { RefundStatus } from '../billing/entities/refund-request.entity';
+import { RiskSeverity } from '../billing/entities/risk-event.entity';
 
 @Controller('admin')
 @UseGuards(JwtAuthGuard, AdminGuard)
@@ -201,6 +208,43 @@ export class AdminController {
     return this.adminService.listSubscriptions(status, page, limit);
   }
 
+  // ── Content Policy Violations ─────────────────────────────────────────────
+
+  @Get('content-violations')
+  @HttpCode(HttpStatus.OK)
+  listContentViolations(
+    @Query('status') status?: ViolationStatus,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit = 20,
+  ) {
+    return this.adminService.listContentViolations(status, page, limit);
+  }
+
+  @Get('content-violations/:id')
+  @HttpCode(HttpStatus.OK)
+  getContentViolation(@Param('id') id: string) {
+    return this.adminService.getContentViolation(id);
+  }
+
+  @Post('content-violations')
+  @HttpCode(HttpStatus.CREATED)
+  createContentViolation(
+    @Body() dto: CreateContentViolationDto,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.adminService.createContentViolation(dto, user.id);
+  }
+
+  @Patch('content-violations/:id')
+  @HttpCode(HttpStatus.OK)
+  updateContentViolation(
+    @Param('id') id: string,
+    @Body() dto: UpdateContentViolationDto,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.adminService.updateContentViolation(id, dto, user.id);
+  }
+
   // ── Statistics ────────────────────────────────────────────────────────────
 
   @Get('istatistikler')
@@ -225,5 +269,88 @@ export class AdminController {
     @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit = 50,
   ) {
     return this.adminService.getConversationMessages(id, page, limit);
+  }
+
+  // ── Finance: Earnings ─────────────────────────────────────────────────────
+
+  @Get('earnings')
+  listEarnings(
+    @Query('creator_id') creatorId?: string,
+    @Query('month') month?: string,
+    @Query('year') year?: string,
+    @Query('status') status?: EarningStatus,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit = 20,
+  ) {
+    return this.adminService.listEarnings({
+      creatorId,
+      month: month ? Number(month) : undefined,
+      year: year ? Number(year) : undefined,
+      status,
+      page,
+      limit,
+    });
+  }
+
+  // ── Finance: Payouts ──────────────────────────────────────────────────────
+
+  @Get('payouts')
+  listPayouts(
+    @Query('creator_id') creatorId?: string,
+    @Query('status') status?: PayoutStatus,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit = 20,
+  ) {
+    return this.adminService.listPayouts({ creatorId, status, page, limit });
+  }
+
+  @Post('payouts/:id/mark-paid')
+  @HttpCode(HttpStatus.OK)
+  markPayoutPaid(@Param('id') id: string) {
+    return this.adminService.markPayoutPaid(id);
+  }
+
+  // ── Finance: Refund Requests ──────────────────────────────────────────────
+
+  @Get('refund-requests')
+  listRefundRequests(
+    @Query('status') status?: RefundStatus,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit = 20,
+  ) {
+    return this.adminService.listRefundRequests({ status, page, limit });
+  }
+
+  @Patch('refund-requests/:id')
+  @HttpCode(HttpStatus.OK)
+  updateRefundRequest(
+    @Param('id') id: string,
+    @Body() dto: { status: RefundStatus; notes?: string },
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.adminService.updateRefundRequest(id, dto, user.id);
+  }
+
+  // ── Finance: Risk Events ──────────────────────────────────────────────────
+
+  @Get('risk-events')
+  listRiskEvents(
+    @Query('severity') severity?: RiskSeverity,
+    @Query('resolved') resolved?: string,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit = 20,
+  ) {
+    return this.adminService.listRiskEvents({
+      severity,
+      resolved: resolved !== undefined ? resolved === 'true' : undefined,
+      page,
+      limit,
+    });
+  }
+
+  @Patch('risk-events/:id/resolve')
+  @HttpCode(HttpStatus.OK)
+  resolveRiskEvent(@Param('id') id: string) {
+    return this.adminService.resolveRiskEvent(id);
   }
 }

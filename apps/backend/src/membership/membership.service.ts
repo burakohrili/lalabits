@@ -9,7 +9,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
 import { In, Repository } from 'typeorm';
-import { randomUUID } from 'crypto';
+import { randomUUID, createHmac } from 'crypto';
 import {
   MembershipSubscription,
   MembershipSubscriptionStatus,
@@ -21,6 +21,7 @@ import {
 } from '../creator/entities/membership-plan.entity';
 import { CreatorProfile, CreatorProfileStatus } from '../creator/entities/creator-profile.entity';
 import { Invoice, InvoiceStatus, InvoiceType } from '../billing/entities/invoice.entity';
+import { SubscriptionConsent } from '../billing/entities/subscription-consent.entity';
 import { SubscribeDto } from './dto/subscribe.dto';
 import { IyzicoService } from '../iyzico/iyzico.service';
 import { NotificationService } from '../notification/notification.service';
@@ -61,6 +62,8 @@ export class MembershipService {
     private readonly creatorProfileRepository: Repository<CreatorProfile>,
     @InjectRepository(Invoice)
     private readonly invoiceRepository: Repository<Invoice>,
+    @InjectRepository(SubscriptionConsent)
+    private readonly subscriptionConsentRepository: Repository<SubscriptionConsent>,
     private readonly iyzicoService: IyzicoService,
     private readonly configService: ConfigService,
     private readonly notificationService: NotificationService,
@@ -102,17 +105,22 @@ export class MembershipService {
       throw new ConflictException('ALREADY_SUBSCRIBED');
     }
 
+    const consentMeta = dto.consent_version
+      ? { consent_version: dto.consent_version, consented_at: dto.consented_at ? new Date(dto.consented_at) : new Date() }
+      : null;
+
     if (!this.iyzicoService.isEnabled) {
-      return this.mockSubscribe(userId, plan, dto.billing_interval);
+      return this.mockSubscribe(userId, plan, dto.billing_interval, consentMeta);
     }
 
-    return this.realSubscribe(userId, plan, dto.billing_interval);
+    return this.realSubscribe(userId, plan, dto.billing_interval, consentMeta);
   }
 
   private async mockSubscribe(
     userId: string,
     plan: MembershipPlan,
     billingInterval: BillingInterval,
+    consentMeta: { consent_version: string; consented_at: Date } | null = null,
   ) {
     const now = new Date();
     const periodEnd = new Date(now);
@@ -133,6 +141,17 @@ export class MembershipService {
         gateway_subscription_id: null,
       }),
     );
+
+    if (consentMeta) {
+      await this.subscriptionConsentRepository.save(
+        this.subscriptionConsentRepository.create({
+          subscription_id: sub.id,
+          user_id: userId,
+          consent_version: consentMeta.consent_version,
+          consented_at: consentMeta.consented_at,
+        }),
+      );
+    }
 
     await this.notificationService.createNotification({
       recipientUserId: userId,
@@ -163,6 +182,7 @@ export class MembershipService {
     userId: string,
     plan: MembershipPlan,
     billingInterval: BillingInterval,
+    consentMeta: { consent_version: string; consented_at: Date } | null = null,
   ) {
     if (!plan.gateway_plan_reference) {
       throw new UnprocessableEntityException('PLAN_NOT_CONFIGURED_AT_GATEWAY');
@@ -194,6 +214,17 @@ export class MembershipService {
         gateway_subscription_id: conversationId, // temp placeholder; overwritten after callback
       }),
     );
+
+    if (consentMeta) {
+      await this.subscriptionConsentRepository.save(
+        this.subscriptionConsentRepository.create({
+          subscription_id: sub.id,
+          user_id: userId,
+          consent_version: consentMeta.consent_version,
+          consented_at: consentMeta.consented_at,
+        }),
+      );
+    }
 
     // LD-2: Use hosted subscription checkout form
     const iyzicoRequest = {
@@ -508,6 +539,59 @@ export class MembershipService {
     });
 
     // TODO: analytics event — subscription_cancelled
+    return {
+      subscription_id: sub.id,
+      status: MembershipSubscriptionStatus.Cancelled,
+      current_period_end: sub.current_period_end,
+    };
+  }
+
+  // ── TOKEN-BASED CANCEL (email link, no auth) ─────────────────────────────
+
+  generateCancelToken(subscriptionId: string): string {
+    const secret = this.configService.get<string>('CANCEL_TOKEN_SECRET', 'cancel-secret-change-me');
+    return createHmac('sha256', secret).update(subscriptionId).digest('hex');
+  }
+
+  async cancelByToken(subscriptionId: string, token: string) {
+    const expected = this.generateCancelToken(subscriptionId);
+    if (token !== expected) {
+      throw new UnprocessableEntityException('INVALID_CANCEL_TOKEN');
+    }
+
+    const sub = await this.subscriptionRepository.findOne({
+      where: { id: subscriptionId },
+    });
+
+    if (!sub) throw new NotFoundException('SUBSCRIPTION_NOT_FOUND');
+    if (sub.status === MembershipSubscriptionStatus.Cancelled) {
+      return { subscription_id: sub.id, status: MembershipSubscriptionStatus.Cancelled, already_cancelled: true };
+    }
+    if (!isAccessActive(sub)) {
+      throw new UnprocessableEntityException('SUBSCRIPTION_NOT_ACTIVE');
+    }
+
+    if (this.iyzicoService.isEnabled && sub.gateway_subscription_id) {
+      try {
+        await this.iyzicoService.cancelSubscription(sub.gateway_subscription_id);
+      } catch (err) {
+        this.logger.error(`İyzico cancel error in cancelByToken for sub ${subscriptionId}:`, err);
+      }
+    }
+
+    await this.subscriptionRepository.update(
+      { id: sub.id },
+      { status: MembershipSubscriptionStatus.Cancelled, cancelled_at: new Date() },
+    );
+
+    await this.notificationService.createNotification({
+      recipientUserId: sub.fan_user_id,
+      type: NotificationType.MembershipCancelledConfirmed,
+      title: 'Üyeliğiniz iptal edildi',
+      body: `Üyeliğiniz dönem sonuna kadar aktif kalmaya devam edecek: ${sub.current_period_end.toLocaleDateString('tr-TR')}.`,
+      actionUrl: '/hesabim/uyelikler',
+    });
+
     return {
       subscription_id: sub.id,
       status: MembershipSubscriptionStatus.Cancelled,

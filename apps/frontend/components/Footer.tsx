@@ -227,7 +227,15 @@ export default function Footer() {
             <Link href="/kvkk" className="text-xs text-white/30 hover:text-white/60 transition-colors">KVKK</Link>
             <Link href="/cerez-politikasi" className="text-xs text-white/30 hover:text-white/60 transition-colors">Çerez</Link>
             <Link href="/mesafeli-satis-sozlesmesi" className="text-xs text-white/30 hover:text-white/60 transition-colors">Mesafeli Satış</Link>
+            <Link href="/on-bilgilendirme" className="text-xs text-white/30 hover:text-white/60 transition-colors">Ön Bilgilendirme</Link>
             <Link href="/iade-politikasi" className="text-xs text-white/30 hover:text-white/60 transition-colors">İade Politikası</Link>
+            <Link href="/uyelik-iptal-politikasi" className="text-xs text-white/30 hover:text-white/60 transition-colors">Üyelik İptali</Link>
+            <Link href="/dijital-teslimat-politikasi" className="text-xs text-white/30 hover:text-white/60 transition-colors">Dijital Teslimat</Link>
+            <Link href="/yasakli-icerik-politikasi" className="text-xs text-white/30 hover:text-white/60 transition-colors">Yasaklı İçerik</Link>
+            <Link href="/topluluk-kurallari" className="text-xs text-white/30 hover:text-white/60 transition-colors">Topluluk Kuralları</Link>
+            <Link href="/moderasyon-politikasi" className="text-xs text-white/30 hover:text-white/60 transition-colors">Moderasyon</Link>
+            <Link href="/telif-sikayeti" className="text-xs text-white/30 hover:text-white/60 transition-colors">Telif Şikâyeti</Link>
+            <Link href="/harcama-itirazi" className="text-xs text-white/30 hover:text-white/60 transition-colors">Harcama İtirazı</Link>
             <Link href="/guvenlik-politikasi" className="text-xs text-white/30 hover:text-white/60 transition-colors">Güvenlik</Link>
             <span className="text-xs text-white/20 border border-white/10 rounded-full px-2 py-0.5 ml-1">🇹🇷 Türkçe · ₺</span>
           </nav>

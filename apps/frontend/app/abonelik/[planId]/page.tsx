@@ -85,7 +85,12 @@ export default function SubscriptionCheckoutPage() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${accessToken}`,
         },
-        body: JSON.stringify({ plan_id: planId, billing_interval: 'monthly' }),
+        body: JSON.stringify({
+          plan_id: planId,
+          billing_interval: 'monthly',
+          consent_version: '2025-v1',
+          consented_at: new Date().toISOString(),
+        }),
       });
 
       if (!res.ok) {
